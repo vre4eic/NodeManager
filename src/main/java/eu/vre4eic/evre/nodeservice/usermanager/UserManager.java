@@ -1,18 +1,15 @@
 /**
  * 
  */
-package eu.vre4eic.evre.nodemanager.user;
-
-
-
+package eu.vre4eic.evre.nodeservice.usermanager;
 
 import java.util.List;
 
-import eu.vre4eic.evre.nodemanager.core.EvreEvent;
-import eu.vre4eic.evre.nodemanager.core.EvreQuery;
-import eu.vre4eic.evre.nodemanager.core.UserCredentials;
-import eu.vre4eic.evre.nodemanager.core.UserProfile;
-import eu.vre4eic.evre.nodemanager.core.messages.Message;
+import eu.vre4eic.evre.nodeservice.core.EvreEvent;
+import eu.vre4eic.evre.nodeservice.core.EvreQuery;
+import eu.vre4eic.evre.nodeservice.core.UserCredentials;
+import eu.vre4eic.evre.nodeservice.core.UserProfile;
+import eu.vre4eic.evre.nodeservice.core.messages.Message;
 
 /**
  * This interface contains methods for managing users. It contains signature of the methods of the ResourceManager component
