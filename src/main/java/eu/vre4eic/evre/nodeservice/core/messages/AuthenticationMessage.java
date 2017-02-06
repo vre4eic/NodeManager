@@ -20,6 +20,18 @@ public interface AuthenticationMessage extends Message {
 	 * @param token String - the user token
 	 */
 	public void setToken(String token);
+	/**
+	 * Gets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
+	 * @return String - the token identifying the user
+	 */
+	public String getTTL();
+	/**
+	 * Sets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
+	 *
+	 * @param ttl String - the lifetime of a token i e-VRE
+	 */
+	public void setTTL(String ttl);
+
 
 	/**
 	 * Returns the userRole
