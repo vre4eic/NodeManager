@@ -26,6 +26,14 @@ public class Common {
 	}
 	
 	/**
+	 * ServiceStatus: <ul><li>Start, <li>Run, <li>Error <li>Stop</ul>
+	 *
+	 */
+	public enum ServiceStatus {
+		START, RUN, ERROR, STOP
+	}
+	
+	/**
 	 * MetadataOperationType: <ul><li>Read</li> <li>Query</li> <li>Insert</li><li>Update</li><li>Delete</li></ul>
 	 */
 	public enum MetadataOperationType{

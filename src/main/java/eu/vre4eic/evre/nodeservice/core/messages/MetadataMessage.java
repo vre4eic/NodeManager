@@ -5,7 +5,7 @@ import eu.vre4eic.evre.nodeservice.core.Common.ResponseStatus;
 import eu.vre4eic.evre.nodeservice.core.Common.UserRole;
 
 /**
- * This message is published to notify other services that an operation operation has been executed by the Metadata service
+ * This message is published to notify other services that an operation has been executed by the Metadata service
  * @author Cesare
  *
  */
@@ -34,7 +34,7 @@ public interface MetadataMessage extends Message {
 	 * 
 	 * @param op MetadataOperationType - the type of the operation
 	 */
-	public void setRole(MetadataOperationType op);
+	public void setOperation(MetadataOperationType op);
 	
 	/**
 	 * Returns the operation result status
