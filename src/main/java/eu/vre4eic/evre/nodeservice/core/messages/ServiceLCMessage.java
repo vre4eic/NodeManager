@@ -1,11 +1,11 @@
 package eu.vre4eic.evre.nodeservice.core.messages;
 
-import eu.vre4eic.evre.nodeservice.core.Common;
+
 import eu.vre4eic.evre.nodeservice.core.Common.ServiceStatus;
 import eu.vre4eic.evre.nodeservice.core.Common.UserRole;
 
 /**
- * This message is published when an event happens in a service life-cycle
+ * This interface defines the message published when a change happens in a service life-cycle
  * @author Cesare
  *
  */
@@ -13,16 +13,16 @@ public interface ServiceLCMessage extends Message {
 
 	/**
 	 * Gets the identifier of the service. 
-	 * @return String - the token identifying the user
+	 * @return String - the id identifying the service
 	 */
 	public String getServiceId();
 	
 	/**
 	 * Sets the the identifier of the service.
 	 *
-	 * @param token String - the user token
+	 * @param id String - the service identifier
 	 */
-	public void setServiceId(String token);
+	public void setServiceId(String id);
 
 	/**
 	 * Returns the new life-cycle status

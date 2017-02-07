@@ -37,7 +37,7 @@ public class Common {
 	 * MetadataOperationType: <ul><li>Read</li> <li>Query</li> <li>Insert</li><li>Update</li><li>Delete</li></ul>
 	 */
 	public enum MetadataOperationType{
-		READ, QUERY,INSERT,UPDATE, DELETE
+		READ,QUERY,INSERT,UPDATE, DELETE
 	}
 	/**
 	 * NotificationType: <ul><li>Authentication</li> <li>Metadata</li><li>UserProfile</li><li>Service</li></ul>

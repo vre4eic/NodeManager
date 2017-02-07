@@ -2,10 +2,10 @@ package eu.vre4eic.evre.nodeservice.core.messages;
 
 import eu.vre4eic.evre.nodeservice.core.Common.MetadataOperationType;
 import eu.vre4eic.evre.nodeservice.core.Common.ResponseStatus;
-import eu.vre4eic.evre.nodeservice.core.Common.UserRole;
 
 /**
- * This message is published to notify other services that an operation has been executed by the Metadata service
+ * This interface defines the message published to notify other services that an operation has been executed by the 
+ * Metadata service
  * @author Cesare
  *
  */

@@ -31,6 +31,7 @@ public class UserController {
 		return null;
 	}
 */
+	//probably this method won't be used, it should be implemented by AAAI service
 	@RequestMapping("/user/login")
 	
 	public Message login(@RequestParam(value="username") String username, @RequestParam(value="pwd") String pwd) {
@@ -38,6 +39,7 @@ public class UserController {
 		return null;
 	}
 
+	//probably this method won't be used, it should be implemented by AAAI service
 	@RequestMapping("/user/logout")
 
 	public Message logout(@RequestParam(value="token") String token) {
@@ -45,6 +47,7 @@ public class UserController {
 		return null;
 	}
 
+	
 	@RequestMapping("/user/removeprofile")
 	public Message removeUserProfile(@RequestParam(value="token") String token, @RequestParam(value="id") String userId) {
 		

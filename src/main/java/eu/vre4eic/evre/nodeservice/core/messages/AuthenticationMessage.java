@@ -3,7 +3,7 @@ package eu.vre4eic.evre.nodeservice.core.messages;
 import eu.vre4eic.evre.nodeservice.core.Common.UserRole;
 
 /**
- * This message is published when a user is authenticated or logs out
+ * This interface defines the message published when a user is authenticated or logs out
  * @author Cesare
  *
  */
