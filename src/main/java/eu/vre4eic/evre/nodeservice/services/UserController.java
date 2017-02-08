@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
-import eu.vre4eic.evre.nodeservice.core.UserProfile;
-import eu.vre4eic.evre.nodeservice.core.messages.Message;
+import eu.vre4eic.evre.core.UserProfile;
+import eu.vre4eic.evre.core.messages.Message;
 
 /**
  * This class contains methods for managing users. 

@@ -1,7 +1,7 @@
-package eu.vre4eic.evre.nodeservice.core.messages;
+package eu.vre4eic.evre.core.messages;
 
-import eu.vre4eic.evre.nodeservice.core.Common.MetadataOperationType;
-import eu.vre4eic.evre.nodeservice.core.Common.ResponseStatus;
+import eu.vre4eic.evre.core.Common.MetadataOperationType;
+import eu.vre4eic.evre.core.Common.ResponseStatus;
 
 /**
  * This interface defines the message published to notify other services that an operation has been executed by the 

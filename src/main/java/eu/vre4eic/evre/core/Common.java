@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.vre4eic.evre.nodeservice.core;
+package eu.vre4eic.evre.core;
 
 /**
  * Enum definitions common to all classes

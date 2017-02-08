@@ -1,6 +1,6 @@
-package eu.vre4eic.evre.nodeservice.core.messages;
+package eu.vre4eic.evre.core.messages;
 
-import eu.vre4eic.evre.nodeservice.core.Common.UserRole;
+import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
  * This interface defines the message published when a user is authenticated or logs out
