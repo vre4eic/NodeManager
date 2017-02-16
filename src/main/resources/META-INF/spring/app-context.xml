@@ -44,7 +44,7 @@
 
   
 	<mvc:resources mapping="/resources/**" location="/resources/" />
-	<context:component-scan base-package="eu.vre4eic.evre.nodeservice" />
+	<context:component-scan base-package="eu.vre4eic.evre.nodeservice." />
 	
 	
 	
