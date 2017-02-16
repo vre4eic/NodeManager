@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+    <title>Node service: User Manager description page</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	
+	<link rel="stylesheet" href="css/style.css"/>
+   
+ 
+</head>
+<body>
+<div id="users" class="colmask fullpage">
+	<h2>The User Manager web service (release <i th:text="${session.release}"></i>)</h2>
+	
+	<p> This page shows the services provided by <b>User Manager</b>.</p>
+	
+
+
+	<table>
+	<!-- caption>List of User Manager services</caption-->
+	
+	<tr>
+	<th>Description</th><th>Path</th><th>Method</th><th>Parameters</th><th>Return type</th></tr>
+	
+	<tr>
+	
+	<td>Create a  user profile</td><td>/user/createprofile</td><td>POST</td><td>login=my_login&amp;name=user_name&amp;email=user@email
+	                                                                    &amp;role=user_role&amp;password=password</td><td>JSON</td></tr>
+	
+	<tr>
+	
+	<td>Register a new user</td><td>/user/updateprofile</td><td>POST</td><td>token=user_token&amp;userid=the_user_id&amp;login=my_login&amp;name=user_name&amp;email=user@email
+	                                                                    &amp;role=user_role&amp;password=password</td><td>JSON</td></tr>
+	<tr>                                                                    
+	<td>Remove the profile of the user identified by the token</td><td>/user/deleteprofile</td><td>GET</td><td>token=user_token</td><td>String</td>
+	</tr>
+	
+	<tr>
+	<td>Authenticate a user</td><td>/user/login</td><td>GET</td><td>login=user_login&amp;password=password</td><td>JSON</td>
+	</tr>
+	<!--  
+	<tr>
+	<td>Change the password</td><td>/user/changePassword</td><td>GET</td><td>login=user_login&amp;oldPassword=old_password&amp;newPassword=new_password&amp;token=user_token</td>
+	</tr>
+	-->
+	
+	<tr>
+	<td>Logout</td><td>/user/logout</td><td>GET</td><td>token=user_token</td><td>String</td>                                                                    
+	 </tr>
+	<!--
+	 <tr>
+	 <td>Password recovery</td><td>/user/passwordForget</td><td>GET</td><td>login=user_login</td><td>String</td>  
+	 </tr>
+	  -->
+	 <!-- 
+	 <tr>
+	 <td>User name recovery</td><td>/user/userForget</td><td>GET</td><td>email=user_email</td> 
+	 </tr>
+	  -->
+	 
+	<tr>
+	 <td> Get user profile</td><td>/user/getprofile</td><td>GET</td><td>token=user_token</td><td>JSON</td>                                                                
+	
+	</tr>
+	 <tr>
+	 <td>Subscribe to a list of events</td><td>/user/subscribeevents</td><td>GET</td><td>token=user_token&amp;userid=the_user_id&amp;token=user_token&amp;event=JSON&amp;event=JSON...</td><td>JSON</td>                                                                
+	
+	</tr>
+	
+	 <tr>
+	 <td>Delete a User profile from eVRE <br/><i>(requires Admin permissions)</i></td><td>/admin/removeuser</td><td>GET</td><td>userlogin=the_user_login&amp;token=the_administrator_token</td><td>JSON</td>                                                                
+	
+	</tr>
+	<tr>
+	 <td>Set or change the role property in a User profile <i>(requires Admin permissions)</i></td><td>/admin/setuserrole</td><td>GET</td><td>userlogin=the_user_login&amp;token=the_administrator_token&amp;role=the_user_role</td><td>JSON</td>                                                                
+	
+	</tr>
+	 
+	 <tr>
+	 <td>Set or change the status property in a User profile <i>(requires Admin permissions)</i></td><td>/admin/setuserstatus</td><td>GET</td><td>userlogin=the_user_login&amp;token=the_administrator_token&amp;status=the_user_status</td><td>JSON</td>                                                                
+	
+	</tr>
+	
+	
+	</table>
+	</div>
+	
+	<div class="footer">
+	 <hr/>
+	<i>e-VRE</i>
+	 </div>
+	 
+	 
+</body>
+</html>
