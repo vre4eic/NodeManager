@@ -58,7 +58,7 @@ public interface UserManager {
 	public Message removeAuthenticator(UserCredentials credentials, String authId);
 	
 	/*
-	 * signature changed from ythe original deliverable description, need to verify.
+	 * signature changed from the original deliverable description, need to verify.
 	 */
 	public Message authenticate(UserCredentials credentials, String authId);
 	
