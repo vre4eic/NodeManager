@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 
 
 /**
@@ -30,6 +33,7 @@ public class NodeController {
 		super();
 	}
 
+	@JsonIgnore
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String WelcomePage(ModelMap model, HttpSession session) {
 
@@ -38,6 +42,7 @@ public class NodeController {
 		return WELCOME_PAGE;
 	}
 	//list of services
+	    @JsonIgnore
 		@RequestMapping(value="/servicesdoc", method=RequestMethod.GET)
 		public String userServices(Model model, HttpSession session, @RequestParam(value="component")String component) {
 			session.setAttribute(RELEASE, "0.01a");
