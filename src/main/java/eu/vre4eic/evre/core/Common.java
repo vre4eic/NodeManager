@@ -10,23 +10,23 @@ package eu.vre4eic.evre.core;
  */
 public class Common {
 	/**
-	 * UserRole: <ul><li>CUSTOMER, <li>OPERATOR, <li>ADMIN, <li>CONTROLLER</ul>
+	 * UserRole: <ul><li>RESEARCHER</li> <li>OPERATOR</li> <li>ADMIN</li> <li>CONTROLLER</li></ul>
 	 *
 	 */
 	public enum UserRole {
-		CUSTOMER, OPERATOR, ADMIN, CONTROLLER
+		RESEARCHER, OPERATOR, ADMIN, CONTROLLER
 	}
 	
 	/**
-	 * ResponseStatus: <ul><li>FAILED, <li>SUCCEED, <li>EMPTY_RESULT <li>WARNING</ul>
+	 * ResponseStatus: <ul><li>SUCCEED</li> <li>EMPTY_RESULT</li> <li>WARNING</li> <li>FAILED</li></ul>
 	 *
 	 */
 	public enum ResponseStatus {
-		FAILED, SUCCEED, EMPTY_RESULT, WARNING
+		SUCCEED, EMPTY_RESULT, WARNING, FAILED,
 	}
 	
 	/**
-	 * ServiceStatus: <ul><li>Start, <li>Run, <li>Error <li>Stop</ul>
+	 * ServiceStatus: <ul><li>Start</li> <li>Run</li> <li>Error</li> <li>Stop</li></ul>
 	 *
 	 */
 	public enum ServiceStatus {

@@ -37,7 +37,7 @@ public class UserController {
 	@RequestMapping(value="/user/createprofile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public  Message createUserProfile(@RequestParam(value="login") String login, @RequestParam(value="name") String name, 
 			@RequestParam(value="email") String email, @RequestParam(value="role") UserRole role, 
-			@RequestParam(value="nickname") String nickName, @RequestParam(value="password") String password) {
+			@RequestParam(value="password") String password) {
 		
 		return null;
 	}
@@ -97,7 +97,17 @@ public class UserController {
 	 @ApiOperation(value = "Gets a user profile based on user id", 
 		        notes = "Retrieves a single user profile", response = UserProfile.class)
 	@RequestMapping(value= "/user/getprofile", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserProfile getUserProfile(@RequestParam(value="token") String token, @RequestParam(value="id") String userId) {
+	public UserProfile getUserProfile(@RequestParam(value="token") String token, @RequestParam(value="userLogin") String userId) {
+		
+		return null;
+	}
+	 
+	 @ApiOperation(value = "Gets a list of user profiles", 
+		        notes = "Retrieves a list of user profiles, can be invoked by users with Administrator role",
+		        response = UserProfile.class,
+		        responseContainer="List")
+	@RequestMapping(value= "/user/getprofiles", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<UserProfile> getUserProfiles(@RequestParam(value="token") String token) {
 		
 		return null;
 	}
@@ -111,6 +121,7 @@ public class UserController {
 	return null;
 
 	}
+	 
 	 @ApiOperation(value = "Unsubscribes from a list of e-VRE events ", 
 		        notes = "A user with a valid token can invoke this web service to unsubscribe from a list of e-VRE events", 
 		        response = Message.class)
