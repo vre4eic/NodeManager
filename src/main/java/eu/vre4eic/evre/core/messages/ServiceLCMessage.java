@@ -1,6 +1,7 @@
 package eu.vre4eic.evre.core.messages;
 
 
+import eu.vre4eic.evre.core.Common.ResponseStatus;
 import eu.vre4eic.evre.core.Common.ServiceStatus;
 import eu.vre4eic.evre.core.Common.UserRole;
 
@@ -30,7 +31,7 @@ public interface ServiceLCMessage extends Message {
 	 * @return ServiceStatus - the current service status
 	 * @see UserRole
 	 */
-	public ServiceStatus getStatus();
+	public ResponseStatus getStatus();
 
 	/**
 	 * Sets the the current service status 

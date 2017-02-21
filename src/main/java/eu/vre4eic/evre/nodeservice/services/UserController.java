@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import eu.vre4eic.evre.core.EvreEvent;
 import eu.vre4eic.evre.core.UserProfile;
+import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,11 +64,11 @@ public class UserController {
 	}
 	
 	@ApiOperation(value = "Authenticates a user ", 
-	        notes = "Authenticates a user on e-VRE", 
-	        response = Message.class)
+	        notes = "Authenticates a user on e-VRE system. Returns the token that will be used by user client in the interactions with the e-VRE services.", 
+	        response = AuthenticationMessage.class)
 	@RequestMapping(value="/user/login", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	
-	public Message login(@RequestParam(value="username") String username, @RequestParam(value="pwd") String pwd) {
+	public AuthenticationMessage login(@RequestParam(value="username") String username, @RequestParam(value="pwd") String pwd) {
 		
 		return null;
 	}

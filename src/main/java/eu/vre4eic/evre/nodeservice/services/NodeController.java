@@ -4,6 +4,7 @@ package eu.vre4eic.evre.nodeservice.services;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import eu.vre4eic.evre.core.messages.Message;
 
 
 
@@ -48,6 +51,11 @@ public class NodeController {
 			session.setAttribute(RELEASE, "0.01a");
 
 			return component;
+		}
+	    @RequestMapping(value="node/ping", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+		public boolean pingNodeService(@RequestParam(value="token") String token) {
+			
+			return true;
 		}
 
 }
