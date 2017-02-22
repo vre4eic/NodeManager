@@ -4,6 +4,8 @@ package eu.vre4eic.evre.nodeservice.services;
 
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +16,8 @@ import eu.vre4eic.evre.core.EvreEvent;
 import eu.vre4eic.evre.core.UserProfile;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
+import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
+import eu.vre4eic.evre.nodeservice.comm.impl.Publisher;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import eu.vre4eic.evre.core.Common.UserRole;
@@ -69,8 +73,22 @@ public class UserController {
 	@RequestMapping(value="/user/login", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	
 	public AuthenticationMessage login(@RequestParam(value="username") String username, @RequestParam(value="pwd") String pwd) {
+		Publisher p;
+		AuthenticationMessage m = new AuthenticationMessageImpl();
+		try {
+			p = new Publisher();
+			
+			
+			m.setToken("12345");
+			m.setTTL("1000");
+			
+			p.publishAuthentication(m);
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		return null;
+		return m;
 	}
 
 	@ApiOperation(value = "Sign off a user", 

@@ -46,4 +46,6 @@ public class Common {
 		AUTHENTICATION, METADATA,USERPROFILE,SERVICE
 	}
 	
+	public static final String AUTH_CHANNEL = "AUTH_Channel";
+	
 }
