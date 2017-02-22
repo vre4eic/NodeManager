@@ -27,4 +27,8 @@ public interface UserProfile {
 	public String getEmail() ;
 
 	public void setEmail(String email) ;
+	
+	public String getCommId() ;
+
+	public void setCommId(String commId) ;
 }

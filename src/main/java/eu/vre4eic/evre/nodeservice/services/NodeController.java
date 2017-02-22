@@ -2,6 +2,11 @@ package eu.vre4eic.evre.nodeservice.services;
 
 
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.MediaType;
@@ -19,7 +24,6 @@ import eu.vre4eic.evre.core.messages.Message;
 
 
 
-
 /**
  * This class contains methods for managing users. 
  * @author Cesare
@@ -31,16 +35,29 @@ public class NodeController {
 
 	private static final String RELEASE = "release";
 	private static final String WELCOME_PAGE = "welcome";
-
+	Properties property = new Properties();
 	public NodeController()  {
 		super();
+		
+		InputStream in;
+		
+		try {
+			in = this.getClass().getClassLoader()
+					.getResourceAsStream("Nodeservice.properties");
+			property.load(in);
+			in.close();
+		} catch (FileNotFoundException e) {
+			
+		} catch (IOException e) {
+			
+		}
 	}
 
 	@JsonIgnore
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String WelcomePage(ModelMap model, HttpSession session) {
 
-		session.setAttribute(RELEASE, "0.01a");
+		session.setAttribute(RELEASE, property.getProperty("VERSION"));
 		
 		return WELCOME_PAGE;
 	}

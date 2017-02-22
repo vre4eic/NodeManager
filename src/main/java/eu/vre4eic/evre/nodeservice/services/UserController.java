@@ -33,11 +33,11 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "Creates a user profile on e-VRE", 
-	        notes = "Creates a  user profile", response = Message.class)
+	        notes = "Creates a  user profile on e-VRE", response = Message.class)
 	@RequestMapping(value="/user/createprofile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public  Message createUserProfile(@RequestParam(value="login") String login, @RequestParam(value="name") String name, 
 			@RequestParam(value="email") String email, @RequestParam(value="role") UserRole role, 
-			@RequestParam(value="password") String password) {
+			@RequestParam(value="password") String password, @RequestParam(value="commid") String commId) {
 		
 		return null;
 	}
@@ -53,7 +53,7 @@ public class UserController {
 		return null;
 	}
 	
-	@ApiOperation(value = "Removes the profile of a user from e-VRE ", 
+	@ApiOperation(value = "Removes the profile of a user from e-VRE", 
 	        notes = "A user with a valid token can invoke this web service to remove her/his profile from e-VRE", 
 	        response = Message.class)
 	

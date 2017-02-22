@@ -15,6 +15,12 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import static springfox.documentation.builders.PathSelectors.*;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import static com.google.common.base.Predicates.*;
 
 
@@ -23,33 +29,45 @@ import static com.google.common.base.Predicates.*;
 @EnableSwagger2
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class SwaggerConfig {                                    
-    @Bean
-    public Docket api() { 
-        return new Docket(DocumentationType.SWAGGER_2) 
-          .groupName("nodeservice-api")
-          .apiInfo(apiInfo())
-          .select()   
-          //.apis(!(RequestHandlerSelectors.withClassAnnotation(JsonIgnore.class))
-          .apis(RequestHandlerSelectors.any())              
-          //.paths(PathSelectors.any()) 
-          //.paths(PathSelectors.regex("/user.*"))
-          .paths(paths())
-          .build()
-          .pathMapping("/NodeService/");                                           
-    }
-    
-    private Predicate<String> paths() {
-        return or(PathSelectors.regex("/user.*"),
-        		PathSelectors.regex("/node.*"));
-      }
-    private ApiInfo apiInfo() {
-    	return new ApiInfoBuilder()
-                .title("e-VRE NodeService")
-                .description("This pages shows the Web Services entry points for the e-VRE NodeService component.")
-                .version("0.0.1")
-                .termsOfServiceUrl("http://terms-of-services.evre")
-                .license("TBD")
-                .licenseUrl("http://url-to-license.com")
-                .build();
-    	}
+	@Bean
+	public Docket api() { 
+		return new Docket(DocumentationType.SWAGGER_2) 
+				.groupName("nodeservice-api")
+				.apiInfo(apiInfo())
+				.select()   
+				//.apis(!(RequestHandlerSelectors.withClassAnnotation(JsonIgnore.class))
+				.apis(RequestHandlerSelectors.any())              
+				//.paths(PathSelectors.any()) 
+				//.paths(PathSelectors.regex("/user.*"))
+				.paths(paths())
+				.build()
+				.pathMapping("/NodeService/");                                           
+	}
+
+	private Predicate<String> paths() {
+		return or(PathSelectors.regex("/user.*"),
+				PathSelectors.regex("/node.*"));
+	}
+	private ApiInfo apiInfo() {
+		InputStream in;
+		Properties property = new Properties();
+		try {
+			in = this.getClass().getClassLoader()
+					.getResourceAsStream("Nodeservice.properties");
+			property.load(in);
+			in.close();
+		} catch (FileNotFoundException e) {
+
+		} catch (IOException e) {
+
+		}
+		return new ApiInfoBuilder()
+				.title("e-VRE NodeService")
+				.description("This pages shows the Web Services entry points for the e-VRE NodeService component.")
+				.version(property.getProperty("VERSION"))
+				.termsOfServiceUrl("http://terms-of-services.evre")
+				.license(property.getProperty("LICENSE_TYPE"))
+				.licenseUrl(property.getProperty("LICENSE_URL"))
+				.build();
+	}
 }

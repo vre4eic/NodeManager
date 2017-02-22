@@ -20,6 +20,7 @@ public class EVREUserProfile implements UserProfile {
 	String name;
 	UserRole role;
 	String email;
+	String commId;
 	
 	public EVREUserProfile() {
 		// TODO Auto-generated constructor stub
@@ -62,6 +63,15 @@ public class EVREUserProfile implements UserProfile {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	@Override
+	public String getCommId() {
+		return commId;
+	}
+	@Override
+	public void setCommId(String commId) {
+		this.commId=commId;
+		
 	}
 
 	
