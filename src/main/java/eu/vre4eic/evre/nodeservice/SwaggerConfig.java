@@ -41,7 +41,7 @@ public class SwaggerConfig {
 				//.paths(PathSelectors.regex("/user.*"))
 				.paths(paths())
 				.build()
-				.pathMapping("/NodeService/");                                           
+				.pathMapping("/");                                           
 	}
 
 	private Predicate<String> paths() {
