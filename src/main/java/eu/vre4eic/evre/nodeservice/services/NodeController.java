@@ -5,6 +5,7 @@ package eu.vre4eic.evre.nodeservice.services;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpSession;
@@ -20,7 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import eu.vre4eic.evre.core.EvreEvent;
+import eu.vre4eic.evre.core.Common.NotificationType;
+import eu.vre4eic.evre.core.Common.UserRole;
 import eu.vre4eic.evre.core.messages.Message;
+import eu.vre4eic.evre.core.messages.SubscriptionMessage;
+import io.swagger.annotations.ApiOperation;
 
 
 
@@ -62,7 +68,7 @@ public class NodeController {
 		return WELCOME_PAGE;
 	}
 	//list of services
-	    @JsonIgnore
+	    
 		@RequestMapping(value="/servicesdoc", method=RequestMethod.GET)
 		public String userServices(Model model, HttpSession session, @RequestParam(value="component")String component) {
 			session.setAttribute(RELEASE, "0.01a");
@@ -73,6 +79,15 @@ public class NodeController {
 		public boolean pingNodeService(@RequestParam(value="token") String token) {
 			
 			return true;
+		}
+	    
+	    @ApiOperation(value = "Subscribes a services to a list of e-VRE topics", 
+		        notes = "A service with a valid identifier can invoke this web service to subscribe to a list of e-VRE topics", 
+		        response = SubscriptionMessage.class)
+	    @RequestMapping(value="/node/subscribetopics", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+		public SubscriptionMessage subscribeService(@RequestParam(value="evresid") String evresid, 
+				@RequestParam(value="topics") List <NotificationType> topics){
+			return null;
 		}
 
 }
