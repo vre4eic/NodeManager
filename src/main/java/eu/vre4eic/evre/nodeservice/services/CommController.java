@@ -38,13 +38,11 @@ import io.swagger.annotations.ApiOperation;
  *
  */
 
-@Controller
-public class NodeController {
+@RestController
+public class CommController {
 
-	private static final String RELEASE = "release";
-	private static final String WELCOME_PAGE = "welcome";
 	Properties property = new Properties();
-	public NodeController()  {
+	public CommController()  {
 		super();
 		
 		InputStream in;
@@ -61,21 +59,23 @@ public class NodeController {
 		}
 	}
 
-	//@JsonIgnore
-	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String WelcomePage(ModelMap model, HttpSession session) {
-
-		session.setAttribute(RELEASE, property.getProperty("VERSION"));
-		
-		return WELCOME_PAGE;
-	}
-	//list of services
+	 @ApiOperation(value = "Chek if the NodeService communication infrastructure is active", 
+		        notes = "A service with a valid identifier can invoke this web service to check if the communication infrastructure is active", 
+		        response = boolean.class)
+	    @RequestMapping(value="node/ping", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+		public boolean pingNodeService(@RequestParam(value="evresid") String evresid) {
+			
+			return true;
+		}
 	    
-		@RequestMapping(value="/servicesdoc", method=RequestMethod.GET)
-		public String userServices(Model model, HttpSession session, @RequestParam(value="component")String component) {
-			session.setAttribute(RELEASE, "0.01a");
-
-			return component;
+	    @ApiOperation(value = "Subscribes a services to a list of e-VRE topics", 
+		        notes = "A service with a valid identifier can invoke this web service to subscribe to a list of e-VRE topics", 
+		        response = SubscriptionMessage.class)
+	    @RequestMapping(value="/node/subscribetopics", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+		public SubscriptionMessage subscribeService(@RequestParam(value="evresid") String evresid, 
+				@RequestParam(value="topics") List <NotificationType> topics){
+	    	SubscriptionMessage sm= new SubscriptionMessageImpl("url", "msg", Common.ResponseStatus.SUCCEED);
+			return sm;
 		}
 
 }
