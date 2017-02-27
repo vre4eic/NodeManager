@@ -1,6 +1,7 @@
 package eu.vre4eic.evre.nodeservice;
 
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,14 +22,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.google.common.base.Predicates.*;
 
+import static com.google.common.base.Predicates.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 //@SpringBootApplication
 @EnableSwagger2
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-public class SwaggerConfig {                                    
+public class SwaggerConfig {    
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 	@Bean
 	public Docket api() { 
 		return new Docket(DocumentationType.SWAGGER_2) 
@@ -58,8 +62,9 @@ public class SwaggerConfig {
 			in.close();
 		} catch (FileNotFoundException e) {
 
+			log.error(e.getMessage());
 		} catch (IOException e) {
-
+			log.error(e.getMessage());
 		}
 		return new ApiInfoBuilder()
 				.title("e-VRE NodeService")
