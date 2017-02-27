@@ -2,7 +2,9 @@ package eu.vre4eic.evre.nodeservice.services;
 
 
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 import javax.jms.JMSException;
 
@@ -78,11 +80,25 @@ public class UserController {
 		try {
 			p = new Publisher();
 			
+			// fake request to AAAI service
+			Random rnd = new Random();
+			int token = rnd.nextInt(1000000);
+
+			m.setToken(Integer.toString(token));
 			
-			m.setToken("12345");
-			m.setTTL("1000");
+			// to do clock synchronization
+			int TTL = 10;
+			LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TTL);
 			
+			m.setTimeLimit(timeLimit);
+						
+			// fake Role
+			m.setRole(UserRole.OPERATOR);
+			
+			// publish message on authentication topic
 			p.publishAuthentication(m);
+			p.close();
+			
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

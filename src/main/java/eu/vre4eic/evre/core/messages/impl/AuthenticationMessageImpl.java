@@ -3,6 +3,9 @@
  */
 package eu.vre4eic.evre.core.messages.impl;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import org.springframework.context.annotation.Configuration;
 
 import eu.vre4eic.evre.core.Common.ResponseStatus;
@@ -16,23 +19,24 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
  *
  */
 @Configuration
-public class AuthenticationMessageImpl implements AuthenticationMessage {
+public class AuthenticationMessageImpl implements AuthenticationMessage, Serializable {
 
 	private String token;
 	private ResponseStatus status;
 	private String message;
 	private UserRole role;
-	String ttl;
+	private LocalDateTime timelimit;
 	
 	public AuthenticationMessageImpl() {
 		super();
 	}
-	public AuthenticationMessageImpl(ResponseStatus status, String message, String token, UserRole role, String ttl) {
+	
+	public AuthenticationMessageImpl(ResponseStatus status, String message, String token, UserRole role, LocalDateTime ttl) {
 		super();
 		this.status = status;
 		this.message = message;
 		this.role=role;
-		this.ttl=ttl;
+		this.timelimit=ttl;
 		this.token=token;
 		
 	}
@@ -74,17 +78,6 @@ public class AuthenticationMessageImpl implements AuthenticationMessage {
 		
 	}
 
-	@Override
-	public String getTTL() {
-		
-		return ttl;
-	}
-
-	@Override
-	public void setTTL(String ttl) {
-		 this.ttl=ttl;
-		
-	}
 
 	@Override
 	public UserRole getRole() {
@@ -95,6 +88,15 @@ public class AuthenticationMessageImpl implements AuthenticationMessage {
 	@Override
 	public void setRole(UserRole role) {
 		this.role=role;
+		
+	}
+	@Override
+	public LocalDateTime getTimeLimit() {
+		return this.timelimit;
+	}
+	@Override
+	public void setTimeLimit(LocalDateTime ttl) {
+		this.timelimit= ttl;
 		
 	}
 	

@@ -14,6 +14,7 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -86,13 +87,15 @@ public class Publisher implements CommToolKit {
 	public void publishAuthentication(AuthenticationMessage m) throws JMSException {
 
 		Destination destination = session.createTopic(Common.AUTH_CHANNEL);
+		
+		ObjectMessage om = session.createObjectMessage(m);
 
-		MapMessage message = session.createMapMessage();
-		message.setString("token", m.getToken());
-		message.setString("ttl", m.getTTL());
-		//message.setInt("role", (int) m.getRole());
+//		MapMessage message = session.createMapMessage();
+//		message.setString("token", m.getToken());
+//		message.setString("ttl", m.getTTL());
+//		message.setInt("role", (int) m.getRole());
 
-		producer.send(destination, message);
+		producer.send(destination, om);
 	}
 
 

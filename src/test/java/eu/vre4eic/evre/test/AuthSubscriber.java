@@ -20,6 +20,10 @@ public class AuthSubscriber {
 
 	public AuthSubscriber() throws JMSException {
 		factory = new ActiveMQConnectionFactory(brokerURL);
+		
+		//TODO limit the list of trusted packages (see http://activemq.apache.org/objectmessage.html)
+		((ActiveMQConnectionFactory) factory).setTrustAllPackages(true);
+		
 		connection = factory.createConnection();
 		connection.start();
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);

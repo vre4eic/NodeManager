@@ -1,5 +1,8 @@
 package eu.vre4eic.evre.core.messages;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
@@ -7,7 +10,7 @@ import eu.vre4eic.evre.core.Common.UserRole;
  * @author Cesare
  *
  */
-public interface AuthenticationMessage extends Message {
+public interface AuthenticationMessage extends Message, Serializable {
 
 	/**
 	 * Gets the token assigned to the authenticated user. 
@@ -24,13 +27,13 @@ public interface AuthenticationMessage extends Message {
 	 * Gets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
 	 * @return String - the token identifying the user
 	 */
-	public String getTTL();
+	public LocalDateTime  getTimeLimit();
 	/**
 	 * Sets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
 	 *
 	 * @param ttl String - the lifetime of a token i e-VRE
 	 */
-	public void setTTL(String ttl);
+	public void setTimeLimit(LocalDateTime ttl);
 
 
 	/**
