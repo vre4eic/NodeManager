@@ -1,5 +1,7 @@
 package eu.vre4eic.evre.nodeservice.modules.authentication;
 
+import java.time.LocalDateTime;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -26,11 +28,15 @@ public class AuthListener implements MessageListener{
 	        if (message instanceof ObjectMessage) {
 	            try {
 	            	AuthenticationMessage am = (AuthenticationMessage) ((ObjectMessage) message).getObject();
-	            	module.registerToken(am);
-	            	
 	            	log.info("##### authentication message arrived #####");
 	            	log.info("token: " + am.getToken());
 	            	log.info("time limit: "+ am.getTimeLimit());
+
+	            	if (am.getTimeLimit().equals(LocalDateTime.MIN))
+	            		module.cancelToken(am);
+	            	else
+	            		module.registerToken(am);
+	            	
 	            	
 	            }
 	            catch (JMSException ex) {

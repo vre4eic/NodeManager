@@ -68,8 +68,18 @@ public class AuthModule {
 
 	public void registerToken(AuthenticationMessage am){
 		AuthTable.put(am.getToken(), am);
+		log.info(" #### registered authentication token ####");
+		log.info(" token " + am.getToken() );
 		doHousekeeping();
 	}
+	
+	public void cancelToken(AuthenticationMessage am) {
+		AuthTable.remove(am.getToken());
+		log.info(" #### cancelled authentication token ####");
+		log.info(" token " + am.getToken() );
+		doHousekeeping();	
+	}
+
 	
 	public boolean checkToken (String tkn) {
 		if (AuthTable == null) {
@@ -106,5 +116,15 @@ public class AuthModule {
 				AuthTable.remove(entry.getKey());
 		}
 	}
+
+//	private void listToken(){
+//		LocalDateTime now = LocalDateTime.now();	
+//		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
+//			LocalDateTime timelimit = entry.getValue().getTimeLimit();
+//			if (now.minus(timelimit))
+//				AuthTable.remove(entry.getKey());
+//		}
+//	}
+
 
 }

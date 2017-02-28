@@ -81,15 +81,16 @@ public class UserController {
 			p = new Publisher();
 			
 			// fake request to AAAI service
-			Random rnd = new Random();
-			int token = rnd.nextInt(1000000);
+//			Random rnd = new Random();
+//			int token = rnd.nextInt(1000000);
+			String token = pwd;
 
-			m.setToken(Integer.toString(token));
+			m.setToken(token);
 			
 			// to do clock synchronization
 			int TTL = 10;
 			LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TTL);
-			
+//			System.out.println(timeLimit.minus(LocalDateTime.now()));
 			m.setTimeLimit(timeLimit);
 						
 			// fake Role
@@ -115,7 +116,32 @@ public class UserController {
 
 	public Message logout(@RequestParam(value="token") String token) {
 		
-		return null;
+		Publisher p;
+		AuthenticationMessage m = new AuthenticationMessageImpl();
+		try {
+			p = new Publisher();
+			
+			m.setToken(token);
+			
+			// to do clock synchronization
+			LocalDateTime timeLimit = LocalDateTime.MIN;
+			
+			m.setTimeLimit(timeLimit);
+						
+			// fake Role
+			m.setRole(UserRole.OPERATOR);
+			
+			// publish message on authentication topic
+			p.publishAuthentication(m);
+			p.close();
+			
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return m;
+
 	}
 
 	@ApiOperation(value = "An administrator removes the profile of a user from e-VRE ", 
