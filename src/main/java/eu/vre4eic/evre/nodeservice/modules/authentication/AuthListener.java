@@ -14,8 +14,8 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 
 /**
  * 
- * Class used to receive asynchronous messages of authenticated users in  the system.
- * The authentication message can represent  Login or Logout operations and contains token which must be used for each operation.
+ * Class used to receive asynchronous messages related to users authenticated by  the system.
+ * The authentication message can represent  Login or Logout operations and contains token which must be used by users for each service invocation.
  * @author francesco
  *
  */

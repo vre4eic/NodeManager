@@ -7,6 +7,13 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
+/**
+ * Class used to create a connection with the Broker
+ *
+ * 
+ * @author francesco
+ *
+ */
 public class AuthSubscriber {
 
 	private static String brokerURL = "tcp://localhost:61616";
@@ -44,9 +51,6 @@ public class AuthSubscriber {
 	}    
 
 	
-	public static void main(String[] args) throws JMSException {
-		AuthModule.getInstance();
-	}
 
 
 
