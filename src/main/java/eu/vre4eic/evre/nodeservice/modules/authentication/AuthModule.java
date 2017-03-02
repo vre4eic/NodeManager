@@ -18,11 +18,15 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 
 
 /**
- * This class must be instanced to automatically receive information of the users authenticated with the system
+ * This class must be instanced to automatically receive information of the users authenticated with the system.
  * The method checkToken() can be used  to verify if the token received during the invocation of a service is valid.
+ * 
  * example:
- * AuthModule module = AuthModule.getInstance();
+ * <br>
+ * <code>
+ * AuthModule module = AuthModule.getInstance(); <br>
  * module.checkToken(tkn);
+ * </code>
  * 
  * @author francesco
  *
@@ -34,13 +38,16 @@ public class AuthModule {
 	private Hashtable<String, AuthenticationMessage> AuthTable;
 	private AuthSubscriber consumer;
 	
-	protected AuthModule() throws JMSException{
+	private static String BROKER_URL = "tcp://v4e-lab.isti.cnr.it:61616";
+	
+	protected AuthModule() throws JMSException{		
+		this(BROKER_URL);		
+	}	
+	
+	protected AuthModule(String brokerURL) throws JMSException{
 		//initialize data structure for tokens
 		AuthTable = new  Hashtable<String, AuthenticationMessage> ();
-		
-		//retrieve Broker URL
-		String brokerURL = getBrokerURL();
-		
+				
 		log.info(" #### Authentication Module instanciated ####");
 		log.info(" Connecting to Broker:: " + brokerURL);
 		
@@ -50,13 +57,38 @@ public class AuthModule {
 	}
 	
 	/**
-	 * The class constructor is protected and can be instanced only by this method
+	 * The class constructor is protected and can be instanced only by this method.
+	 * The default Broker URL is: v4e-lab.isti.cnr.it
 	 * @return AuthModule - the singleton instance of the Class
 	 */
 	public static AuthModule getInstance() {
 		if(instance == null) {
 	         try {
 				instance = new AuthModule();
+			} catch (JMSException e) {
+				// TODO Auto-generated catch block
+				log.info(e.getMessage()); 
+				e.printStackTrace();
+			}
+	      }
+	      return instance;
+	      
+	}
+	
+	/**
+	 * The class constructor is protected and can be instanced only by this method.
+	 * @param brokerURL -  the URL of the Local or Remote Broker
+	 * @return AuthModule - the singleton instance of the Class
+	 */
+
+	/**
+	 * @param brokerURL
+	 * @return
+	 */
+	public static AuthModule getInstance(String brokerURL) {
+		if(instance == null) {
+	         try {
+				instance = new AuthModule(brokerURL);
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
 				log.info(e.getMessage()); 
@@ -74,7 +106,7 @@ public class AuthModule {
 	}
 	
 	/**
-	 * It is private method invoked during the class instantiation to register a litner to the authentication channel
+	 * It is a private method invoked during the class instantiation to register a listener to the authentication channel
 	 * @param brokerURL - the URL of the Broker provider
 	 * @throws JMSException - JMS interfaces are used to connect to the provider
 	 */
@@ -90,7 +122,7 @@ public class AuthModule {
 
 	/**
 	 *  Method invoked by the authentication listener to register tokens of new authenticated users
-	 * @param am - AuthenticationMessage received from the 
+	 * @param am - AuthenticationMessage received from the system
 	 */
 	protected void registerToken(AuthenticationMessage am){
 		AuthTable.put(am.getToken(), am);
@@ -101,7 +133,7 @@ public class AuthModule {
 	
 	/**
 	 *  Method invoked by the authentication listener to register tokens of new authenticated users
-	 * @param am - AuthenticationMessage received from the 
+	 * @param am - AuthenticationMessage received from the system
 	 */
 	protected void cancelToken(AuthenticationMessage am) {
 		AuthTable.remove(am.getToken());
