@@ -1,5 +1,6 @@
 package eu.vre4eic.evre.nodeservice.modules.authentication;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Hashtable;
 import java.util.Map.Entry;
@@ -15,9 +16,20 @@ import org.slf4j.LoggerFactory;
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 
+
+/**
+ * This class must be instanced to automatically receive information of the users authenticated with the system
+ * The method checkToken() can be used  to verify if the token received during the invocation of a service is valid.
+ * example:
+ * AuthModule module = AuthModule.getInstance();
+ * module.checkToken(tkn);
+ * 
+ * @author francesco
+ *
+ */
 public class AuthModule {
 	
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static Logger log = LoggerFactory.getLogger(AuthModule.class);
 	private static AuthModule instance = null;
 	private Hashtable<String, AuthenticationMessage> AuthTable;
 	private AuthSubscriber consumer;
@@ -37,12 +49,17 @@ public class AuthModule {
 		
 	}
 	
+	/**
+	 * The class constructor is protected and can be instanced only by this method
+	 * @return AuthModule - the singleton instance of the Class
+	 */
 	public static AuthModule getInstance() {
 		if(instance == null) {
 	         try {
 				instance = new AuthModule();
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
+				log.info(e.getMessage()); 
 				e.printStackTrace();
 			}
 	      }
@@ -56,6 +73,11 @@ public class AuthModule {
 		
 	}
 	
+	/**
+	 * It is private method invoked during the class instantiation to register a litner to the authentication channel
+	 * @param brokerURL - the URL of the Broker provider
+	 * @throws JMSException - JMS interfaces are used to connect to the provider
+	 */
 	private void doSubcribe(String brokerURL) throws JMSException{	
 		consumer = new AuthSubscriber(brokerURL);
 		Session session = consumer.getSession();
@@ -66,14 +88,22 @@ public class AuthModule {
 
 	}
 
-	public void registerToken(AuthenticationMessage am){
+	/**
+	 *  Method invoked by the authentication listener to register tokens of new authenticated users
+	 * @param am - AuthenticationMessage received from the 
+	 */
+	protected void registerToken(AuthenticationMessage am){
 		AuthTable.put(am.getToken(), am);
 		log.info(" #### registered authentication token ####");
 		log.info(" token " + am.getToken() );
 		doHousekeeping();
 	}
 	
-	public void cancelToken(AuthenticationMessage am) {
+	/**
+	 *  Method invoked by the authentication listener to register tokens of new authenticated users
+	 * @param am - AuthenticationMessage received from the 
+	 */
+	protected void cancelToken(AuthenticationMessage am) {
 		AuthTable.remove(am.getToken());
 		log.info(" #### cancelled authentication token ####");
 		log.info(" token " + am.getToken() );
@@ -81,19 +111,24 @@ public class AuthModule {
 	}
 
 	
-	public boolean checkToken (String tkn) {
+	/**
+	 * It must be used to check validity of the token receved with a service invocation
+	 * @param token - the token received with a service invocation
+	 * @return true - if the token is valid
+	 */
+	public boolean checkToken (String token) {
 		if (AuthTable == null) {
 			getInstance();
 			return false;
 		}
 		
-		if (AuthTable.containsKey(tkn)) {
-			AuthenticationMessage am = AuthTable.get(tkn);
+		if (AuthTable.containsKey(token)) {
+			AuthenticationMessage am = AuthTable.get(token);
 			LocalDateTime now = LocalDateTime.now();
 			if (now.isBefore(am.getTimeLimit()))
 				return true;
 			else {
-				AuthTable.remove(tkn);
+				AuthTable.remove(token);
 				return false;			
 			}
 
@@ -103,11 +138,17 @@ public class AuthModule {
 	
 	
 	
+	/**
+	 *  not used
+	 */
 	public void close(){
 		consumer.close();
 	}
 	
 	
+	/**
+	 *  helper method to remove the expired token
+	 */
 	private void doHousekeeping(){
 		LocalDateTime now = LocalDateTime.now();	
 		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
@@ -117,14 +158,20 @@ public class AuthModule {
 		}
 	}
 
-//	private void listToken(){
-//		LocalDateTime now = LocalDateTime.now();	
-//		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
-//			LocalDateTime timelimit = entry.getValue().getTimeLimit();
-//			if (now.minus(timelimit))
-//				AuthTable.remove(entry.getKey());
-//		}
-//	}
+	/**
+	 * utility to print the table of the managed tokens
+	 */
+	public void listToken(){
+		LocalDateTime now = LocalDateTime.now();	
+		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
+			LocalDateTime timelimit = entry.getValue().getTimeLimit();
+			Duration period = Duration.between(now, timelimit);
+			if (period.isNegative())
+				log.info("Token: "+ entry.getKey() + " EXPIRED:   " + period);
+			else
+				log.info("Token: "+ entry.getKey() + " VALID for: " + period);
+		}
+	}
 
 
 }

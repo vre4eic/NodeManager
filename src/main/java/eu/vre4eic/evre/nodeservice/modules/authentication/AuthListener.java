@@ -12,6 +12,13 @@ import org.slf4j.LoggerFactory;
 
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 
+/**
+ * 
+ * Class used to receive asynchronous messages of authenticated users in  the system.
+ * The authentication message can represent  Login or Logout operations and contains token which must be used for each operation.
+ * @author francesco
+ *
+ */
 public class AuthListener implements MessageListener{
 	
 	private AuthModule module;
@@ -21,6 +28,9 @@ public class AuthListener implements MessageListener{
 		this.module = authModule;
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
+	 */
 	@Override
 	public void onMessage(Message message) {
 		try {
@@ -35,8 +45,7 @@ public class AuthListener implements MessageListener{
 	            	if (am.getTimeLimit().equals(LocalDateTime.MIN))
 	            		module.cancelToken(am);
 	            	else
-	            		module.registerToken(am);
-	            	
+	            		module.registerToken(am);           	
 	            	
 	            }
 	            catch (JMSException ex) {
@@ -48,6 +57,7 @@ public class AuthListener implements MessageListener{
 	        }
 		
 		} catch (Exception e) {
+			// MessageListener cannot throw exceptions
 			e.printStackTrace();
 		}
 	}
