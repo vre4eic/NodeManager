@@ -24,9 +24,13 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
  * example:
  * <br>
  * <code>
- * AuthModule module = AuthModule.getInstance(); <br>
+ * AuthModule module = AuthModule.getInstance(tcp://localhost:61616); <br>
  * module.checkToken(tkn);
  * </code>
+ * 
+ * <br>
+ * If you don't specify a Broker URL ( i.e. AuthModule.getInstance() )
+ * <br>then the default URL is tcp://v4e-lab.isti.cnr.it:61616
  * 
  * @author francesco
  *
@@ -81,10 +85,6 @@ public class AuthModule {
 	 * @return AuthModule - the singleton instance of the Class
 	 */
 
-	/**
-	 * @param brokerURL
-	 * @return
-	 */
 	public static AuthModule getInstance(String brokerURL) {
 		if(instance == null) {
 	         try {
