@@ -12,7 +12,7 @@ import eu.vre4eic.evre.core.UserProfile;
 import eu.vre4eic.evre.core.messages.Message;
 
 /**
- * This interface contains methods for managing users. It contains signature of the methods of the ResourceManager component
+ * This interface contains methods for managing user profiles. It contains signature of the methods of the UserManager component
  * decribed in the Deliverable 3.1
  * @author cesare
  *

@@ -31,7 +31,6 @@ import eu.vre4eic.evre.core.messages.impl.SubscriptionMessageImpl;
 import io.swagger.annotations.ApiOperation;
 
 
-
 /**
  * This class contains methods for managing users. 
  * @author Cesare
@@ -76,6 +75,11 @@ public class NodeController {
 			session.setAttribute(RELEASE, "0.01a");
 
 			return component;
+		}
+		@RequestMapping(value = "/doc", method = RequestMethod.GET)
+		public String redirect() {
+
+			return "redirect:/doc/index"; 
 		}
 
 }

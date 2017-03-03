@@ -4,11 +4,12 @@
 package eu.vre4eic.evre.core;
 
 /**
- * Enum definitions common to all classes
+ * Enum types common to all classes
  * @author Cesare
  *
  */
 public class Common {
+	
 	/**
 	 * UserRole: <ul><li>RESEARCHER</li> <li>OPERATOR</li> <li>ADMIN</li> <li>CONTROLLER</li></ul>
 	 *
@@ -40,7 +41,7 @@ public class Common {
 		READ,QUERY,INSERT,UPDATE, DELETE
 	}
 	/**
-	 * NotificationType: <ul><li>Authentication</li> <li>Metadata</li><li>UserProfile</li><li>Service</li></ul>
+	 * NotificationType: <ul><li>Authentication</li> <li>Metadata</li><li>UserProfile</li> <li>Service</li></ul>
 	 */
 	public enum NotificationType{
 		AUTHENTICATION, METADATA,USERPROFILE,SERVICE

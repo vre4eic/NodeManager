@@ -21,7 +21,9 @@ import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.nodeservice.comm.impl.Publisher;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
@@ -32,6 +34,7 @@ import eu.vre4eic.evre.core.Common.UserRole;
 
 @RestController
 @Api(value = "User management")
+
 public class UserController {
 
 	public UserController()  {
@@ -74,7 +77,7 @@ public class UserController {
 	        response = AuthenticationMessage.class)
 	@RequestMapping(value="/user/login", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	
-	public AuthenticationMessage login(@RequestParam(value="username") String username, @RequestParam(value="pwd") String pwd) {
+	public AuthenticationMessage login(@ApiParam(name = "username", value = "Alphanumeric string", required = true) @RequestParam(value="username") String username, @ApiParam(name = "pwd", value = "Alphanumeric string", required = true) @RequestParam(value="pwd") String pwd) {
 		Publisher p;
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 		try {

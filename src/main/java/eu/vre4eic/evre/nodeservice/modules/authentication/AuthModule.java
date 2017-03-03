@@ -61,7 +61,7 @@ public class AuthModule {
 	}
 	
 	/**
-	 * The class constructor is protected and can be instanced only by this method.
+	 * The class constructor is protected and can be instantiated with this method.
 	 * The default Broker URL is: v4e-lab.isti.cnr.it
 	 * @return AuthModule - the singleton instance of the Class
 	 */
