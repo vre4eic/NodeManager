@@ -4,8 +4,8 @@ import eu.vre4eic.evre.core.Common.MetadataOperationType;
 import eu.vre4eic.evre.core.Common.ResponseStatus;
 
 /**
- * This interface defines the message published to notify other services that an operation has been executed by the 
- * Metadata service
+ * This interface defines the methods  to set/get values used to notify to e-VRE services that an operation has been executed
+ * by the Metadata service
  * @author Cesare
  *
  */

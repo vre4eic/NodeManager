@@ -13,7 +13,7 @@ public interface Message {
 	
 	/**
 	 * Gets the status of the executed request
-	 * @param status ResponseStatus - FAILED, SUCCEED, EMPTY_RESULT, WARNING
+	 * @return status ResponseStatus - FAILED, SUCCEED, EMPTY_RESULT, WARNING
 	 */
 	public ResponseStatus getStatus() ;
 	

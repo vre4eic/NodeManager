@@ -3,7 +3,8 @@ package eu.vre4eic.evre.core;
 import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
- * This interface represents the user profile (see CERIF for fields)
+ * This interface describes the user profile (will be modified, check CERIF  specs)
+ * 
  * @author Cesare
  *
  */

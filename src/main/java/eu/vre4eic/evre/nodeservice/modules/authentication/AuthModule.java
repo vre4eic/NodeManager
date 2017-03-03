@@ -18,7 +18,7 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 
 
 /**
- * This class must be instanced to automatically receive information of the users authenticated with the system.
+ * This class must be instantiated to automatically receive information of the users authenticated with the system.
  * The method checkToken() can be used  to verify if the token received during the invocation of a service is valid.
  * 
  * example:
@@ -57,7 +57,7 @@ public class AuthModule {
 	}
 	
 	/**
-	 * The class constructor is protected and can be instanced only by this method.
+	 * The class constructor is protected and can be instantiated with this method.
 	 * The default Broker URL is: v4e-lab.isti.cnr.it
 	 * @return AuthModule - the singleton instance of the Class
 	 */
@@ -76,15 +76,12 @@ public class AuthModule {
 	}
 	
 	/**
-	 * The class constructor is protected and can be instanced only by this method.
+	 * The class constructor is protected and can be instantiated with this method.
 	 * @param brokerURL -  the URL of the Local or Remote Broker
 	 * @return AuthModule - the singleton instance of the Class
 	 */
 
-	/**
-	 * @param brokerURL
-	 * @return
-	 */
+	
 	public static AuthModule getInstance(String brokerURL) {
 		if(instance == null) {
 	         try {
@@ -171,7 +168,7 @@ public class AuthModule {
 	
 	
 	/**
-	 *  not used
+	 *  to be implemented
 	 */
 	public void close(){
 		consumer.close();
@@ -191,7 +188,7 @@ public class AuthModule {
 	}
 
 	/**
-	 * utility to print the table of the managed tokens
+	 * Prints the list of the tokens
 	 */
 	public void listToken(){
 		LocalDateTime now = LocalDateTime.now();	

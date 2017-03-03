@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
- * This interface defines the message published when a user is authenticated or logs out
+ * This interface defines the methods to set/get the values returned when an authentication operation is executed by a client.
+ * The same values are used to build the <i>message</i> sent to other e-VRE services to notify the authentication event.
  * @author Cesare
  *
  */

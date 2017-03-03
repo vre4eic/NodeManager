@@ -2,6 +2,8 @@ package eu.vre4eic.evre.core.impl;
 
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import eu.vre4eic.evre.core.Common.UserRole;
 
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +14,9 @@ import eu.vre4eic.evre.core.UserProfile;
  * @author cesare
  *
  */
+
 @Configuration
+@ApiModel
 public class EVREUserProfile implements UserProfile {
 
 	String login;
@@ -20,11 +24,12 @@ public class EVREUserProfile implements UserProfile {
 	String name;
 	UserRole role;
 	String email;
-	String commId;
+	String commId;//sns id
 	
 	public EVREUserProfile() {
-		// TODO Auto-generated constructor stub
+		
 	}
+	@ApiModelProperty(position = 1, required = true, value = "username containing lowercase letters or numbers")
 	public String getLogin() {
 		return login;
 	}
@@ -33,6 +38,7 @@ public class EVREUserProfile implements UserProfile {
 		this.login = login;
 	}
 
+	@ApiModelProperty(position = 2, required = false)
 	public String getPassword() {
 		return password;
 	}
@@ -40,7 +46,7 @@ public class EVREUserProfile implements UserProfile {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	@ApiModelProperty(position = 3, required = true)
 	public String getName() {
 		return name;
 	}
@@ -49,6 +55,7 @@ public class EVREUserProfile implements UserProfile {
 		this.name = name;
 	}
 
+	@ApiModelProperty(position = 4, required = true)
 	public UserRole getRole() {
 		return role;
 	}
@@ -57,6 +64,7 @@ public class EVREUserProfile implements UserProfile {
 		this.role = role;
 	}
 
+	@ApiModelProperty(position = 5, required = true)
 	public String getEmail() {
 		return email;
 	}
@@ -68,6 +76,7 @@ public class EVREUserProfile implements UserProfile {
 	public String getCommId() {
 		return commId;
 	}
+	@ApiModelProperty(position = 6, required = true)
 	@Override
 	public void setCommId(String commId) {
 		this.commId=commId;
