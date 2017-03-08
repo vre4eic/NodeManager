@@ -29,7 +29,12 @@ public interface UserProfile {
 
 	public void setEmail(String email) ;
 	
-	public String getCommId() ;
+	public String getSnsId ();
 
-	public void setCommId(String commId) ;
+	public void setSnsId(String commId) ;
+	
+	public String getAuthId ();
+
+	public void setAuthId(String commId) ;
+	
 }

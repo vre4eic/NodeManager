@@ -46,7 +46,7 @@ public class UserController {
 	@RequestMapping(value="/user/createprofile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public  Message createUserProfile(@RequestParam(value="login") String login, @RequestParam(value="name") String name, 
 			@RequestParam(value="email") String email, @RequestParam(value="role") UserRole role, 
-			@RequestParam(value="password") String password, @RequestParam(value="commid") String commId) {
+			@RequestParam(value="password") String password, @RequestParam(value="snsid") String snsId, @RequestParam(value="authid") String authid) {
 		
 		return null;
 	}

@@ -24,7 +24,22 @@ public class EVREUserProfile implements UserProfile {
 	String name;
 	UserRole role;
 	String email;
-	String commId;//sns id
+	String snsId;
+	String authId;
+	
+	public String getSnsId() {
+		return snsId;
+	}
+	public void setSnsId(String snsId) {
+		this.snsId = snsId;
+	}
+	public String getAuthId() {
+		return authId;
+	}
+	public void setAuthId(String authId) {
+		this.authId = authId;
+	}
+	
 	
 	public EVREUserProfile() {
 		
@@ -72,16 +87,7 @@ public class EVREUserProfile implements UserProfile {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	@Override
-	public String getCommId() {
-		return commId;
-	}
-	@ApiModelProperty(position = 6, required = true)
-	@Override
-	public void setCommId(String commId) {
-		this.commId=commId;
-		
-	}
+	
 
 	
 
