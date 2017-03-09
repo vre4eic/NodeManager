@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import eu.vre4eic.evre.core.Common.UserRole;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.annotation.Id;
 
 import eu.vre4eic.evre.core.UserProfile;
 
@@ -19,7 +20,8 @@ import eu.vre4eic.evre.core.UserProfile;
 @ApiModel
 public class EVREUserProfile implements UserProfile {
 
-	String login;
+	@Id
+	String userId;
 	String password;
 	String name;
 	UserRole role;
@@ -27,6 +29,32 @@ public class EVREUserProfile implements UserProfile {
 	String snsId;
 	String authId;
 	
+	
+	public EVREUserProfile() {
+		
+	}
+	
+	public EVREUserProfile(String userId, String password, String name, UserRole role, String email, 
+							String snsId, String authId) {
+		
+		this.userId=userId;
+		this.name=name;
+		this.password=password;
+		this.role=role;
+		this.email=email;
+		this.snsId=snsId;
+		this.authId=authId;
+		
+	}
+	
+	public EVREUserProfile(String userId, String name, String email) {
+		
+		this.userId=userId;
+		this.name=name;
+		this.email=email;
+		
+	}
+
 	public String getSnsId() {
 		return snsId;
 	}
@@ -41,16 +69,14 @@ public class EVREUserProfile implements UserProfile {
 	}
 	
 	
-	public EVREUserProfile() {
-		
-	}
+	
 	@ApiModelProperty(position = 1, required = true, value = "username containing lowercase letters or numbers")
-	public String getLogin() {
-		return login;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setLogin(String login) {
-		this.login = login;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	@ApiModelProperty(position = 2, required = false)
@@ -89,6 +115,12 @@ public class EVREUserProfile implements UserProfile {
 	}
 	
 
+	@Override
+    public String toString() {
+        return String.format(
+                "User [id=%s, name='%s', email='%s']",
+                userId, name, email);
+    }
 	
 
 }

@@ -10,9 +10,9 @@ import eu.vre4eic.evre.core.Common.UserRole;
  */
 public interface UserProfile {
 
-	public String getLogin();
+	public String getUserId();
 
-	public void setLogin(String login) ;
+	public void setUserId(String userId) ;
 
 	public String getPassword() ;
 
