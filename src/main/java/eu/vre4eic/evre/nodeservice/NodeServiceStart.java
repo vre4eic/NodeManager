@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
-
-import eu.vre4eic.evre.nodeservice.modules.monitor.AdvisoryModule;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 //@Configuration
 //@ComponentScan
@@ -14,6 +14,7 @@ import eu.vre4eic.evre.nodeservice.modules.monitor.AdvisoryModule;
 //@EnableAutoConfiguration
 @SpringBootApplication
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+
 public class NodeServiceStart {
 
 	
@@ -21,6 +22,5 @@ public class NodeServiceStart {
      //	System.out.println("Working Directory is = " +
        //         System.getProperty("user.dir"));
         SpringApplication.run(NodeServiceStart.class, args);
-        AdvisoryModule.getInstance();
     }
 }

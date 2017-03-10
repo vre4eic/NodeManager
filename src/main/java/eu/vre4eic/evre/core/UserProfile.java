@@ -10,9 +10,9 @@ import eu.vre4eic.evre.core.Common.UserRole;
  */
 public interface UserProfile {
 
-	public String getLogin();
+	public String getUserId();
 
-	public void setLogin(String login) ;
+	public void setUserId(String userId) ;
 
 	public String getPassword() ;
 
@@ -29,7 +29,12 @@ public interface UserProfile {
 
 	public void setEmail(String email) ;
 	
-	public String getCommId() ;
+	public String getSnsId ();
 
-	public void setCommId(String commId) ;
+	public void setSnsId(String commId) ;
+	
+	public String getAuthId ();
+
+	public void setAuthId(String commId) ;
+	
 }

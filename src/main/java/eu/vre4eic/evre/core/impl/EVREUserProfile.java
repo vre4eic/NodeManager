@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import eu.vre4eic.evre.core.Common.UserRole;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.annotation.Id;
 
 import eu.vre4eic.evre.core.UserProfile;
 
@@ -19,23 +20,63 @@ import eu.vre4eic.evre.core.UserProfile;
 @ApiModel
 public class EVREUserProfile implements UserProfile {
 
-	String login;
+	@Id
+	String userId;
 	String password;
 	String name;
 	UserRole role;
 	String email;
-	String commId;//sns id
+	String snsId;
+	String authId;
+	
 	
 	public EVREUserProfile() {
 		
 	}
-	@ApiModelProperty(position = 1, required = true, value = "username containing lowercase letters or numbers")
-	public String getLogin() {
-		return login;
+	
+	public EVREUserProfile(String userId, String password, String name, UserRole role, String email, 
+							String snsId, String authId) {
+		
+		this.userId=userId;
+		this.name=name;
+		this.password=password;
+		this.role=role;
+		this.email=email;
+		this.snsId=snsId;
+		this.authId=authId;
+		
+	}
+	
+	public EVREUserProfile(String userId, String name, String email) {
+		
+		this.userId=userId;
+		this.name=name;
+		this.email=email;
+		
 	}
 
-	public void setLogin(String login) {
-		this.login = login;
+	public String getSnsId() {
+		return snsId;
+	}
+	public void setSnsId(String snsId) {
+		this.snsId = snsId;
+	}
+	public String getAuthId() {
+		return authId;
+	}
+	public void setAuthId(String authId) {
+		this.authId = authId;
+	}
+	
+	
+	
+	@ApiModelProperty(position = 1, required = true, value = "username containing lowercase letters or numbers")
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	@ApiModelProperty(position = 2, required = false)
@@ -72,17 +113,14 @@ public class EVREUserProfile implements UserProfile {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	@Override
-	public String getCommId() {
-		return commId;
-	}
-	@ApiModelProperty(position = 6, required = true)
-	@Override
-	public void setCommId(String commId) {
-		this.commId=commId;
-		
-	}
+	
 
+	@Override
+    public String toString() {
+        return String.format(
+                "User [id=%s, name='%s', email='%s']",
+                userId, name, email);
+    }
 	
 
 }

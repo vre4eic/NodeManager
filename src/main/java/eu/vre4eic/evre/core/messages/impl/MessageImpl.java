@@ -5,16 +5,16 @@ import org.springframework.context.annotation.Configuration;
 import eu.vre4eic.evre.core.Common.ResponseStatus;
 
 @Configuration
-public class Message implements eu.vre4eic.evre.core.messages.Message {
+public class MessageImpl implements eu.vre4eic.evre.core.messages.Message {
 
 	String message;
 	ResponseStatus status;
 	
-	public Message() {
+	public MessageImpl() {
 		super();
 	}
 
-	public Message(ResponseStatus status, String message) {
+	public MessageImpl(String message, ResponseStatus status) {
 		super();
 		this.status = status;
 		this.message = message;

@@ -4,27 +4,36 @@ package eu.vre4eic.evre.nodeservice.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
+
+
+
+
+
 
 import javax.jms.JMSException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.EvreEvent;
 import eu.vre4eic.evre.core.UserProfile;
+import eu.vre4eic.evre.core.impl.EVREUserProfile;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
+import eu.vre4eic.evre.core.messages.impl.MessageImpl;
 import eu.vre4eic.evre.nodeservice.comm.impl.Publisher;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
+import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
+
 
 /**
  * This class contains methods for managing users. 
@@ -32,23 +41,43 @@ import eu.vre4eic.evre.core.Common.UserRole;
  *
  */
 
+
 @RestController
 @Api(value = "User management")
 
 public class UserController {
-
+	
+	@Autowired
+	private UserProfileRepository repository;
+	
+	
+	
+	
 	public UserController()  {
 		super();
+		
 	}
 
 	@ApiOperation(value = "Creates a user profile on e-VRE", 
 	        notes = "Creates a  user profile on e-VRE", response = Message.class)
 	@RequestMapping(value="/user/createprofile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public  Message createUserProfile(@RequestParam(value="login") String login, @RequestParam(value="name") String name, 
+	
+	public  Message createUserProfile(@RequestParam(value="userid") String userId, @RequestParam(value="name") String name, 
 			@RequestParam(value="email") String email, @RequestParam(value="role") UserRole role, 
-			@RequestParam(value="password") String password, @RequestParam(value="commid") String commId) {
+			@RequestParam(value="password") String password, @RequestParam(value="snsid") String snsId, 
+			@RequestParam(value="authid") String authId) {
 		
-		return null;
+		
+		repository.save(new EVREUserProfile(userId, password, name, role, email,snsId, authId));
+		System.out.println("Users found with findAll():");
+		System.out.println("-------------------------------");
+		for (EVREUserProfile userp : repository.findAll()) {
+			System.out.println(userp);
+		}
+		System.out.println();
+		
+		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
+		 
 	}
 
 	@ApiOperation(value = "Updates the information in a profile of a user ", 
@@ -56,10 +85,19 @@ public class UserController {
 	        response = Message.class)
 	
 	@RequestMapping(value="/user/updateprofile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Message updateUserProfile(@RequestParam(value="token") String token, @RequestParam(value="userId") String userId, @RequestParam(value="login") String login, @RequestParam(value="name") String name, 
+	public Message updateUserProfile(@RequestParam(value="token") String token, @RequestParam(value="userid") String userId, @RequestParam(value="name") String name, 
 			@RequestParam(value="email") String email, @RequestParam(value="role") UserRole role, 
-			@RequestParam(value="nickname") String nickName, @RequestParam(value="password") String password){
-		return null;
+			@RequestParam(value="password") String password, @RequestParam(value="snsid") String snsId, 
+			@RequestParam(value="authid") String authId){
+		
+		if (repository.findByUserId(userId)!=null){
+			repository.save(new EVREUserProfile(userId, password, name, role, email,snsId, authId));
+			
+			return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
+		}
+		
+		
+		return( new MessageImpl("User Profile not found", Common.ResponseStatus.FAILED));
 	}
 	
 	@ApiOperation(value = "Removes the profile of a user from e-VRE", 
@@ -81,7 +119,7 @@ public class UserController {
 		Publisher p;
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 		try {
-			p = Publisher.getInstance();
+			p = new Publisher();
 			
 			// fake request to AAAI service
 //			Random rnd = new Random();
@@ -101,6 +139,7 @@ public class UserController {
 			
 			// publish message on authentication topic
 			p.publishAuthentication(m);
+			p.close();
 			
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
@@ -121,7 +160,7 @@ public class UserController {
 		Publisher p;
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 		try {
-			p = Publisher.getInstance();
+			p = new Publisher();
 			
 			m.setToken(token);
 			
@@ -135,6 +174,7 @@ public class UserController {
 			
 			// publish message on authentication topic
 			p.publishAuthentication(m);
+			p.close();
 			
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
