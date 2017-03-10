@@ -14,7 +14,7 @@ public class AuthModuleTest {
 		Properties property = Utils.getNodeServiceProperties();
 		String brokerURL =  property.getProperty("BROKER_URL");
 		
-		module = AuthModule.getInstance();
+		module = AuthModule.getInstance(brokerURL);
 		
 		
 		while (true) {

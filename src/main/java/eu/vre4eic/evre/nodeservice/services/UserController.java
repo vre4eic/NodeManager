@@ -119,7 +119,7 @@ public class UserController {
 		Publisher p;
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 		try {
-			p = new Publisher();
+			p = Publisher.getInstance();
 			
 			// fake request to AAAI service
 //			Random rnd = new Random();
@@ -139,7 +139,7 @@ public class UserController {
 			
 			// publish message on authentication topic
 			p.publishAuthentication(m);
-			p.close();
+
 			
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
@@ -160,7 +160,7 @@ public class UserController {
 		Publisher p;
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 		try {
-			p = new Publisher();
+			p =  Publisher.getInstance();
 			
 			m.setToken(token);
 			
@@ -174,7 +174,7 @@ public class UserController {
 			
 			// publish message on authentication topic
 			p.publishAuthentication(m);
-			p.close();
+
 			
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
