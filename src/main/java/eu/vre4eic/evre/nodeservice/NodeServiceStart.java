@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+import eu.vre4eic.evre.nodeservice.modules.monitor.AdvisoryModule;
+
 //@Configuration
 //@ComponentScan
 
@@ -19,5 +21,6 @@ public class NodeServiceStart {
      //	System.out.println("Working Directory is = " +
        //         System.getProperty("user.dir"));
         SpringApplication.run(NodeServiceStart.class, args);
+        AdvisoryModule.getInstance();
     }
 }

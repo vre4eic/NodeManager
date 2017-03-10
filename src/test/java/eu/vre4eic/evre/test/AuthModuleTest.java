@@ -1,9 +1,8 @@
 package eu.vre4eic.evre.test;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.util.Properties;
 
-import javax.jms.JMSException;
+import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 
 public class AuthModuleTest {
@@ -11,7 +10,12 @@ public class AuthModuleTest {
 	private static AuthModule module;
 	
 	public static void main(String[] args)  {
+		
+		Properties property = Utils.getNodeServiceProperties();
+		String brokerURL =  property.getProperty("BROKER_URL");
+		
 		module = AuthModule.getInstance();
+		
 		
 		while (true) {
 			try {

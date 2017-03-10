@@ -30,7 +30,7 @@ public class AuthSubscriber {
 		
 		//TODO limit the list of trusted packages (see http://activemq.apache.org/objectmessage.html)
 		((ActiveMQConnectionFactory) factory).setTrustAllPackages(true);
-		
+		((ActiveMQConnectionFactory) factory).setWatchTopicAdvisories(true);
 		connection = factory.createConnection();
 		connection.start();
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);

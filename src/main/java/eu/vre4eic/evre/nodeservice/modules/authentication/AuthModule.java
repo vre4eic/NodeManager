@@ -42,7 +42,7 @@ public class AuthModule {
 	private Hashtable<String, AuthenticationMessage> AuthTable;
 	private AuthSubscriber consumer;
 	
-	private static String BROKER_URL = "tcp://v4e-lab.isti.cnr.it:61616";
+	private static String BROKER_URL = "tcp://localhost:61616";
 	
 	protected AuthModule() throws JMSException{		
 		this(BROKER_URL);		
@@ -113,10 +113,10 @@ public class AuthModule {
 	private void doSubcribe(String brokerURL) throws JMSException{	
 		consumer = new AuthSubscriber(brokerURL);
 		Session session = consumer.getSession();
-		Destination destination = session.createTopic(Common.AUTH_CHANNEL);
+		Destination destination = session.createTopic(Common.AUTH_CHANNEL+"?consumer.retroactive=true");
 		MessageConsumer messageConsumer = session.createConsumer(destination);
 		messageConsumer.setMessageListener(new AuthListener(this));
-		log.info(" subscribed to topic:: " + Common.AUTH_CHANNEL);
+		log.info(" subscribed to topic:: " + destination.toString());
 
 	}
 
