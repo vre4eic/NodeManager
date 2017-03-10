@@ -5,6 +5,7 @@ package eu.vre4eic.evre.core.messages.impl;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +27,7 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	private String message;
 	private UserRole role;
 	private LocalDateTime timelimit;
+	private ZoneId zoneId;
 	
 	public AuthenticationMessageImpl() {
 		super();
@@ -97,6 +99,18 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	@Override
 	public void setTimeLimit(LocalDateTime ttl) {
 		this.timelimit= ttl;
+		
+	}
+
+	@Override
+	public ZoneId getTimeZone() {
+		// TODO Auto-generated method stub
+		return zoneId;
+	}
+
+	@Override
+	public void setTimeZone(ZoneId zoneId) {
+		this.zoneId=zoneId;
 		
 	}
 	

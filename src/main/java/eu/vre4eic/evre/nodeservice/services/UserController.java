@@ -3,6 +3,7 @@ package eu.vre4eic.evre.nodeservice.services;
 
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 
@@ -129,9 +130,9 @@ public class UserController {
 			m.setToken(token);
 			
 			// to do clock synchronization
-			int TTL = 10;
+			int TTL = 5;
 			LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TTL);
-//			System.out.println(timeLimit.minus(LocalDateTime.now()));
+			m.setTimeZone(ZoneId.systemDefault());
 			m.setTimeLimit(timeLimit);
 						
 			// fake Role
@@ -164,9 +165,9 @@ public class UserController {
 			
 			m.setToken(token);
 			
-			// to do clock synchronization
 			LocalDateTime timeLimit = LocalDateTime.MIN;
 			
+			m.setTimeZone(ZoneId.systemDefault());
 			m.setTimeLimit(timeLimit);
 						
 			// fake Role

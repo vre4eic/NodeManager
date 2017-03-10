@@ -2,6 +2,7 @@ package eu.vre4eic.evre.core.messages;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import eu.vre4eic.evre.core.Common.UserRole;
 
@@ -24,11 +25,26 @@ public interface AuthenticationMessage extends Message, Serializable {
 	 * @param token String - the user token
 	 */
 	public void setToken(String token);
+	
+	/**
+	 * Gets the zone time id used to calculate the token's TimeLimit.
+	 * @return ZoneId - the zoneId
+	 */
+	public ZoneId  getTimeZone();
+	
+	/**
+	 * Sets the time zone id used to calculate the token's time limit.
+	 *
+	 * @param zoneId ZoneId - the ZoneId
+	 */
+	public void setTimeZone(ZoneId zoneId);
+	
 	/**
 	 * Gets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
 	 * @return String - the token identifying the user
 	 */
 	public LocalDateTime  getTimeLimit();
+	
 	/**
 	 * Sets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
 	 *

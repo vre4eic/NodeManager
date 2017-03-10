@@ -2,6 +2,7 @@ package eu.vre4eic.evre.nodeservice.modules.authentication;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
@@ -156,7 +157,8 @@ public class AuthModule {
 		
 		if (AuthTable.containsKey(token)) {
 			AuthenticationMessage am = AuthTable.get(token);
-			LocalDateTime now = LocalDateTime.now();
+			ZoneId zone = am.getTimeZone();
+			LocalDateTime now = LocalDateTime.now(zone);
 			if (now.isBefore(am.getTimeLimit()))
 				return true;
 			else {
@@ -182,9 +184,12 @@ public class AuthModule {
 	 *  helper method to remove the expired token
 	 */
 	private void doHousekeeping(){
-		LocalDateTime now = LocalDateTime.now();	
+		
+//		LocalDateTime now = LocalDateTime.now();	
 		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
 			LocalDateTime timelimit = entry.getValue().getTimeLimit();
+			ZoneId zone = entry.getValue().getTimeZone();
+			LocalDateTime now = LocalDateTime.now(zone);	
 			if (timelimit.isBefore(now))
 				AuthTable.remove(entry.getKey());
 		}
@@ -194,8 +199,10 @@ public class AuthModule {
 	 * utility to print the table of the managed tokens
 	 */
 	public void listToken(){
-		LocalDateTime now = LocalDateTime.now();	
+//		LocalDateTime now = LocalDateTime.now();	
 		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
+			ZoneId zone = entry.getValue().getTimeZone();
+			LocalDateTime now = LocalDateTime.now(zone);	
 			LocalDateTime timelimit = entry.getValue().getTimeLimit();
 			Duration period = Duration.between(now, timelimit);
 			if (period.isNegative())
