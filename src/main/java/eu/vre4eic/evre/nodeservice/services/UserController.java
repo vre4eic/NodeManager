@@ -32,7 +32,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
-import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
+import eu.vre4eic.evre.nodeservice.modules.authentication.Publisher;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 
 
