@@ -30,14 +30,14 @@ public interface AuthenticationMessage extends Message, Serializable {
 	 * Gets the zone time id used to calculate the token's TimeLimit.
 	 * @return ZoneId - the zoneId
 	 */
-	public ZoneId  getTimeZone();
+	public String  getTimeZone();
 	
 	/**
 	 * Sets the time zone id used to calculate the token's time limit.
 	 *
-	 * @param zoneId ZoneId - the ZoneId
+	 * @param string ZoneId - the ZoneId
 	 */
-	public void setTimeZone(ZoneId zoneId);
+	public void setTimeZone(String string);
 	
 	/**
 	 * Gets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.

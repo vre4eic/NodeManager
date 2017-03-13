@@ -157,7 +157,7 @@ public class AuthModule {
 		
 		if (AuthTable.containsKey(token)) {
 			AuthenticationMessage am = AuthTable.get(token);
-			ZoneId zone = am.getTimeZone();
+			ZoneId zone = ZoneId.of(am.getTimeZone());
 			LocalDateTime now = LocalDateTime.now(zone);
 			if (now.isBefore(am.getTimeLimit()))
 				return true;
@@ -188,7 +188,7 @@ public class AuthModule {
 //		LocalDateTime now = LocalDateTime.now();	
 		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
 			LocalDateTime timelimit = entry.getValue().getTimeLimit();
-			ZoneId zone = entry.getValue().getTimeZone();
+			ZoneId zone = ZoneId.of(entry.getValue().getTimeZone());
 			LocalDateTime now = LocalDateTime.now(zone);	
 			if (timelimit.isBefore(now))
 				AuthTable.remove(entry.getKey());
@@ -199,9 +199,10 @@ public class AuthModule {
 	 * utility to print the table of the managed tokens
 	 */
 	public void listToken(){
+		log.info("#### --------------------------- Token list ----------------------------------- ####" );
 //		LocalDateTime now = LocalDateTime.now();	
 		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
-			ZoneId zone = entry.getValue().getTimeZone();
+			ZoneId zone = ZoneId.of(entry.getValue().getTimeZone());
 			LocalDateTime now = LocalDateTime.now(zone);	
 			LocalDateTime timelimit = entry.getValue().getTimeLimit();
 			Duration period = Duration.between(now, timelimit);
@@ -210,6 +211,7 @@ public class AuthModule {
 			else
 				log.info("Token: "+ entry.getKey() + " VALID for: " + period);
 		}
+		log.info("#### --------------------------- Token list ----------------------------------- ####" );
 	}
 
 

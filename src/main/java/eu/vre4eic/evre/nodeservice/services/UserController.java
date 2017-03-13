@@ -132,7 +132,7 @@ public class UserController {
 			// to do clock synchronization
 			int TTL = 5;
 			LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TTL);
-			m.setTimeZone(ZoneId.systemDefault());
+			m.setTimeZone(ZoneId.systemDefault().getId());
 			m.setTimeLimit(timeLimit);
 						
 			// fake Role
@@ -167,7 +167,7 @@ public class UserController {
 			
 			LocalDateTime timeLimit = LocalDateTime.MIN;
 			
-			m.setTimeZone(ZoneId.systemDefault());
+			m.setTimeZone(ZoneId.systemDefault().getId());
 			m.setTimeLimit(timeLimit);
 						
 			// fake Role

@@ -27,7 +27,7 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	private String message;
 	private UserRole role;
 	private LocalDateTime timelimit;
-	private ZoneId zoneId;
+	private String zoneId;
 	
 	public AuthenticationMessageImpl() {
 		super();
@@ -103,13 +103,13 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	}
 
 	@Override
-	public ZoneId getTimeZone() {
+	public String getTimeZone() {
 		// TODO Auto-generated method stub
 		return zoneId;
 	}
 
 	@Override
-	public void setTimeZone(ZoneId zoneId) {
+	public void setTimeZone(String zoneId) {
 		this.zoneId=zoneId;
 		
 	}
