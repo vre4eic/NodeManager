@@ -28,11 +28,11 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MessageImpl;
-import eu.vre4eic.evre.nodeservice.comm.impl.Publisher;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
+import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 
 
