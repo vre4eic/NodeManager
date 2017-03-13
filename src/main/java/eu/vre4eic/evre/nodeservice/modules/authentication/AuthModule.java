@@ -13,7 +13,6 @@ import javax.jms.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 
@@ -36,6 +35,7 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
  * @author francesco
  *
  */
+
 public class AuthModule {
 	
 	private static Logger log = LoggerFactory.getLogger(AuthModule.class);
