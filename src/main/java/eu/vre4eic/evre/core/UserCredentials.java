@@ -8,5 +8,11 @@ package eu.vre4eic.evre.core;
  *
  */
 public interface UserCredentials {
+	public String getUserId();
 
+	public void setUserId(String userId) ;
+
+	public String getPassword() ;
+
+	public void setPassword(String password) ;
 }

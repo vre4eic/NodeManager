@@ -11,9 +11,12 @@ import java.util.List;
 
 
 
+
+
 import javax.jms.JMSException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +37,7 @@ import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
 import eu.vre4eic.evre.nodeservice.modules.authentication.Publisher;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
+import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 
 
 /**
@@ -41,7 +45,6 @@ import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
  * @author Cesare
  *
  */
-
 
 @RestController
 @Api(value = "User management")
@@ -51,7 +54,8 @@ public class UserController {
 	@Autowired
 	private UserProfileRepository repository;
 	
-	
+	@Autowired
+	private UserManagerImpl userManager;
 	
 	
 	public UserController()  {
@@ -69,13 +73,16 @@ public class UserController {
 			@RequestParam(value="authid") String authId) {
 		
 		
-		repository.save(new EVREUserProfile(userId, password, name, role, email,snsId, authId));
-		System.out.println("Users found with findAll():");
+		userManager.createUserProfile(new EVREUserProfile(userId, password, name, role, email,snsId, authId));
+		//repository.save(new EVREUserProfile(userId, password, name, role, email,snsId, authId));
+		System.out.println("UC: Users found with findAll():");
 		System.out.println("-------------------------------");
-		for (EVREUserProfile userp : repository.findAll()) {
+		for (UserProfile userp : repository.findAll()) {
 			System.out.println(userp);
 		}
 		System.out.println();
+		System.out.println("-------------------------------");
+		System.out.println(repository.findByRole(Common.UserRole.RESEARCHER));
 		
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 		 
@@ -91,7 +98,7 @@ public class UserController {
 			@RequestParam(value="password") String password, @RequestParam(value="snsid") String snsId, 
 			@RequestParam(value="authid") String authId){
 		
-		if (repository.findByUserId(userId)!=null){
+		if (repository.findOne(userId)!=null){
 			repository.save(new EVREUserProfile(userId, password, name, role, email,snsId, authId));
 			
 			return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));

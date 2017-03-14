@@ -8,15 +8,9 @@ import eu.vre4eic.evre.core.Common.UserRole;
  * @author Cesare
  *
  */
-public interface UserProfile {
+public interface UserProfile extends UserCredentials{
 
-	public String getUserId();
-
-	public void setUserId(String userId) ;
-
-	public String getPassword() ;
-
-	public void setPassword(String password) ;
+	
 	public String getName() ;
 
 	public void setName(String name);

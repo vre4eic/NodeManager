@@ -118,8 +118,8 @@ public class EVREUserProfile implements UserProfile {
 	@Override
     public String toString() {
         return String.format(
-                "User [id=%s, name='%s', email='%s']",
-                userId, name, email);
+                "User [id=%s, password=%s, name='%s', email='%s']",
+                userId, password, name, email);
     }
 	
 

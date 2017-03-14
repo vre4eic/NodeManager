@@ -9,6 +9,8 @@ import eu.vre4eic.evre.core.EvreEvent;
 import eu.vre4eic.evre.core.EvreQuery;
 import eu.vre4eic.evre.core.UserCredentials;
 import eu.vre4eic.evre.core.UserProfile;
+import eu.vre4eic.evre.core.impl.EVREUserProfile;
+import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
 
 /**
@@ -20,9 +22,9 @@ import eu.vre4eic.evre.core.messages.Message;
 public interface UserManager {
 	
 	
-	public Message createUserProfile(UserProfile profile);
+	public Message createUserProfile(EVREUserProfile profile);
 	
-	public Message updateUserProfile(String userId, UserProfile profile);
+	public Message updateUserProfile(String userId, EVREUserProfile profile);
 	
 	public Message removeUserProfile(String userId);
 	
@@ -47,11 +49,11 @@ public interface UserManager {
 	
 	public List<EvreEvent> getSubscribedEvents (String userId);
 	
-	public Message login (UserCredentials credentials);
+	public AuthenticationMessage login (UserCredentials credentials);
 	
-	public Message login (String authId, String deviceId);
+	public AuthenticationMessage login (String authId, String deviceId);
 	
-	public Message logout(String token);
+	public AuthenticationMessage logout(String token);
 	
 	public Message registerAuthenticator(UserCredentials credentials, String authId);
 	
