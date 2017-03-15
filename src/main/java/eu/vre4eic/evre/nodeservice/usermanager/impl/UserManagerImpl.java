@@ -57,12 +57,12 @@ public class UserManagerImpl implements UserManager {
 			return( new MessageImpl("Operation not executed, User Id not unique", Common.ResponseStatus.FAILED));
 			
 		repository.save(profile);
-		System.out.println("UMI: Users found with findAll():");
-		System.out.println("-------------------------------");
-		for (UserProfile userp : repository.findAll()) {
-			System.out.println(userp);
-		}
-		System.out.println();
+		//System.out.println("UMI: Users found with findAll():");
+		//System.out.println("-------------------------------");
+		//for (UserProfile userp : repository.findAll()) {
+		//	System.out.println(userp);
+		//}
+		//System.out.println();
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 	}
 
@@ -98,9 +98,9 @@ public class UserManagerImpl implements UserManager {
 	 * @see eu.vre4eic.evre.nodeservice.usermanager.UserManager#getUserProfile(java.lang.String)
 	 */
 	@Override
-	public UserProfile getUserProfile(String userId) {
+	public EVREUserProfile getUserProfile(String userId) {
 		
-		UserProfile profile= repository.findByUserId(userId);
+		EVREUserProfile profile= repository.findByUserId(userId);
 		return profile;	
 		
 		
@@ -111,8 +111,8 @@ public class UserManagerImpl implements UserManager {
 	 * @see eu.vre4eic.evre.nodeservice.usermanager.UserManager#getUserProfile(eu.vre4eic.evre.core.UserCredentials)
 	 */
 	@Override
-	public UserProfile getUserProfile(UserCredentials credentials) {
-		UserProfile profile= repository.findByUserId(credentials.getUserId());
+	public EVREUserProfile getUserProfile(UserCredentials credentials) {
+		EVREUserProfile profile= repository.findByUserId(credentials.getUserId());
 		if (credentials.getPassword().equals(profile.getPassword()))
 			return profile;
 		return null;
@@ -215,7 +215,7 @@ public class UserManagerImpl implements UserManager {
 	 * @see eu.vre4eic.evre.nodeservice.usermanager.UserManager#login(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public AuthenticationMessage login(String authId, String deviceId) {
+	public AuthenticationMessage login(String userId, String password, String authId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -157,35 +157,7 @@
 					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
-			<!-- 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.0.0</version>
-				<configuration>
-                
-                <descriptors>
-                	<descriptor>${project.basedir}/src/assembly/evrecore.xml</descriptor>
-                </descriptors>
-
-            </configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<classifier>client</classifier>
-							<includes>
-								<include>**/core/*</include>
-							</includes>
-						</configuration>
-					</execution>
-
-				</executions>
-			</plugin>
-			-->
+			
 		</plugins>
 	</build>
 

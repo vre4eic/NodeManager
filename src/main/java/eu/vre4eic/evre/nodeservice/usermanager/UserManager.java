@@ -28,9 +28,9 @@ public interface UserManager {
 	
 	public Message removeUserProfile(String userId);
 	
-	public UserProfile getUserProfile(String userId);
+	public EVREUserProfile getUserProfile(String userId);
 	
-	public UserProfile getUserProfile(UserCredentials credentials);
+	public EVREUserProfile getUserProfile(UserCredentials credentials);
 	
 
 	public List <UserProfile> getUserProfile(EvreQuery query);
@@ -51,7 +51,7 @@ public interface UserManager {
 	
 	public AuthenticationMessage login (UserCredentials credentials);
 	
-	public AuthenticationMessage login (String authId, String deviceId);
+	public AuthenticationMessage login (String userId, String password, String authId);
 	
 	public AuthenticationMessage logout(String token);
 	

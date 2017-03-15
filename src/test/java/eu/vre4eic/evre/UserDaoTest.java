@@ -143,5 +143,53 @@ public class UserDaoTest {
 		assertEquals(auth, false);
 		
 	}
+	@Test
+	public final void testUpdateUserProfile() {	
+		
+		Properties property = Utils.getNodeServiceProperties();
+		String brokerURL =  property.getProperty("BROKER_URL");
+		
+		module = AuthModule.getInstance(brokerURL);
+		//save a user profile
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+				"email@domain","snsId", "authId"));
+		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
+		// execute a login
+		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
 	
+		userMI.login(uc);
+		//wait for authentication message being dispatched
+		
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is valid
+		Boolean auth=module.checkToken("userPWD");
+		assertEquals(auth, true);
+		
+		//logout
+		userMI.logout("userPWD");
+		//wait for authentication message being dispatched
+		
+		try {
+			
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is no longer valid
+		auth=module.checkToken("userPWD");
+		assertEquals(auth, false);
+		mes=userMI.updateUserProfile("userId", new EVREUserProfile("userId", "userPWDupdate", "Nameupdate", eu.vre4eic.evre.core.Common.UserRole.CONTROLLER, 
+				"email@domain","snsId", "authId"));
+		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
+		EVREUserProfile eup= userMI.getUserProfile("userId");
+		assertEquals("userPWDupdate", eup.getPassword());
+		
+	}
 }
