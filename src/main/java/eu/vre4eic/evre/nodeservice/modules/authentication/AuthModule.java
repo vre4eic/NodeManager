@@ -39,6 +39,7 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 public class AuthModule {
 	
 	private static Logger log = LoggerFactory.getLogger(AuthModule.class);
+
 	private static AuthModule instance = null;
 	private Hashtable<String, AuthenticationMessage> AuthTable;
 	private AuthSubscriber consumer;
@@ -118,6 +119,12 @@ public class AuthModule {
 		MessageConsumer messageConsumer = session.createConsumer(destination);
 		messageConsumer.setMessageListener(new AuthListener(this));
 		log.info(" subscribed to topic:: " + destination.toString());
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -159,6 +166,9 @@ public class AuthModule {
 			AuthenticationMessage am = AuthTable.get(token);
 			ZoneId zone = ZoneId.of(am.getTimeZone());
 			LocalDateTime now = LocalDateTime.now(zone);
+			log.info(" #### NOW IS::: " + now);
+			log.info(" #### TIMELIMIT " + am.getTimeLimit());
+			
 			if (now.isBefore(am.getTimeLimit()))
 				return true;
 			else {

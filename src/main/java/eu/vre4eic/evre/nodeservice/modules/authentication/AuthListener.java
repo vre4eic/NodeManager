@@ -39,8 +39,8 @@ public class AuthListener implements MessageListener{
 	            try {
 	            	AuthenticationMessage am = (AuthenticationMessage) ((ObjectMessage) message).getObject();
 	            	log.info("##### authentication message arrived #####");
-	            	log.info("token: " + am.getToken());
-	            	log.info("time limit: "+ am.getTimeLimit());
+//	            	log.info("token: " + am.getToken());
+//	            	log.info("time limit: "+ am.getTimeLimit());
 
 	            	if (am.getTimeLimit().equals(LocalDateTime.MIN))
 	            		module.cancelToken(am);
