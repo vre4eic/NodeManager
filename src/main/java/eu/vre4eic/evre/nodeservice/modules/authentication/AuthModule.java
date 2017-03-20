@@ -166,9 +166,6 @@ public class AuthModule {
 			AuthenticationMessage am = AuthTable.get(token);
 			ZoneId zone = ZoneId.of(am.getTimeZone());
 			LocalDateTime now = LocalDateTime.now(zone);
-			log.info(" #### NOW IS::: " + now);
-			log.info(" #### TIMELIMIT " + am.getTimeLimit());
-			
 			if (now.isBefore(am.getTimeLimit()))
 				return true;
 			else {
