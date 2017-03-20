@@ -13,10 +13,11 @@ import java.util.List;
 
 
 
+
 import javax.jms.JMSException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,6 +46,7 @@ import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
  * @author Cesare
  *
  */
+
 
 @RestController
 @Api(value = "User management")

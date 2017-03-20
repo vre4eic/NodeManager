@@ -26,6 +26,8 @@ public interface UserManager {
 	
 	public Message updateUserProfile(String userId, EVREUserProfile profile);
 	
+	public Message passwordRecovery(String email);
+	
 	public Message removeUserProfile(String userId);
 	
 	public EVREUserProfile getUserProfile(String userId);

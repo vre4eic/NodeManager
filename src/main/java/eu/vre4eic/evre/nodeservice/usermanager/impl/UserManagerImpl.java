@@ -57,12 +57,7 @@ public class UserManagerImpl implements UserManager {
 			return( new MessageImpl("Operation not executed, User Id not unique", Common.ResponseStatus.FAILED));
 			
 		repository.save(profile);
-		//System.out.println("UMI: Users found with findAll():");
-		//System.out.println("-------------------------------");
-		//for (UserProfile userp : repository.findAll()) {
-		//	System.out.println(userp);
-		//}
-		//System.out.println();
+		
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 	}
 
@@ -284,4 +279,15 @@ public class UserManagerImpl implements UserManager {
 		return null;
 	}
 
+	@Override
+	public Message passwordRecovery(String email) {
+		UserProfile profile= repository.findByEmail(email);
+		if (profile !=null){
+			//TO BE IMPLEMENTED: send an email message to recover password
+			return (new MessageImpl("An email has been sent to the specified address", Common.ResponseStatus.SUCCEED));
+		}
+			
+		return (new MessageImpl("No user found with the specified email", Common.ResponseStatus.EMPTY_RESULT));
+
+	}
 }

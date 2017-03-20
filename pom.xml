@@ -158,12 +158,10 @@
 				<configuration>
 
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<!-- 
 					<webResources>
 						 <resource> <directory>doc</directory> <targetPath>doc</targetPath> 
 							</resource>
 					</webResources>
-					-->
 					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
