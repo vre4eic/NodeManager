@@ -8,6 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import eu.vre4eic.evre.nodeservice.modules.monitor.AdvisoryModule;
+
 //@Configuration
 //@ComponentScan
 
@@ -22,5 +24,6 @@ public class NodeServiceStart {
      //	System.out.println("Working Directory is = " +
        //         System.getProperty("user.dir"));
         SpringApplication.run(NodeServiceStart.class, args);
+        AdvisoryModule.getInstance();
     }
 }

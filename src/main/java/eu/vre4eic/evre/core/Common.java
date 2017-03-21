@@ -3,6 +3,9 @@
  */
 package eu.vre4eic.evre.core;
 
+import eu.vre4eic.evre.core.messages.AuthenticationMessage;
+import eu.vre4eic.evre.core.messages.MetadataMessage;
+
 /**
  * Enum types common to all classes
  * @author Cesare
@@ -48,5 +51,12 @@ public class Common {
 	}
 	
 	public static final String AUTH_CHANNEL = "AUTH_Channel";
+	
+	public enum Topics {
+		AUTH_Channel, METADATA_OP_Channel;
+
+	
+		
+	}
 	
 }

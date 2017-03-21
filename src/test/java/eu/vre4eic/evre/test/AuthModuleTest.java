@@ -14,14 +14,14 @@ public class AuthModuleTest {
 	private static AuthModule module;
 	
 	public static void main(String[] args)  {
-		
+
 		Properties property = Utils.getNodeServiceProperties();
 		String brokerURL =  property.getProperty("BROKER_URL");
-		
+
 		module = AuthModule.getInstance(brokerURL);
-		String z = ZoneId.systemDefault().getId();
-		ZoneId z1 = ZoneId.of(z);
-		System.out.println(z1.getId());
+		System.out.println("############ TOKEN Pluto " + module.checkToken("pluto"));
+		
+		
 		while (true) {
 			try {
 				Thread.sleep(60000);

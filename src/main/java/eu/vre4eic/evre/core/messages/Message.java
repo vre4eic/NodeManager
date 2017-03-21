@@ -1,9 +1,11 @@
 package eu.vre4eic.evre.core.messages;
 
 
+import java.io.Serializable;
+
 import  eu.vre4eic.evre.core.Common.ResponseStatus;
 
-public interface Message {
+public interface Message extends Serializable{
 	/**
 	 * Returns a message related to the request. It is always set for FAILED status
 	 * @return String - a text message

@@ -12,7 +12,7 @@ import eu.vre4eic.evre.core.Common.UserRole;
  * @author Cesare
  *
  */
-public interface AuthenticationMessage extends Message, Serializable {
+public interface AuthenticationMessage extends Message{
 
 	/**
 	 * Gets the token assigned to the authenticated user. 

@@ -24,9 +24,11 @@ import eu.vre4eic.evre.core.Common.UserRole;
 import eu.vre4eic.evre.core.impl.EVREUserProfile;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
+import eu.vre4eic.evre.core.messages.MetadataMessage;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MessageImpl;
-import eu.vre4eic.evre.nodeservice.modules.authentication.Publisher;
+import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
+import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.usermanager.UserManager;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 
@@ -173,11 +175,12 @@ public class UserManagerImpl implements UserManager {
 	 */
 	@Override
 	public AuthenticationMessage login(UserCredentials credentials) {
-		Publisher p;
+		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
+
 		int TTL = 5;
 		LocalDateTime timeLimit;
 		AuthenticationMessage ame;
-		p =  Publisher.getInstance();
+
 		ame = new AuthenticationMessageImpl(Common.ResponseStatus.FAILED, "Operation completed",
 				"", null,LocalDateTime.MIN);
 		ame.setTimeZone(ZoneId.systemDefault().getId());
@@ -195,7 +198,7 @@ public class UserManagerImpl implements UserManager {
 					profile.getPassword(), profile.getRole(),timeLimit);
 			ame.setTimeZone(ZoneId.systemDefault().getId());
 			try {
-				p.publishAuthentication(ame);
+				p.publish(ame);
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -221,8 +224,7 @@ public class UserManagerImpl implements UserManager {
 	 */
 	@Override
 	public AuthenticationMessage logout(String token) {
-		Publisher p;
-		p =  Publisher.getInstance();
+		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 		
 		LocalDateTime timeLimit;
 		AuthenticationMessage ame;
@@ -232,7 +234,7 @@ public class UserManagerImpl implements UserManager {
 				token, Common.UserRole.ADMIN,timeLimit);
 		ame.setTimeZone(ZoneId.systemDefault().getId());
 		try {
-			p.publishAuthentication(ame);
+			p.publish(ame);
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

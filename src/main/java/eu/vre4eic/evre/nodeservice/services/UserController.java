@@ -36,7 +36,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
-import eu.vre4eic.evre.nodeservice.modules.authentication.Publisher;
+import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
+import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 
@@ -126,10 +127,9 @@ public class UserController {
 	@RequestMapping(value="/user/login", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	
 	public AuthenticationMessage login(@ApiParam(name = "username", value = "Alphanumeric string", required = true) @RequestParam(value="username") String username, @ApiParam(name = "pwd", value = "Alphanumeric string", required = true) @RequestParam(value="pwd") String pwd) {
-		Publisher p;
+		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 		try {
-			p = Publisher.getInstance();
 			
 			// fake request to AAAI service
 //			Random rnd = new Random();
@@ -148,7 +148,7 @@ public class UserController {
 			m.setRole(UserRole.OPERATOR);
 			
 			// publish message on authentication topic
-			p.publishAuthentication(m);
+			p.publish(m);
 
 			
 		} catch (JMSException e) {
@@ -167,10 +167,9 @@ public class UserController {
 
 	public Message logout(@RequestParam(value="token") String token) {
 		
-		Publisher p;
+		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 		try {
-			p =  Publisher.getInstance();
 			
 			m.setToken(token);
 			
@@ -183,7 +182,7 @@ public class UserController {
 			m.setRole(UserRole.OPERATOR);
 			
 			// publish message on authentication topic
-			p.publishAuthentication(m);
+			p.publish(m);
 
 			
 		} catch (JMSException e) {
