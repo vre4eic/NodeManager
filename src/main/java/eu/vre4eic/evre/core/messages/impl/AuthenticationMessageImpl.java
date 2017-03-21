@@ -28,6 +28,7 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	private UserRole role;
 	private LocalDateTime timelimit;
 	private String zoneId;
+	private String renewable;
 	
 	public AuthenticationMessageImpl() {
 		super();
@@ -119,6 +120,18 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 		this.zoneId=zoneId;
 		return this;
 		
+	}
+
+	@Override
+	public String getRenewable() {
+		// TODO Auto-generated method stub
+		return renewable;
+	}
+
+	@Override
+	public AuthenticationMessage setRenewable(String minutes) {
+		this.renewable= minutes;
+		return this;
 	}
 	
 }

@@ -36,6 +36,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
+import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
 import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
@@ -131,18 +132,16 @@ public class UserController {
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 		try {
 			
-			// fake request to AAAI service
-//			Random rnd = new Random();
-//			int token = rnd.nextInt(1000000);
 			String token = pwd;
 
 			m.setToken(token);
 			
 			// to do clock synchronization
-			int TTL = 5;
-			LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TTL);
-			m.setTimeZone(ZoneId.systemDefault().getId());
-			m.setTimeLimit(timeLimit);
+			String TTL = Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT");
+			LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(Integer.valueOf(TTL));
+			m.setTimeZone(ZoneId.systemDefault().getId())
+			 .setTimeLimit(timeLimit)
+			 .setRenewable(TTL);
 						
 			// fake Role
 			m.setRole(UserRole.OPERATOR);

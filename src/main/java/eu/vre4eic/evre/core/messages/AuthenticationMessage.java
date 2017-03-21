@@ -53,6 +53,23 @@ public interface AuthenticationMessage extends Message{
 	public AuthenticationMessage setTimeLimit(LocalDateTime ttl);
 
 
+	
+	/**
+	 * Gets the period of time in minutes of a renewable token, 0 otherwise.
+	 * @return String  - the minutes
+	 */
+	public String  getRenewable();
+	
+	/**
+	 * Sets  the period of time in minutes of a renewable token.
+	 *
+	 * @param String - minutes
+	 */
+	public AuthenticationMessage setRenewable(String ttl);
+
+	
+	
+	
 	/**
 	 * Returns the userRole
 	 * 

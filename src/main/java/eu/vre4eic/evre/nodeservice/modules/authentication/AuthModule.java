@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
+import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
+import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
 
 
 /**
@@ -43,6 +45,7 @@ public class AuthModule {
 	private static AuthModule instance = null;
 	private Hashtable<String, AuthenticationMessage> AuthTable;
 	private AuthSubscriber consumer;
+	Publisher<AuthenticationMessage> ap;
 	
 	private static String BROKER_URL = "tcp://localhost:61616";
 	
@@ -53,6 +56,7 @@ public class AuthModule {
 	protected AuthModule(String brokerURL) throws JMSException{
 		//initialize data structure for tokens
 		AuthTable = new  Hashtable<String, AuthenticationMessage> ();
+		ap = PublisherFactory.getAuthenticationPublisher();
 				
 		log.info(" #### Authentication Module instanciated ####");
 		log.info(" Connecting to Broker:: " + brokerURL);
@@ -136,6 +140,7 @@ public class AuthModule {
 		AuthTable.put(am.getToken(), am);
 		log.info(" #### registered authentication token ####");
 		log.info(" token " + am.getToken() );
+		log.info(" token timeout " + am.getTimeLimit() );
 		doHousekeeping();
 	}
 	
@@ -166,9 +171,11 @@ public class AuthModule {
 			AuthenticationMessage am = AuthTable.get(token);
 			ZoneId zone = ZoneId.of(am.getTimeZone());
 			LocalDateTime now = LocalDateTime.now(zone);
-			if (now.isBefore(am.getTimeLimit()))
+			if (now.isBefore(am.getTimeLimit())){ // token valid
+				doRenew(am, now);
 				return true;
-			else {
+			}
+			else { // token expired
 				AuthTable.remove(token);
 				return false;			
 			}
@@ -179,6 +186,25 @@ public class AuthModule {
 	
 	
 	
+	private void doRenew(AuthenticationMessage am, LocalDateTime now) {
+		log.info("########### dorenew ##########");
+		log.info(am.getTimeLimit().toString());
+		int renewable = Integer.valueOf(am.getRenewable());
+		LocalDateTime halftime = am.getTimeLimit().minusMinutes(renewable/2);
+		if (now.isAfter(halftime)) {
+			am.setTimeLimit(now.plusMinutes(renewable));
+			try {
+				log.info("########### Renewd ##########");
+				log.info(am.getTimeLimit().toString());
+				ap.publish(am);
+			} catch (JMSException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 	/**
 	 *  not used
 	 */

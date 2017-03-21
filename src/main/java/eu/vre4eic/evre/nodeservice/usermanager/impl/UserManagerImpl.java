@@ -27,6 +27,7 @@ import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MessageImpl;
+import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
 import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.usermanager.UserManager;
@@ -177,7 +178,8 @@ public class UserManagerImpl implements UserManager {
 	public AuthenticationMessage login(UserCredentials credentials) {
 		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 
-		int TTL = 5;
+		String TTL = Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT");
+
 		LocalDateTime timeLimit;
 		AuthenticationMessage ame;
 
@@ -192,11 +194,12 @@ public class UserManagerImpl implements UserManager {
 		}
 		
 		if (credentials.getPassword().equals(profile.getPassword())){
-			
-			timeLimit = LocalDateTime.now().plusMinutes(TTL);
-					ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
+
+			timeLimit = LocalDateTime.now().plusMinutes(Integer.valueOf(TTL));
+			ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
 					profile.getPassword(), profile.getRole(),timeLimit);
-			ame.setTimeZone(ZoneId.systemDefault().getId());
+			ame.setTimeZone(ZoneId.systemDefault().getId())
+			   .setRenewable(TTL);
 			try {
 				p.publish(ame);
 			} catch (JMSException e) {
