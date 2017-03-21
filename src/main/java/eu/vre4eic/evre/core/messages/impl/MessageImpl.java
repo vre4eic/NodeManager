@@ -3,9 +3,10 @@ package eu.vre4eic.evre.core.messages.impl;
 import org.springframework.context.annotation.Configuration;
 
 import eu.vre4eic.evre.core.Common.ResponseStatus;
+import eu.vre4eic.evre.core.messages.Message;
 
 @Configuration
-public class MessageImpl implements eu.vre4eic.evre.core.messages.Message {
+public class MessageImpl implements Message {
 
 	String message;
 	ResponseStatus status;
@@ -33,14 +34,16 @@ public class MessageImpl implements eu.vre4eic.evre.core.messages.Message {
 	}
 
 	
-	public void setStatus(ResponseStatus status) {
+	public Message setStatus(ResponseStatus status) {
 		this.status=status;
+		return this;
 
 	}
 
 	
-	public void setMessage(String message) {
+	public Message setMessage(String message) {
 		this.message=message;
+		return this;
 
 	}
 

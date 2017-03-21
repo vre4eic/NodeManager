@@ -48,6 +48,6 @@ public interface MetadataMessage extends Message {
 	 * 
 	 * @param resStatus ResponseStatus - the outcome of the operation
 	 */
-	public void setStatus(ResponseStatus resStatus);
+	public MetadataMessage setStatus(ResponseStatus resStatus);
 	
 }

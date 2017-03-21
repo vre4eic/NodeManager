@@ -34,14 +34,16 @@ public class SubscriptionMessageImpl implements SubscriptionMessage {
 	}
 
 	@Override
-	public void setStatus(ResponseStatus status) {
+	public SubscriptionMessage setStatus(ResponseStatus status) {
 		this.status=status;
+		return this;
 
 	}
 
 	@Override
-	public void setMessage(String message) {
+	public SubscriptionMessage setMessage(String message) {
 		this.message=message;
+		return this;
 
 	}
 

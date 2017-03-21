@@ -51,9 +51,11 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	}
 	/**
 	 * @param token the token to set
+	 * @return 
 	 */
-	public void setToken(String token) {
+	public AuthenticationMessage setToken(String token) {
 		this.token = token;
+		return this;
 	}
 	
 	/**
@@ -65,8 +67,9 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	/**
 	 * @param message the message to set
 	 */
-	public void setMessage(String message) {
+	public AuthenticationMessage setMessage(String message) {
 		this.message = message;
+		return this;
 	}
 	
 	@Override
@@ -75,8 +78,9 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	}
 
 	@Override
-	public void setStatus(ResponseStatus status) {
+	public AuthenticationMessage setStatus(ResponseStatus status) {
 		this.status=status;
+		return this;
 		
 	}
 
@@ -88,8 +92,9 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	}
 
 	@Override
-	public void setRole(UserRole role) {
+	public AuthenticationMessage setRole(UserRole role) {
 		this.role=role;
+		return this;
 		
 	}
 	@Override
@@ -97,8 +102,9 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 		return this.timelimit;
 	}
 	@Override
-	public void setTimeLimit(LocalDateTime ttl) {
+	public AuthenticationMessage setTimeLimit(LocalDateTime ttl) {
 		this.timelimit= ttl;
+		return this;
 		
 	}
 
@@ -109,8 +115,9 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 	}
 
 	@Override
-	public void setTimeZone(String zoneId) {
+	public AuthenticationMessage setTimeZone(String zoneId) {
 		this.zoneId=zoneId;
+		return this;
 		
 	}
 	

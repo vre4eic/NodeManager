@@ -23,12 +23,12 @@ public interface Message extends Serializable{
 	 * Sets the status of the executed request
 	 * @param status ResponseStatus - FAILED, SUCCEED, EMPTY_RESULT, WARNING
 	 */
-	public void setStatus(ResponseStatus status) ;
+	public Message setStatus(ResponseStatus status) ;
 
 	/**
 	 * Sets a message that gives a feedback about the request to the invoker method
 	 * @param message String - the message to set
 	 */
-	public void setMessage(String message);
+	public Message setMessage(String message);
 
 }

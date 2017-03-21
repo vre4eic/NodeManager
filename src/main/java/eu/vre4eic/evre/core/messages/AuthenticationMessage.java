@@ -24,7 +24,7 @@ public interface AuthenticationMessage extends Message{
 	 *
 	 * @param token String - the user token
 	 */
-	public void setToken(String token);
+	public AuthenticationMessage setToken(String token);
 	
 	/**
 	 * Gets the zone time id used to calculate the token's TimeLimit.
@@ -37,7 +37,7 @@ public interface AuthenticationMessage extends Message{
 	 *
 	 * @param string ZoneId - the ZoneId
 	 */
-	public void setTimeZone(String string);
+	public AuthenticationMessage setTimeZone(String string);
 	
 	/**
 	 * Gets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
@@ -50,7 +50,7 @@ public interface AuthenticationMessage extends Message{
 	 *
 	 * @param ttl String - the lifetime of a token i e-VRE
 	 */
-	public void setTimeLimit(LocalDateTime ttl);
+	public AuthenticationMessage setTimeLimit(LocalDateTime ttl);
 
 
 	/**
@@ -67,6 +67,6 @@ public interface AuthenticationMessage extends Message{
 	 * @param role UserRole - the role to set
 	 * @see UserRole
 	 */
-	public void setRole(UserRole role);
+	public AuthenticationMessage setRole(UserRole role);
 	
 }
