@@ -37,7 +37,7 @@ import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
  *
  */
 @Configuration
-@EnableAutoConfiguration
+
 public class UserManagerImpl implements UserManager {
 
 	@Autowired
@@ -110,7 +110,7 @@ public class UserManagerImpl implements UserManager {
 	@Override
 	public EVREUserProfile getUserProfile(UserCredentials credentials) {
 		EVREUserProfile profile= repository.findByUserId(credentials.getUserId());
-		if (credentials.getPassword().equals(profile.getPassword()))
+		if (profile!=null && credentials.getPassword().equals(profile.getPassword()))
 			return profile;
 		return null;
 		
