@@ -3,9 +3,6 @@
  */
 package eu.vre4eic.evre.nodeservice.modules.comm;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import javax.jms.Connection;
@@ -16,7 +13,6 @@ import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import eu.vre4eic.evre.nodeservice.Utils;
-import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 
 /**
  * @author francesco

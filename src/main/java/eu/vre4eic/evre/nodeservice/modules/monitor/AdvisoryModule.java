@@ -19,7 +19,7 @@ import org.apache.activemq.command.ConsumerInfo;
 import org.apache.activemq.command.DataStructure;
 import org.apache.activemq.command.RemoveInfo;
 
-import eu.vre4eic.evre.core.Common;
+import eu.vre4eic.evre.core.Common.Topics;
 import eu.vre4eic.evre.nodeservice.modules.comm.CommModule;
 
 /**
@@ -32,17 +32,20 @@ public class AdvisoryModule implements MessageListener {
 	public AdvisoryModule(){
 
 		Session session =CommModule.getInstance().getSession();
-		try {			
-			ActiveMQDestination destination = (ActiveMQDestination)session.createTopic(Common.AUTH_CHANNEL);
+		for (Topics topic : Topics.values()) {
+			try {
 
-			Destination consumerTopic = AdvisorySupport.getConsumerAdvisoryTopic(destination);
-			System.out.println("Subscribing to advisory " + consumerTopic);
-			MessageConsumer consumerAdvisory = session.createConsumer(consumerTopic);
-			consumerAdvisory.setMessageListener(this);
+				ActiveMQDestination destination = (ActiveMQDestination)session.createTopic(topic.name());
 
-		} catch (JMSException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+				Destination consumerTopic = AdvisorySupport.getConsumerAdvisoryTopic(destination);
+				System.out.println("Subscribing to advisory " + consumerTopic);
+				MessageConsumer consumerAdvisory = session.createConsumer(consumerTopic);
+				consumerAdvisory.setMessageListener(this);
+
+			} catch (JMSException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 	}
