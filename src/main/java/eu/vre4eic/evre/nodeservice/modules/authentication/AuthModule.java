@@ -105,12 +105,6 @@ public class AuthModule {
 	      
 	}
 	
-	// TODO do we get it dynamically from NodeService? (see discovery mechanism)
-	private String getBrokerURL(){
-		return "tcp://v4e-lab.isti.cnr.it:61616";
-		
-	}
-	
 	/**
 	 * It is a private method invoked during the class instantiation to register a listener to the authentication channel
 	 * @param brokerURL - the URL of the Broker provider
@@ -137,11 +131,13 @@ public class AuthModule {
 	 * @param am - AuthenticationMessage received from the system
 	 */
 	protected void registerToken(AuthenticationMessage am){
-		AuthTable.put(am.getToken(), am);
+		synchronized(AuthTable) {
+			AuthTable.put(am.getToken(), am);
+			doHousekeeping();
+		}
 		log.info(" #### registered authentication token ####");
 		log.info(" token " + am.getToken() );
 		log.info(" token timeout " + am.getTimeLimit() );
-		doHousekeeping();
 	}
 	
 	/**
@@ -149,10 +145,12 @@ public class AuthModule {
 	 * @param am - AuthenticationMessage received from the system
 	 */
 	protected void cancelToken(AuthenticationMessage am) {
-		AuthTable.remove(am.getToken());
+		synchronized(AuthTable) {
+			AuthTable.remove(am.getToken());
+			doHousekeeping();	
+		}
 		log.info(" #### cancelled authentication token ####");
 		log.info(" token " + am.getToken() );
-		doHousekeeping();	
 	}
 
 	
@@ -167,19 +165,22 @@ public class AuthModule {
 			return false;
 		}
 		
-		if (AuthTable.containsKey(token)) {
-			AuthenticationMessage am = AuthTable.get(token);
-			ZoneId zone = ZoneId.of(am.getTimeZone());
-			LocalDateTime now = LocalDateTime.now(zone);
-			if (now.isBefore(am.getTimeLimit())){ // token valid
-				doRenew(am, now);
-				return true;
-			}
-			else { // token expired
-				AuthTable.remove(token);
-				return false;			
-			}
+		// granularity on AuthTable Lock could be reduced when renewing
+		synchronized(AuthTable) {
+			if (AuthTable.containsKey(token)) {
+				AuthenticationMessage am = AuthTable.get(token);
+				ZoneId zone = ZoneId.of(am.getTimeZone());
+				LocalDateTime now = LocalDateTime.now(zone);
+				if (now.isBefore(am.getTimeLimit())){ // token valid
+					doRenew(am, now);
+					return true;
+				}
+				else { // token expired
+					AuthTable.remove(token);
+					return false;			
+				}
 
+			}
 		}
 		return false;				
 	}
