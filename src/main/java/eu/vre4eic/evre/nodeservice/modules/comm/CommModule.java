@@ -31,10 +31,12 @@ public class CommModule {
 
 		Properties property = Utils.getNodeServiceProperties();
 		factory = new ActiveMQConnectionFactory(property.getProperty("BROKER_URL"));
-		factory.setWatchTopicAdvisories(true);
+		// TODO
+		// Development configuration to be fixed with trusted packages
+		factory.setTrustAllPackages(true);
+		
 		connection = factory.createConnection();
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		producer = session.createProducer(null);
 
 	
 		try {
@@ -71,6 +73,13 @@ public class CommModule {
 
 
 	public MessageProducer getProducer() {
+		if (producer==null)
+			try {
+				producer = session.createProducer(null);
+			} catch (JMSException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return producer;
 	}
 

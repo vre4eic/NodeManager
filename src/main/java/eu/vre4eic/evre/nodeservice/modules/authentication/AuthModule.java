@@ -14,9 +14,11 @@ import javax.jms.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import eu.vre4eic.evre.core.Common;
+import eu.vre4eic.evre.core.Common.Topics;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
 import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
+import eu.vre4eic.evre.nodeservice.modules.comm.Subscriber;
 
 
 /**
@@ -44,7 +46,6 @@ public class AuthModule {
 
 	private static AuthModule instance = null;
 	private Hashtable<String, AuthenticationMessage> AuthTable;
-	private AuthSubscriber consumer;
 	Publisher<AuthenticationMessage> ap;
 	
 	private static String BROKER_URL = "tcp://localhost:61616";
@@ -111,12 +112,11 @@ public class AuthModule {
 	 * @throws JMSException - JMS interfaces are used to connect to the provider
 	 */
 	private void doSubcribe(String brokerURL) throws JMSException{	
-		consumer = new AuthSubscriber(brokerURL);
-		Session session = consumer.getSession();
-		Destination destination = session.createTopic(Common.AUTH_CHANNEL+"?consumer.retroactive=true");
-		MessageConsumer messageConsumer = session.createConsumer(destination);
-		messageConsumer.setMessageListener(new AuthListener(this));
-		log.info(" subscribed to topic:: " + destination.toString());
+		Subscriber subscriber = new Subscriber(Topics.AUTH_Channel);
+		subscriber.setListener(new AuthListener(this));
+		
+		// Forces thread switch to receive early notification on Auth_channel
+		// TODO improve handshake
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
@@ -206,13 +206,6 @@ public class AuthModule {
 
 	}
 
-	/**
-	 *  not used
-	 */
-	public void close(){
-		consumer.close();
-	}
-	
 	
 	/**
 	 *  helper method to remove the expired token
