@@ -1,9 +1,6 @@
 package eu.vre4eic.evre.core.messages;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-
 import eu.vre4eic.evre.core.Common.UserRole;
 
 /**

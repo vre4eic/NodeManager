@@ -3,10 +3,7 @@
  */
 package eu.vre4eic.evre.core.messages.impl;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-
 import org.springframework.context.annotation.Configuration;
 
 import eu.vre4eic.evre.core.Common.ResponseStatus;
@@ -20,11 +17,9 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
  *
  */
 @Configuration
-public class AuthenticationMessageImpl implements AuthenticationMessage, Serializable {
+public class AuthenticationMessageImpl extends MessageImpl implements AuthenticationMessage {
 
 	private String token;
-	private ResponseStatus status;
-	private String message;
 	private UserRole role;
 	private LocalDateTime timelimit;
 	private String zoneId;
@@ -34,10 +29,10 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 		super();
 	}
 	
+	// TODO
+	// LocaleDate, timeZone,  timeLimit, renewable should be added to constructor !?
 	public AuthenticationMessageImpl(ResponseStatus status, String message, String token, UserRole role, LocalDateTime ttl) {
-		super();
-		this.status = status;
-		this.message = message;
+		super(message,status);
 		this.role=role;
 		this.timelimit=ttl;
 		this.token=token;
@@ -59,32 +54,6 @@ public class AuthenticationMessageImpl implements AuthenticationMessage, Seriali
 		return this;
 	}
 	
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
-	/**
-	 * @param message the message to set
-	 */
-	public AuthenticationMessage setMessage(String message) {
-		this.message = message;
-		return this;
-	}
-	
-	@Override
-	public ResponseStatus getStatus() {
-		return status;
-	}
-
-	@Override
-	public AuthenticationMessage setStatus(ResponseStatus status) {
-		this.status=status;
-		return this;
-		
-	}
-
 
 	@Override
 	public UserRole getRole() {

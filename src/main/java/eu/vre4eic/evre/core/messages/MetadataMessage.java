@@ -1,7 +1,6 @@
 package eu.vre4eic.evre.core.messages;
 
 import eu.vre4eic.evre.core.Common.MetadataOperationType;
-import eu.vre4eic.evre.core.Common.ResponseStatus;
 
 /**
  * This interface defines the methods  to set/get values used to notify to e-VRE services that an operation has been executed
@@ -20,7 +19,7 @@ public interface MetadataMessage extends Message {
 	 * Sets the token of the user that has requested the operation. 
 	 * @param token String - the user token
 	 */
-	public void setToken(String token);
+	public MetadataMessage setToken(String token);
 
 	/**
 	 * Returns the operation type
@@ -34,20 +33,7 @@ public interface MetadataMessage extends Message {
 	 * 
 	 * @param op MetadataOperationType - the type of the operation
 	 */
-	public void setOperation(MetadataOperationType op);
+	public MetadataMessage setOperation(MetadataOperationType op);
 	
-	/**
-	 * Returns the operation result status
-	 * 
-	 * @return ResponseStatus - the outcome of the operation
-	 */
-	public ResponseStatus getStatus();
-
-	/**
-	 * Sets the the operation result status
-	 * 
-	 * @param resStatus ResponseStatus - the outcome of the operation
-	 */
-	public MetadataMessage setStatus(ResponseStatus resStatus);
 	
 }

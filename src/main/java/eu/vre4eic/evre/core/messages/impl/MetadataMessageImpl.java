@@ -16,6 +16,9 @@ public class MetadataMessageImpl extends MessageImpl implements MetadataMessage 
 	
 	
 	
+	private String token;
+	private MetadataOperationType operation;
+
 	public  MetadataMessageImpl() {
 		super();
 	}
@@ -30,16 +33,16 @@ public class MetadataMessageImpl extends MessageImpl implements MetadataMessage 
 	 */
 	@Override
 	public String getToken() {
-		// TODO Auto-generated method stub
-		return null;
+		return token;
 	}
 
 	/* (non-Javadoc)
 	 * @see eu.vre4eic.evre.core.messages.MetadataMessage#setToken(java.lang.String)
 	 */
 	@Override
-	public void setToken(String token) {
-		// TODO Auto-generated method stub
+	public MetadataMessage setToken(String token) {
+		this.token = token;
+		return this;
 
 	}
 
@@ -48,17 +51,16 @@ public class MetadataMessageImpl extends MessageImpl implements MetadataMessage 
 	 */
 	@Override
 	public MetadataOperationType getOperation() {
-		// TODO Auto-generated method stub
-		return null;
+		return operation;
 	}
 
 	/* (non-Javadoc)
 	 * @see eu.vre4eic.evre.core.messages.MetadataMessage#setOperation(eu.vre4eic.evre.core.Common.MetadataOperationType)
 	 */
 	@Override
-	public void setOperation(MetadataOperationType op) {
-		// TODO Auto-generated method stub
-
+	public MetadataMessage setOperation(MetadataOperationType op) {
+		this.operation = op;
+		return this;
 	}
 
 

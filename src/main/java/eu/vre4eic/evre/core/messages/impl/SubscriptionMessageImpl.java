@@ -1,7 +1,6 @@
 package eu.vre4eic.evre.core.messages.impl;
 
 import eu.vre4eic.evre.core.Common.ResponseStatus;
-import eu.vre4eic.evre.core.Common.UserRole;
 import eu.vre4eic.evre.core.messages.SubscriptionMessage;
 
 public class SubscriptionMessageImpl implements SubscriptionMessage {
