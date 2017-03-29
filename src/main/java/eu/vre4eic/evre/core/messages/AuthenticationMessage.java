@@ -1,6 +1,9 @@
 package eu.vre4eic.evre.core.messages;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
@@ -27,6 +30,7 @@ public interface AuthenticationMessage extends Message{
 	 * Gets the zone time id used to calculate the token's TimeLimit.
 	 * @return ZoneId - the zoneId
 	 */
+	@JsonIgnore
 	public String  getTimeZone();
 	
 	/**
@@ -55,6 +59,7 @@ public interface AuthenticationMessage extends Message{
 	 * Gets the period of time in minutes of a renewable token, 0 otherwise.
 	 * @return String  - the minutes
 	 */
+	@JsonIgnore
 	public String  getRenewable();
 	
 	/**

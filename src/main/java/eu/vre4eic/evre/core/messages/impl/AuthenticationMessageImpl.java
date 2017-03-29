@@ -4,7 +4,10 @@
 package eu.vre4eic.evre.core.messages.impl;
 
 import java.time.LocalDateTime;
+
 import org.springframework.context.annotation.Configuration;
+
+
 
 import eu.vre4eic.evre.core.Common.ResponseStatus;
 import eu.vre4eic.evre.core.Common.UserRole;
@@ -22,7 +25,9 @@ public class AuthenticationMessageImpl extends MessageImpl implements Authentica
 	private String token;
 	private UserRole role;
 	private LocalDateTime timelimit;
+	
 	private String zoneId;
+	
 	private String renewable;
 	
 	public AuthenticationMessageImpl() {
@@ -79,6 +84,7 @@ public class AuthenticationMessageImpl extends MessageImpl implements Authentica
 	}
 
 	@Override
+	
 	public String getTimeZone() {
 		// TODO Auto-generated method stub
 		return zoneId;
@@ -92,6 +98,7 @@ public class AuthenticationMessageImpl extends MessageImpl implements Authentica
 	}
 
 	@Override
+	
 	public String getRenewable() {
 		// TODO Auto-generated method stub
 		return renewable;
