@@ -2,16 +2,11 @@ package eu.vre4eic.evre.nodeservice.modules.authentication;
 
 import java.time.LocalDateTime;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-
-import javax.jms.ObjectMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
-import eu.vre4eic.evre.nodeservice.modules.comm.MessageListener;
+import eu.vre4eic.evre.core.comm.MessageListener;
 
 /**
  * 

@@ -20,7 +20,8 @@ import org.apache.activemq.command.DataStructure;
 import org.apache.activemq.command.RemoveInfo;
 
 import eu.vre4eic.evre.core.Common.Topics;
-import eu.vre4eic.evre.nodeservice.modules.comm.CommModule;
+import eu.vre4eic.evre.core.comm.CommModule;
+
 
 /**
  * @author francesco

@@ -8,11 +8,12 @@ import java.util.Map.Entry;
 import javax.jms.JMSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.vre4eic.evre.core.comm.MessageListener;
+import eu.vre4eic.evre.core.comm.Publisher;
+import eu.vre4eic.evre.core.comm.Subscriber;
+import eu.vre4eic.evre.core.comm.SubscriberFactory;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
-import eu.vre4eic.evre.nodeservice.modules.comm.MessageListener;
-import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
-import eu.vre4eic.evre.nodeservice.modules.comm.Subscriber;
-import eu.vre4eic.evre.nodeservice.modules.comm.SubscriberFactory;
 
 
 /**

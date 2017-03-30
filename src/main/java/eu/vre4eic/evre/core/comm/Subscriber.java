@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.vre4eic.evre.nodeservice.modules.comm;
+package eu.vre4eic.evre.core.comm;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.vre4eic.evre.core.Common.Topics;
-import eu.vre4eic.evre.nodeservice.modules.comm.CommModule;
+import eu.vre4eic.evre.core.comm.CommModule;
 
 
 /**
@@ -80,7 +80,7 @@ public class Subscriber<T extends eu.vre4eic.evre.core.messages.Message> {
 	}
 
 
-	public void setListener(eu.vre4eic.evre.nodeservice.modules.comm.MessageListener<T> listener)  {
+	public void setListener(MessageListener<T> listener)  {
 		try {
 			if (listener == null)
 				messageConsumer.setMessageListener(null);

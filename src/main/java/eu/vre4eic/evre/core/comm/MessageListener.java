@@ -1,4 +1,4 @@
-package eu.vre4eic.evre.nodeservice.modules.comm;
+package eu.vre4eic.evre.core.comm;
 
 import eu.vre4eic.evre.core.messages.Message;
 

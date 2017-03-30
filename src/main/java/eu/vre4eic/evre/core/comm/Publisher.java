@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.vre4eic.evre.nodeservice.modules.comm;
+package eu.vre4eic.evre.core.comm;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -14,7 +14,7 @@ import org.springframework.jms.annotation.EnableJms;
 import eu.vre4eic.evre.core.Common.Topics;
 import eu.vre4eic.evre.core.messages.Message;
 
-import eu.vre4eic.evre.nodeservice.modules.comm.CommModule;
+import eu.vre4eic.evre.core.comm.CommModule;
 
 /**
  * @author francesco

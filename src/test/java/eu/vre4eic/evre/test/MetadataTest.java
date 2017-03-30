@@ -7,8 +7,8 @@ import eu.vre4eic.evre.core.Common.ResponseStatus;
 import eu.vre4eic.evre.core.Common.Topics;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
 import eu.vre4eic.evre.core.messages.impl.MetadataMessageImpl;
-import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
-import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;;
+import eu.vre4eic.evre.core.comm.Publisher;
+import eu.vre4eic.evre.core.comm.PublisherFactory;;
 
 public class MetadataTest {
 	
