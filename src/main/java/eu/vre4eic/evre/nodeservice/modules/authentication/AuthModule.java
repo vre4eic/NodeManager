@@ -19,6 +19,7 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
 import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.modules.comm.Subscriber;
+import eu.vre4eic.evre.nodeservice.modules.comm.SubscriberFactory;
 
 
 /**
@@ -112,7 +113,7 @@ public class AuthModule {
 	 * @throws JMSException - JMS interfaces are used to connect to the provider
 	 */
 	private void doSubcribe(String brokerURL) throws JMSException{	
-		Subscriber subscriber = new Subscriber(Topics.AUTH_Channel);
+		Subscriber<AuthenticationMessage> subscriber = SubscriberFactory.getAuthenticationSubscriber();
 		subscriber.setListener(new AuthListener(this));
 		
 		// Forces thread switch to receive early notification on Auth_channel
