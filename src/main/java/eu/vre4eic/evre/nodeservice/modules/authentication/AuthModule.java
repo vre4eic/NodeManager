@@ -6,19 +6,14 @@ import java.time.ZoneId;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.vre4eic.evre.core.Common;
-import eu.vre4eic.evre.core.Common.Topics;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
-import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
-import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
-import eu.vre4eic.evre.nodeservice.modules.comm.Subscriber;
+import eu.vre4eic.evre.core.comm.Publisher;
+import eu.vre4eic.evre.core.comm.PublisherFactory;
+import eu.vre4eic.evre.core.comm.Subscriber;
+import eu.vre4eic.evre.core.comm.SubscriberFactory;
 
 
 /**
@@ -112,7 +107,7 @@ public class AuthModule {
 	 * @throws JMSException - JMS interfaces are used to connect to the provider
 	 */
 	private void doSubcribe(String brokerURL) throws JMSException{	
-		Subscriber subscriber = new Subscriber(Topics.AUTH_Channel);
+		Subscriber<AuthenticationMessage> subscriber = SubscriberFactory.getAuthenticationSubscriber();
 		subscriber.setListener(new AuthListener(this));
 		
 		// Forces thread switch to receive early notification on Auth_channel

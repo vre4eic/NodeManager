@@ -28,8 +28,8 @@ import eu.vre4eic.evre.core.messages.MetadataMessage;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MessageImpl;
 import eu.vre4eic.evre.nodeservice.Utils;
-import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
-import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
+import eu.vre4eic.evre.core.comm.Publisher;
+import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.usermanager.UserManager;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 

@@ -2,12 +2,6 @@ package eu.vre4eic.evre;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -16,27 +10,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootContextLoader;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.transaction.annotation.Transactional;
-
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.UserCredentials;
-import eu.vre4eic.evre.core.UserProfile;
 import eu.vre4eic.evre.core.impl.EVREUserProfile;
 import eu.vre4eic.evre.core.impl.UserCredentialsImpl;
 import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
-import eu.vre4eic.evre.nodeservice.services.UserController;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 

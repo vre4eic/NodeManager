@@ -37,8 +37,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
 import eu.vre4eic.evre.nodeservice.Utils;
-import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
-import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
+import eu.vre4eic.evre.core.comm.Publisher;
+import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 

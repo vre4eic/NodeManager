@@ -5,30 +5,16 @@ package eu.vre4eic.evre.nodeservice.services;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import eu.vre4eic.evre.core.EvreEvent;
-import eu.vre4eic.evre.core.Common;
-import eu.vre4eic.evre.core.Common.NotificationType;
-import eu.vre4eic.evre.core.Common.UserRole;
-import eu.vre4eic.evre.core.messages.Message;
-import eu.vre4eic.evre.core.messages.SubscriptionMessage;
-import eu.vre4eic.evre.core.messages.impl.SubscriptionMessageImpl;
-import io.swagger.annotations.ApiOperation;
 
 
 /**

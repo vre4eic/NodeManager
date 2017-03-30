@@ -1,27 +1,19 @@
 package eu.vre4eic.evre.nodeservice.modules.metadata;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.vre4eic.evre.core.Common;
-import eu.vre4eic.evre.core.Common.Topics;
 
+import eu.vre4eic.evre.core.comm.MessageListener;
+import eu.vre4eic.evre.core.comm.Publisher;
+import eu.vre4eic.evre.core.comm.Subscriber;
+import eu.vre4eic.evre.core.comm.SubscriberFactory;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
-import eu.vre4eic.evre.nodeservice.modules.comm.Publisher;
-import eu.vre4eic.evre.nodeservice.modules.comm.PublisherFactory;
-import eu.vre4eic.evre.nodeservice.modules.comm.Subscriber;
 
 
 /**
@@ -115,8 +107,14 @@ public class MDModule {
 	 * @throws JMSException - JMS interfaces are used to connect to the provider
 	 */
 	private void doSubcribe() throws JMSException{	
-		Subscriber subscriber = new Subscriber(Topics.METADATA_OP_Channel);
-		subscriber.setListener(new MDListener(this));
+		Subscriber<MetadataMessage> subscriber = SubscriberFactory.getMetadataSubscriber();
+		
+		subscriber.setListener(new MessageListener<MetadataMessage>()  {			
+			@Override
+			public void onMessage(MetadataMessage mdm) {
+				addMessage(mdm);				
+			}			
+		});
 		
 		// Forces thread switch to receive early notification on Auth_channel
 		// TODO improve handshake
