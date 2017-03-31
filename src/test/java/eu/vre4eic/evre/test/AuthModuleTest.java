@@ -13,6 +13,7 @@ public class AuthModuleTest {
 		Properties property = Utils.getNodeServiceProperties();
 		String brokerURL =  property.getProperty("BROKER_URL");
 
+		AuthModule mymodule = AuthModule.getInstance("tcp://v4e-lab.isti.cnr.it:61616");
 		module = AuthModule.getInstance(brokerURL);
 		System.out.println("############ TOKEN Pluto " + module.checkToken("pluto"));
 		

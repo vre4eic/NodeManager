@@ -14,6 +14,12 @@ public class PublisherFactory {
 			authenticationPublisher = new Publisher<AuthenticationMessage>(Topics.AUTH_Channel);
 		return authenticationPublisher;	
 	}
+	//Cesare
+	public static  Publisher<AuthenticationMessage> getAuthenticationPublisher(String brokerURL) {
+		if ( authenticationPublisher == null)
+			authenticationPublisher = new Publisher<AuthenticationMessage>(brokerURL, Topics.AUTH_Channel);
+		return authenticationPublisher;	
+	}
 	
 	public static  Publisher<MetadataMessage> getMetatdaPublisher() {
 		if ( metadataPublisher == null)

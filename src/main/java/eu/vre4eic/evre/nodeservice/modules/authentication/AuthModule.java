@@ -52,7 +52,8 @@ public class AuthModule {
 	protected AuthModule(String brokerURL) throws JMSException{
 		//initialize data structure for tokens
 		AuthTable = new  Hashtable<String, AuthenticationMessage> ();
-		ap = PublisherFactory.getAuthenticationPublisher();
+		//Cesare
+		ap = PublisherFactory.getAuthenticationPublisher(brokerURL);
 				
 		log.info(" #### Authentication Module instanciated ####");
 		log.info(" Connecting to Broker:: " + brokerURL);

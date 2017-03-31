@@ -46,7 +46,25 @@ public class CommModule {
 			throw jmse;
 		}
 }
+//Cesare
+	protected CommModule(String borokerURL) throws JMSException {
 
+		factory = new ActiveMQConnectionFactory(borokerURL);
+		// TODO
+		// Development configuration to be fixed with trusted packages
+		factory.setTrustAllPackages(true);
+		
+		connection = factory.createConnection();
+		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+	
+		try {
+			getConnection().start();
+		} catch (JMSException jmse) {
+			getConnection().close();
+			throw jmse;
+		}
+}
 	
 	public static CommModule getInstance() {
 		if(instance == null) {
@@ -60,7 +78,19 @@ public class CommModule {
 	      return instance;
 	      
 	}
-
+//Cesare
+	public static CommModule getInstance(String brokerURL) {
+		if(instance == null) {
+	         try {
+				instance = new CommModule(brokerURL);
+			} catch (JMSException e) {
+				
+				e.printStackTrace();
+			}
+	      }
+	      return instance;
+	      
+	}
 
 	public Connection getConnection() {
 		return connection;

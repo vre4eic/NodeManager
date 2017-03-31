@@ -39,7 +39,18 @@ public class Publisher<T extends Message>  {
 
 	}
 
+	public Publisher(String brokerURL, Topics channel) {
+		try {
+			session  = CommModule.getInstance(brokerURL).getSession();
+			Destination destination = session.createTopic(channel.toString());
+			dipatcher = session.createProducer(destination);
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+	}
+	
 	public void publish(T m) throws JMSException {
 		ObjectMessage om = session.createObjectMessage(m);
 		dipatcher.send(om);
