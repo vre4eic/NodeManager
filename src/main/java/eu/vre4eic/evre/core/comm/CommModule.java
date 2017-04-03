@@ -46,7 +46,7 @@ public class CommModule {
 			throw jmse;
 		}
 }
-//Cesare
+
 	protected CommModule(String borokerURL) throws JMSException {
 
 		factory = new ActiveMQConnectionFactory(borokerURL);
@@ -78,7 +78,7 @@ public class CommModule {
 	      return instance;
 	      
 	}
-//Cesare
+
 	public static CommModule getInstance(String brokerURL) {
 		if(instance == null) {
 	         try {

@@ -73,15 +73,10 @@ public class MetadataDaoTest {
 		MetadataMessage mdm = new MetadataMessageImpl("test message", ResponseStatus.SUCCEED)
 				.setToken("testtoken")
 				.setOperation(MetadataOperationType.QUERY);
-		try {
 			mdp.publish(mdm);
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
 		
 		
-		assertEquals(Topics.values().length, 2);
+		assertEquals(Topics.values().length, 3);
 		//assertEquals((userp.get(0)).getUserId(), "userId");
 		
 		
