@@ -2,12 +2,14 @@ package eu.vre4eic.evre.core.comm;
 
 import eu.vre4eic.evre.core.Common.Topics;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
+import eu.vre4eic.evre.core.messages.ControlMessage;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
 
 public class SubscriberFactory {
 
 	static Subscriber<AuthenticationMessage> authenticationSubscriber;
 	static Subscriber<MetadataMessage> metadataSubscriber;
+	static Subscriber<ControlMessage> controlSubscriber;
 
 	public static  Subscriber<AuthenticationMessage> getAuthenticationSubscriber() {
 		if ( authenticationSubscriber == null)
@@ -19,6 +21,12 @@ public class SubscriberFactory {
 		if ( metadataSubscriber == null)
 			metadataSubscriber = new Subscriber<MetadataMessage>(Topics.METADATA_OP_Channel);
 		return metadataSubscriber;	
+	}
+	
+	public static  Subscriber<ControlMessage> getControlSubscriber() {
+		if ( controlSubscriber == null)
+			controlSubscriber = new Subscriber<ControlMessage>(Topics.CONTROL_Channel);
+		return controlSubscriber;	
 	}
 
 }
