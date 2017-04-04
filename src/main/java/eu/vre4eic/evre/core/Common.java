@@ -50,10 +50,15 @@ public class Common {
 	public static final String AUTH_CHANNEL = "AUTH_Channel";
 	
 	public enum Topics {
-		AUTH_Channel, METADATA_OP_Channel;
+		AUTH_Channel, METADATA_OP_Channel, CONTROL_Channel;
 
-	
 		
 	}
+	
+	public enum ControlOperationType {
+		PRINT_STATUS,PING,SHOW_WARNING;
+		
+	}
+
 	
 }

@@ -130,7 +130,6 @@ public class UserController {
 	public AuthenticationMessage login(@ApiParam(name = "username", value = "Alphanumeric string", required = true) @RequestParam(value="username") String username, @ApiParam(name = "pwd", value = "Alphanumeric string", required = true) @RequestParam(value="pwd") String pwd) {
 		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 		AuthenticationMessage m = new AuthenticationMessageImpl();
-		try {
 			
 			String token = pwd;
 
@@ -150,10 +149,6 @@ public class UserController {
 			p.publish(m);
 
 			
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		return m;
 	}
@@ -168,7 +163,6 @@ public class UserController {
 		
 		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 		AuthenticationMessage m = new AuthenticationMessageImpl();
-		try {
 			
 			m.setToken(token);
 			
@@ -184,11 +178,6 @@ public class UserController {
 			p.publish(m);
 
 			
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		return m;
 
 	}

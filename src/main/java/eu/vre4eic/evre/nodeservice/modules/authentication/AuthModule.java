@@ -10,6 +10,7 @@ import javax.jms.JMSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
+import eu.vre4eic.evre.core.messages.ControlMessage;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.core.comm.Subscriber;
@@ -52,9 +53,12 @@ public class AuthModule {
 	protected AuthModule(String brokerURL) throws JMSException{
 		//initialize data structure for tokens
 		AuthTable = new  Hashtable<String, AuthenticationMessage> ();
-		//Cesare
+
 		ap = PublisherFactory.getAuthenticationPublisher(brokerURL);
 				
+		Subscriber<ControlMessage> subcriber = SubscriberFactory.getControlSubscriber();
+		subcriber.setListener(new ControlListener(this));
+		
 		log.info(" #### Authentication Module instanciated ####");
 		log.info(" Connecting to Broker:: " + brokerURL);
 		
@@ -190,14 +194,9 @@ public class AuthModule {
 		LocalDateTime halftime = am.getTimeLimit().minusMinutes(renewable/2);
 		if (now.isAfter(halftime)) {
 			am.setTimeLimit(now.plusMinutes(renewable));
-			try {
-				log.info("########### Renewd ##########");
-				log.info(am.getTimeLimit().toString());
-				ap.publish(am);
-			} catch (JMSException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			log.info("########### Renewd ##########");
+			log.info(am.getTimeLimit().toString());
+			ap.publish(am);
 		}
 
 	}

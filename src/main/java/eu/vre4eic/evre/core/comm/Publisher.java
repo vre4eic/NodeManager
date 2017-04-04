@@ -51,9 +51,15 @@ public class Publisher<T extends Message>  {
 
 	}
 	
-	public void publish(T m) throws JMSException {
-		ObjectMessage om = session.createObjectMessage(m);
-		dipatcher.send(om);
+	public void publish(T m)  {
+		ObjectMessage om;
+		try {
+			om = session.createObjectMessage(m);
+			dipatcher.send(om);
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 

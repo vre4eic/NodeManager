@@ -200,12 +200,7 @@ public class UserManagerImpl implements UserManager {
 					profile.getPassword(), profile.getRole(),timeLimit);
 			ame.setTimeZone(ZoneId.systemDefault().getId())
 			   .setRenewable(TTL);
-			try {
 				p.publish(ame);
-			} catch (JMSException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			return (ame);
 		}
 		ame.setTimeLimit(LocalDateTime.MIN);
@@ -236,12 +231,7 @@ public class UserManagerImpl implements UserManager {
 		ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
 				token, Common.UserRole.ADMIN,timeLimit);
 		ame.setTimeZone(ZoneId.systemDefault().getId());
-		try {
 			p.publish(ame);
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return ame;
 	}
 
