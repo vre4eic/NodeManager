@@ -76,7 +76,7 @@ public class MetadataDaoTest {
 			mdp.publish(mdm);
 		
 		
-		assertEquals(Topics.values().length, 3);
+		assertEquals(Topics.values().length, 4);
 		//assertEquals((userp.get(0)).getUserId(), "userId");
 		
 		
@@ -93,7 +93,7 @@ public class MetadataDaoTest {
 		
 		module = AuthModule.getInstance(brokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login

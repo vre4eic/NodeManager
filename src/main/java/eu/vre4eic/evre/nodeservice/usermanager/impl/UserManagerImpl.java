@@ -25,8 +25,10 @@ import eu.vre4eic.evre.core.impl.EVREUserProfile;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
+import eu.vre4eic.evre.core.messages.MultiFactorMessage;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MessageImpl;
+import eu.vre4eic.evre.core.messages.impl.MultiFactorMEssageImpl;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
@@ -211,9 +213,21 @@ public class UserManagerImpl implements UserManager {
 	 * @see eu.vre4eic.evre.nodeservice.usermanager.UserManager#login(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public AuthenticationMessage login(String userId, String password, String authId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Message loginMFA(String userId, String password) {
+		Publisher<MultiFactorMessage> p =  PublisherFactory.getMFAPublisher();
+		MultiFactorMessage mfam;
+ 
+		mfam = new MultiFactorMEssageImpl("", ResponseStatus.IN_PROGRESS);
+		
+		UserProfile profile= repository.findByUserId(userId);
+		
+		if (profile==null || !password.equals(profile.getPassword()))
+			return (new MessageImpl("Error, credentials not valid", ResponseStatus.FAILED));
+		mfam.setAuthId(profile.getAuthId());
+		mfam.setUserId(profile.getUserId());
+		p.publish(mfam);
+		
+		return (new MessageImpl("Please check your authenticator for code", ResponseStatus.SUCCEED));
 	}
 
 	/* (non-Javadoc)
@@ -285,4 +299,5 @@ public class UserManagerImpl implements UserManager {
 		return (new MessageImpl("No user found with the specified email", Common.ResponseStatus.EMPTY_RESULT));
 
 	}
+	
 }

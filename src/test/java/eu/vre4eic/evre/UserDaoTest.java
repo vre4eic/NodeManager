@@ -59,7 +59,7 @@ public class UserDaoTest {
 	@Test
 	public final void testInsertUserProfile() {
 		
-		repository.save(new EVREUserProfile("userId", "userPWD", "Name", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		repository.save(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		List<EVREUserProfile> userp = (List<EVREUserProfile>) repository.findAll();
 		
@@ -73,7 +73,7 @@ public class UserDaoTest {
 	 */
 	@Test
 	public final void testInsertUserProfile2() {	
-		repository.save(new EVREUserProfile("userId", "userPWD", "Name", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		repository.save(new EVREUserProfile("userId", "userPWD", "Name","my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		List<EVREUserProfile> userp = (List<EVREUserProfile>) repository.findByPassword("userPWD");
 		assertEquals(userp.get(0).getUserId(), "userId");
@@ -91,7 +91,7 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(brokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
@@ -135,7 +135,7 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(brokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
@@ -169,7 +169,7 @@ public class UserDaoTest {
 		//check if token is no longer valid
 		auth=module.checkToken("userPWD");
 		assertEquals(auth, false);
-		mes=userMI.updateUserProfile("userId", new EVREUserProfile("userId", "userPWDupdate", "Nameupdate", eu.vre4eic.evre.core.Common.UserRole.CONTROLLER, 
+		mes=userMI.updateUserProfile("userId", new EVREUserProfile("userId", "userPWDupdate", "Nameupdate", "my_organization", eu.vre4eic.evre.core.Common.UserRole.CONTROLLER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		EVREUserProfile eup= userMI.getUserProfile("userId");

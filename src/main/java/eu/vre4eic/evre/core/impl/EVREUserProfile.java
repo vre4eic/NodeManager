@@ -21,7 +21,9 @@ import eu.vre4eic.evre.core.UserProfile;
 public class EVREUserProfile implements UserProfile {
 
 	@Id
+	String id;
 	String userId;
+	String organization;
 	String password;
 	String name;
 	UserRole role;
@@ -34,11 +36,13 @@ public class EVREUserProfile implements UserProfile {
 		
 	}
 	
-	public EVREUserProfile(String userId, String password, String name, UserRole role, String email, 
+	public EVREUserProfile(String userId, String password, String name, String organization, UserRole role, String email, 
 							String snsId, String authId) {
 		
+		this.id=userId;
 		this.userId=userId;
 		this.name=name;
+		this.organization=organization;
 		this.password=password;
 		this.role=role;
 		this.email=email;
@@ -121,6 +125,18 @@ public class EVREUserProfile implements UserProfile {
                 "User [id=%s, password=%s, name='%s', email='%s']",
                 userId, password, name, email);
     }
+
+	@Override
+	public String getOrganization() {
+		
+		return organization;
+	}
+
+	@Override
+	public void setOrganization(String organization) {
+		this.organization=organization;
+		
+	}
 	
 
 }
