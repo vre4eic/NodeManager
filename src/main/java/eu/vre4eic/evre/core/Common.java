@@ -19,11 +19,11 @@ public class Common {
 	}
 	
 	/**
-	 * ResponseStatus: <ul><li>SUCCEED</li> <li>EMPTY_RESULT</li> <li>WARNING</li> <li>FAILED</li></ul>
+	 * ResponseStatus: <ul><li>SUCCEED</li> <li>EMPTY_RESULT</li> <li>WARNING</li> <li>FAILED</li><li>IN_PROGRESS</li></ul>
 	 *
 	 */
 	public enum ResponseStatus {
-		SUCCEED, EMPTY_RESULT, WARNING, FAILED,
+		SUCCEED, EMPTY_RESULT, WARNING, FAILED, IN_PROGRESS
 	}
 	
 	/**
@@ -47,10 +47,9 @@ public class Common {
 		AUTHENTICATION, METADATA,USERPROFILE,SERVICE
 	}
 	
-	public static final String AUTH_CHANNEL = "AUTH_Channel";
-	
+		
 	public enum Topics {
-		AUTH_Channel, METADATA_OP_Channel, CONTROL_Channel;
+		AUTH_Channel, METADATA_OP_Channel, CONTROL_Channel, MFA_Channel;
 
 		
 	}
