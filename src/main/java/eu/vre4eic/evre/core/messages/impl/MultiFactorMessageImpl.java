@@ -10,15 +10,16 @@ import eu.vre4eic.evre.core.messages.MultiFactorMessage;
  * @author francesco
  *
  */
-public class MultiFactorMEssageImpl extends MessageImpl implements MultiFactorMessage {
+public class MultiFactorMessageImpl extends MessageImpl implements MultiFactorMessage {
 
 	private String authId;
 	private String userId;
+	private String code;
 
 	/**
 	 * 
 	 */
-	public MultiFactorMEssageImpl() {
+	public MultiFactorMessageImpl() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -26,7 +27,7 @@ public class MultiFactorMEssageImpl extends MessageImpl implements MultiFactorMe
 	 * @param message
 	 * @param status
 	 */
-	public MultiFactorMEssageImpl(String message, ResponseStatus status) {
+	public MultiFactorMessageImpl(String message, ResponseStatus status) {
 		super(message, status);
 		// TODO Auto-generated constructor stub
 	}
@@ -63,6 +64,17 @@ public class MultiFactorMEssageImpl extends MessageImpl implements MultiFactorMe
 	@Override
 	public String getUserId() {
 		return userId;
+	}
+
+	@Override
+	public MultiFactorMessage setCode(String code) {
+		this.code = code;
+		return this;
+	}
+
+	@Override
+	public String getCode() {
+		return code;
 	}
 
 }
