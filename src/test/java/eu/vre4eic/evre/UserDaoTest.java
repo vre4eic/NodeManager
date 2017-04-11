@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
@@ -14,15 +15,21 @@ import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.UserCredentials;
+import eu.vre4eic.evre.core.comm.Subscriber;
+import eu.vre4eic.evre.core.comm.SubscriberFactory;
 import eu.vre4eic.evre.core.impl.EVREUserProfile;
 import eu.vre4eic.evre.core.impl.UserCredentialsImpl;
+import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
+import eu.vre4eic.evre.core.messages.MultiFactorMessage;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
+
 
 //@ContextConfiguration ("/Test-context.xml")
 @ComponentScan
@@ -44,19 +51,23 @@ public class UserDaoTest {
 
 	private AuthModule module;
 	
+	private static Vector <String> mfmCode;
+	private static Subscriber<MultiFactorMessage> subscriber;
 	//@Autowired
 	//private CustomerPreferences customerPreference;
 	
 	@Before
 	public void setUp() throws Exception {
 		repository.deleteAll();
+		subscriber = SubscriberFactory.getMFASubscriber();
+		subscriber.setListener(new eu.vre4eic.evre.util.TGBotMFAListener(this));
 	}
 
 	
 /*
  * Test the insert of a new User profile
  */
-	@Test
+	//@Test
 	public final void testInsertUserProfile() {
 		
 		repository.save(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
@@ -71,7 +82,7 @@ public class UserDaoTest {
 	/*
 	 * Test the insert of a new User profile
 	 */
-	@Test
+	//@Test
 	public final void testInsertUserProfile2() {	
 		repository.save(new EVREUserProfile("userId", "userPWD", "Name","my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
@@ -83,7 +94,7 @@ public class UserDaoTest {
 	/*
 	 * Test the login logout
 	 */
-	@Test
+	//@Test
 	public final void testLoginLogout() {	
 		
 		Properties property = Utils.getNodeServiceProperties();
@@ -92,7 +103,7 @@ public class UserDaoTest {
 		module = AuthModule.getInstance(brokerURL);
 		//save a user profile
 		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
-				"email@domain","snsId", "authId"));
+				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
 		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
@@ -127,7 +138,44 @@ public class UserDaoTest {
 		assertEquals(auth, false);
 		
 	}
+	
 	@Test
+	public final void testLoginMFALogout() {	
+		
+		this.mfmCode= new Vector<String>();
+		
+		Properties property = Utils.getNodeServiceProperties();
+		String brokerURL =  property.getProperty("BROKER_URL");
+		
+		module = AuthModule.getInstance(brokerURL);
+		//save a user profile
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+				"email@domain","snsId", "11"));
+		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
+		// execute a login
+		
+	
+		AuthenticationMessage ame= userMI.loginMFA("userId", "userPWD");
+		//wait for authentication message being dispatched
+		
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is valid
+		
+		assertEquals(UserDaoTest.mfmCode.size(), 1);
+		
+	}
+	public void updateMFMQueue(int id, String code){
+		
+		UserDaoTest.mfmCode.add(code);
+	}
+	
+	//@Test
 	public final void testUpdateUserProfile() {	
 		
 		Properties property = Utils.getNodeServiceProperties();
@@ -176,4 +224,5 @@ public class UserDaoTest {
 		assertEquals("userPWDupdate", eup.getPassword());
 		
 	}
+
 }
