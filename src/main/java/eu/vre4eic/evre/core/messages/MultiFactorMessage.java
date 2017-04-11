@@ -16,4 +16,8 @@ public interface MultiFactorMessage extends Message {
 	public MultiFactorMessage setUserId(String userId);
 	
 	public String getUserId();
+	
+	public MultiFactorMessage setCode(String code);
+	
+	public String getCode();
 }
