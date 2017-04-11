@@ -234,7 +234,7 @@ public class UserManagerImpl implements UserManager {
 	public AuthenticationMessage loginMFACode(String token, String code) {
 
 		String key = token + "#" + code;
-		AuthenticationMessage ame = pendingUsers.get(key);
+		AuthenticationMessage ame = pendingUsers.remove(key);
 		if (ame == null){
 			AuthenticationMessage error =  new AuthenticationMessageImpl();
 			error.setStatus(ResponseStatus.FAILED)
