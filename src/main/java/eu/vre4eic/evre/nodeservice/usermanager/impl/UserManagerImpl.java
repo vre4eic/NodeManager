@@ -44,8 +44,9 @@ import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 @Configuration
 
 public class UserManagerImpl implements UserManager {
-	
-	
+
+	LocalDateTime timeLimit;
+
 	private Hashtable<String, UserProfile> pendingUsers = new Hashtable<String,UserProfile>();
 
 
@@ -63,12 +64,12 @@ public class UserManagerImpl implements UserManager {
 	 */
 	@Override
 	public Message createUserProfile(EVREUserProfile profile) {
-		
+
 		if (repository.findByUserId(profile.getUserId())!=null)
 			return( new MessageImpl("Operation not executed, User Id not unique", Common.ResponseStatus.FAILED));
-			
+
 		repository.save(profile);
-		
+
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 	}
 
@@ -79,7 +80,7 @@ public class UserManagerImpl implements UserManager {
 	public Message updateUserProfile(String userId, EVREUserProfile profile) {
 		if (repository.findByUserId(userId)==null)
 			return( new MessageImpl("Operation not executed, User profile not found", Common.ResponseStatus.FAILED));
-			
+
 		repository.save(profile);
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 	}
@@ -92,12 +93,12 @@ public class UserManagerImpl implements UserManager {
 		EVREUserProfile profile= repository.findByUserId(userId);
 		if (profile==null)
 			return( new MessageImpl("Operation not executed, User profile not found", Common.ResponseStatus.FAILED));
-			
-		
+
+
 		repository.delete(profile);
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
-		
-		
+
+
 	}
 
 	/* (non-Javadoc)
@@ -105,12 +106,12 @@ public class UserManagerImpl implements UserManager {
 	 */
 	@Override
 	public EVREUserProfile getUserProfile(String userId) {
-		
+
 		EVREUserProfile profile= repository.findByUserId(userId);
 		return profile;	
-		
-		
-		
+
+
+
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +123,7 @@ public class UserManagerImpl implements UserManager {
 		if (profile!=null && credentials.getPassword().equals(profile.getPassword()))
 			return profile;
 		return null;
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -185,33 +186,9 @@ public class UserManagerImpl implements UserManager {
 	@Override
 	public AuthenticationMessage login(UserCredentials credentials) {
 		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
-
-		String TTL = Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT");
-
-		LocalDateTime timeLimit;
-		AuthenticationMessage ame;
-
-		ame = new AuthenticationMessageImpl(Common.ResponseStatus.FAILED, "Operation completed",
-				"", null,LocalDateTime.MIN);
-		ame.setTimeZone(ZoneId.systemDefault().getId());
-	
-		UserProfile profile= repository.findByUserId(credentials.getUserId());
-		if (profile==null){
-			ame.setTimeLimit(LocalDateTime.MIN);
-			return ame;
-		}
-		
-		if (credentials.getPassword().equals(profile.getPassword())){
-
-			timeLimit = LocalDateTime.now().plusMinutes(Integer.valueOf(TTL));
-			ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
-					profile.getPassword(), profile.getRole(),timeLimit);
-			ame.setTimeZone(ZoneId.systemDefault().getId())
-			   .setRenewable(TTL);
-				p.publish(ame);
-			return (ame);
-		}
-		ame.setTimeLimit(LocalDateTime.MIN);
+		AuthenticationMessage ame = this.getLoginMessage(credentials.getUserId(), credentials.getPassword());
+		if (ame.getStatus() == Common.ResponseStatus.SUCCEED)
+			p.publish(ame);
 		return ame;
 	}
 
@@ -219,43 +196,48 @@ public class UserManagerImpl implements UserManager {
 	 * @see eu.vre4eic.evre.nodeservice.usermanager.UserManager#login(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Message loginMFA(String userId, String password) {
-		
-		// check credentials
-		UserProfile profile= repository.findByUserId(userId);		
-		if (profile==null || !password.equals(profile.getPassword()))
-			return (new MessageImpl("Error, credentials not valid", ResponseStatus.FAILED));
+	public AuthenticationMessage loginMFA(String userId, String password) {
 
+		// check credentials
+		AuthenticationMessage ame= this.getLoginMessage(userId, password);
 		
-		// generate code
-		String codeStr;
-		int count = 0;
-		do {
-			count +=1;
-			int code = RandomUtils.nextInt(10000);
-			codeStr = String.valueOf(code);			
-		} while (pendingUsers.containsKey(codeStr) && count < 5000);
-		if (count >= 5000) {
-			throw new RuntimeException("Code generation: too many pending users !!");
+		if (ame.getStatus() == Common.ResponseStatus.SUCCEED){
+			UserProfile profile= repository.findByUserId(userId);
+			// generate code
+			String codeStr;
+			int count = 0;
+			do {
+				count +=1;
+				int code = RandomUtils.nextInt(10000);
+				codeStr = String.valueOf(code);			
+			} while (pendingUsers.containsKey(codeStr) && count < 5000);
+			if (count >= 5000) {
+				throw new RuntimeException("Code generation: too many pending users !!");
+			}
+
+			// save code
+			// TODO ? persistent with Mongo ?
+			pendingUsers.put(codeStr, profile);
+			// publish
+			Publisher<MultiFactorMessage> p =  PublisherFactory.getMFAPublisher();
+			MultiFactorMessage mfam;
+
+			mfam = new MultiFactorMessageImpl("", ResponseStatus.IN_PROGRESS);
+
+			mfam.setAuthId(profile.getAuthId());
+			mfam.setUserId(profile.getUserId());
+			mfam.setCode(codeStr);
+			p.publish(mfam);
+			
 		}
-		
-		// save code
-		// TODO ? persistent with Mongo ?
-		pendingUsers.put(codeStr, profile);
-		
-		
-		// publish
-		Publisher<MultiFactorMessage> p =  PublisherFactory.getMFAPublisher();
-		MultiFactorMessage mfam;
- 
-		mfam = new MultiFactorMessageImpl("", ResponseStatus.IN_PROGRESS);
-		
-		mfam.setAuthId(profile.getAuthId());
-		mfam.setUserId(profile.getUserId());
-		mfam.setCode(codeStr);
-		p.publish(mfam);
-		
-		return (new MessageImpl("Please check your authenticator for code", ResponseStatus.SUCCEED));
+
+		return ame;
+	}
+	
+	@Override
+	public AuthenticationMessage loginMFACode(String token, String code) {
+		//check if the code is correct and is associated to the token  
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -265,15 +247,15 @@ public class UserManagerImpl implements UserManager {
 	@Override
 	public AuthenticationMessage logout(String token) {
 		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
-		
+
 		LocalDateTime timeLimit;
 		AuthenticationMessage ame;
-		
+
 		timeLimit = LocalDateTime.MIN;
 		ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
 				token, Common.UserRole.ADMIN,timeLimit);
 		ame.setTimeZone(ZoneId.systemDefault().getId());
-			p.publish(ame);
+		p.publish(ame);
 		return ame;
 	}
 
@@ -323,9 +305,37 @@ public class UserManagerImpl implements UserManager {
 			//TO BE IMPLEMENTED: send an email message to recover password
 			return (new MessageImpl("An email has been sent to the specified address", Common.ResponseStatus.SUCCEED));
 		}
-			
+
 		return (new MessageImpl("No user found with the specified email", Common.ResponseStatus.EMPTY_RESULT));
 
 	}
+	//private methods
+
+	private AuthenticationMessage getLoginMessage(String login, String password){
+
+		String TTL = Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT");
+
+
+		AuthenticationMessage ame;
+
+		ame = new AuthenticationMessageImpl(Common.ResponseStatus.FAILED, "Invalid credentials",
+				"", null,LocalDateTime.MIN);
+		ame.setTimeZone(ZoneId.systemDefault().getId());
+		ame.setTimeLimit(LocalDateTime.MIN);
+		UserProfile profile= repository.findByUserId(login);
+		
+		if (profile==null || !password.equals(profile.getPassword()))
+			return ame;
+		
+		timeLimit = LocalDateTime.now().plusMinutes(Integer.valueOf(TTL));
+		ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
+				profile.getPassword(), profile.getRole(),timeLimit);
+		
+		ame.setTimeZone(ZoneId.systemDefault().getId())
+		.setRenewable(TTL);
+		return ame;
+
+	}
+
 	
 }

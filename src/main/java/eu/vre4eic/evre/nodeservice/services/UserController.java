@@ -154,7 +154,7 @@ public class UserController {
 		return m;
 	}
 
-	@ApiOperation(value = "Authenticates a user with a <i>Two-factor authentication</i> procedure ", 
+	@ApiOperation(value = "Authenticates a user with a <i>Two-factor authentication</i> procedure", 
 			notes = "Authenticates a user on e-VRE system. Returns the URL to a WS that must be used to verify the second authentication factor.", 
 			response = Message.class)
 	@RequestMapping(value="/user/loginmfa", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -163,6 +163,17 @@ public class UserController {
 			@ApiParam(name = "pwd", value = "Alphanumeric string", required = true) @RequestParam(value="pwd") String pwd) {
 	
 		return userManager.loginMFA(username, pwd);
+	}
+	
+	@ApiOperation(value = "Invoked to complete the <i>Two-factor authentication</i> procedure started by a user ", 
+			notes = "Authenticates a user on e-VRE system by completing the Two-Factor athentication procedure", 
+			response = Message.class)
+	@RequestMapping(value="/user/loginmfacode", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	public Message loginMfaCode(@ApiParam(name = "token", value = "Alphanumeric string", required = true) @RequestParam(value="token") String token, 
+			@ApiParam(name = "code", value = "Alphanumeric string", required = true) @RequestParam(value="code") String code) {
+	
+		return userManager.loginMFACode(token, code);
 	}
 
 	@ApiOperation(value = "Sign off a user", 

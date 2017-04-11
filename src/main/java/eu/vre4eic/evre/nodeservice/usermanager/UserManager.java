@@ -53,7 +53,9 @@ public interface UserManager {
 	
 	public AuthenticationMessage login (UserCredentials credentials);
 	
-	public Message loginMFA (String userId, String password);
+	public AuthenticationMessage loginMFA (String userId, String password);
+	
+	public AuthenticationMessage loginMFACode (String token, String code);
 	
 	public AuthenticationMessage logout(String token);
 	
