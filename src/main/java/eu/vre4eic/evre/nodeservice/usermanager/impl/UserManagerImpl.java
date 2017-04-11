@@ -47,7 +47,7 @@ public class UserManagerImpl implements UserManager {
 
 	LocalDateTime timeLimit;
 
-	private Hashtable<String, UserProfile> pendingUsers = new Hashtable<String,UserProfile>();
+	private Hashtable<String, AuthenticationMessage> pendingUsers = new Hashtable<String,AuthenticationMessage>();
 
 
 	@Autowired
@@ -185,10 +185,11 @@ public class UserManagerImpl implements UserManager {
 	 */
 	@Override
 	public AuthenticationMessage login(UserCredentials credentials) {
-		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 		AuthenticationMessage ame = this.getLoginMessage(credentials.getUserId(), credentials.getPassword());
-		if (ame.getStatus() == Common.ResponseStatus.SUCCEED)
+		if (ame.getStatus() == Common.ResponseStatus.SUCCEED) {
+			Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 			p.publish(ame);
+		}
 		return ame;
 	}
 
@@ -203,21 +204,16 @@ public class UserManagerImpl implements UserManager {
 		
 		if (ame.getStatus() == Common.ResponseStatus.SUCCEED){
 			UserProfile profile= repository.findByUserId(userId);
+			
 			// generate code
 			String codeStr;
-			int count = 0;
-			do {
-				count +=1;
-				int code = RandomUtils.nextInt(10000);
-				codeStr = String.valueOf(code);			
-			} while (pendingUsers.containsKey(codeStr) && count < 5000);
-			if (count >= 5000) {
-				throw new RuntimeException("Code generation: too many pending users !!");
-			}
+			int code = RandomUtils.nextInt(10000);
+			codeStr = String.valueOf(code);			
 
 			// save code
-			// TODO ? persistent with Mongo ?
-			pendingUsers.put(codeStr, profile);
+			String key = ame.getToken()+"#"+codeStr;
+			pendingUsers.put(key, ame);
+			
 			// publish
 			Publisher<MultiFactorMessage> p =  PublisherFactory.getMFAPublisher();
 			MultiFactorMessage mfam;
@@ -236,8 +232,16 @@ public class UserManagerImpl implements UserManager {
 	
 	@Override
 	public AuthenticationMessage loginMFACode(String token, String code) {
-		//check if the code is correct and is associated to the token  
-		return null;
+
+		String key = token + "#" + code;
+		AuthenticationMessage ame = pendingUsers.get(key);
+		if (ame == null){
+			AuthenticationMessage error =  new AuthenticationMessageImpl();
+			error.setStatus(ResponseStatus.FAILED)
+				 .setMessage("LoginMFAcode failed");
+			return error;
+		}
+		return ame;
 	}
 
 	/* (non-Javadoc)
@@ -332,9 +336,10 @@ public class UserManagerImpl implements UserManager {
 				profile.getPassword(), profile.getRole(),timeLimit);
 		
 		ame.setTimeZone(ZoneId.systemDefault().getId())
-		.setRenewable(TTL);
+		   .setRenewable(TTL)
+		   .setToken(Utils.generateToken());
+		
 		return ame;
-
 	}
 
 	

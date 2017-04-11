@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +51,12 @@ public class Utils {
 	
 	}
 
+	
 
-
+	public static String generateToken() {
+	  UUID uniqueKey = UUID.randomUUID();
+	  return uniqueKey.toString();
+	}
 	
 	
 
