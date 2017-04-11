@@ -241,6 +241,8 @@ public class UserManagerImpl implements UserManager {
 				 .setMessage("LoginMFAcode failed");
 			return error;
 		}
+		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
+		p.publish(ame);
 		return ame;
 	}
 
