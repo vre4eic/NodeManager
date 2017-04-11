@@ -5,10 +5,12 @@ package eu.vre4eic.evre.nodeservice.usermanager.impl;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -28,7 +30,7 @@ import eu.vre4eic.evre.core.messages.MetadataMessage;
 import eu.vre4eic.evre.core.messages.MultiFactorMessage;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MessageImpl;
-import eu.vre4eic.evre.core.messages.impl.MultiFactorMEssageImpl;
+import eu.vre4eic.evre.core.messages.impl.MultiFactorMessageImpl;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
@@ -42,6 +44,10 @@ import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 @Configuration
 
 public class UserManagerImpl implements UserManager {
+	
+	
+	private Hashtable<String, UserProfile> pendingUsers = new Hashtable<String,UserProfile>();
+
 
 	@Autowired
 	private UserProfileRepository repository;
@@ -214,17 +220,39 @@ public class UserManagerImpl implements UserManager {
 	 */
 	@Override
 	public Message loginMFA(String userId, String password) {
+		
+		// check credentials
+		UserProfile profile= repository.findByUserId(userId);		
+		if (profile==null || !password.equals(profile.getPassword()))
+			return (new MessageImpl("Error, credentials not valid", ResponseStatus.FAILED));
+
+		
+		// generate code
+		String codeStr;
+		int count = 0;
+		do {
+			count +=1;
+			int code = RandomUtils.nextInt(10000);
+			codeStr = String.valueOf(code);			
+		} while (pendingUsers.containsKey(codeStr) && count < 5000);
+		if (count >= 5000) {
+			throw new RuntimeException("Code generation: too many pending users !!");
+		}
+		
+		// save code
+		// TODO ? persistent with Mongo ?
+		pendingUsers.put(codeStr, profile);
+		
+		
+		// publish
 		Publisher<MultiFactorMessage> p =  PublisherFactory.getMFAPublisher();
 		MultiFactorMessage mfam;
  
-		mfam = new MultiFactorMEssageImpl("", ResponseStatus.IN_PROGRESS);
+		mfam = new MultiFactorMessageImpl("", ResponseStatus.IN_PROGRESS);
 		
-		UserProfile profile= repository.findByUserId(userId);
-		
-		if (profile==null || !password.equals(profile.getPassword()))
-			return (new MessageImpl("Error, credentials not valid", ResponseStatus.FAILED));
 		mfam.setAuthId(profile.getAuthId());
 		mfam.setUserId(profile.getUserId());
+		mfam.setCode(codeStr);
 		p.publish(mfam);
 		
 		return (new MessageImpl("Please check your authenticator for code", ResponseStatus.SUCCEED));

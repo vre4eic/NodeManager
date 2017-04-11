@@ -34,7 +34,7 @@ import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.MultiFactorMessage;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MessageImpl;
-import eu.vre4eic.evre.core.messages.impl.MultiFactorMEssageImpl;
+import eu.vre4eic.evre.core.messages.impl.MultiFactorMessageImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
