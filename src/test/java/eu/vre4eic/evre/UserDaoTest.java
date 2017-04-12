@@ -67,7 +67,7 @@ public class UserDaoTest {
 /*
  * Test the insert of a new User profile
  */
-	//@Test
+	@Test
 	public final void testInsertUserProfile() {
 		
 		repository.save(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
@@ -168,6 +168,8 @@ public class UserDaoTest {
 		//check if token is valid
 		
 		assertEquals(UserDaoTest.mfmCode.size(), 1);
+		
+		userMI.loginMFACode(ame.getToken(), UserDaoTest.mfmCode.get(0));
 		
 	}
 	public void updateMFMQueue(int id, String code){

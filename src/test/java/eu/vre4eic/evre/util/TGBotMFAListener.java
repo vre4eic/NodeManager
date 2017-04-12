@@ -16,25 +16,21 @@ public class TGBotMFAListener implements MessageListener<MultiFactorMessage>{
 	
 	private UserDaoTest module;
 	private Logger log = LoggerFactory.getLogger(this.getClass());
-	private Vector<String > authTable;
+	//private Vector<String > authTable;
 	
 	public  TGBotMFAListener(UserDaoTest authModule) {
 		this.module = authModule;
-		authTable=new Vector<String>();
+		
 	}
 	
-	/* (non-Javadoc)
-	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
-	 */
+	
 	@Override
 	public void onMessage(MultiFactorMessage message) {
 
 		log.info("##### authentication message arrived #####");
 
-			if ( !authTable.contains(message.getUserId())){
-				authTable.add(message.getUserId());
-				module.updateMFMQueue(new Integer(message.getAuthId()), message.getCode());     
-			}
+		module.updateMFMQueue(new Integer(message.getAuthId()), message.getCode());     
+			
 
 	}
 
