@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +56,16 @@ public class Utils {
 	
 
 	public static String generateToken() {
-	  UUID uniqueKey = UUID.randomUUID();
-	  return uniqueKey.toString();
+		UUID uniqueKey = UUID.randomUUID();
+		return uniqueKey.toString();
 	}
+	
+	public static String generateCode() {
+		int code = RandomUtils.nextInt(100000);
+		String codeStr = String.valueOf(code);	
+		return StringUtils.leftPad(codeStr, 5, "0");
+	}
+
 	
 	
 

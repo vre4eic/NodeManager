@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -45,7 +46,9 @@ import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 
 public class UserManagerImpl implements UserManager {
 
-	LocalDateTime timeLimit;
+	static int TOKEN_TIMEOT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT"));
+	static int CODE_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT"));
+
 
 	private Hashtable<String, AuthenticationMessage> pendingUsers = new Hashtable<String,AuthenticationMessage>();
 
@@ -206,12 +209,10 @@ public class UserManagerImpl implements UserManager {
 			UserProfile profile= repository.findByUserId(userId);
 			
 			// generate code
-			String codeStr;
-			int code = RandomUtils.nextInt(10000);
-			codeStr = String.valueOf(code);			
+			String code = Utils.generateCode();
 
 			// save code
-			String key = ame.getToken()+"#"+codeStr;
+			String key = ame.getToken()+"#"+code;
 			pendingUsers.put(key, ame);
 			
 			// publish
@@ -222,7 +223,7 @@ public class UserManagerImpl implements UserManager {
 
 			mfam.setAuthId(profile.getAuthId());
 			mfam.setUserId(profile.getUserId());
-			mfam.setCode(codeStr);
+			mfam.setCode(code);
 			p.publish(mfam);
 			
 		}
@@ -242,6 +243,8 @@ public class UserManagerImpl implements UserManager {
 			return error;
 		}
 		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
+		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TOKEN_TIMEOT);
+		ame.setTimeLimit(timeLimit);
 		p.publish(ame);
 		return ame;
 	}
@@ -333,7 +336,7 @@ public class UserManagerImpl implements UserManager {
 		if (profile==null || !password.equals(profile.getPassword()))
 			return ame;
 		
-		timeLimit = LocalDateTime.now().plusMinutes(Integer.valueOf(TTL));
+		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TOKEN_TIMEOT);
 		ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
 				profile.getPassword(), profile.getRole(),timeLimit);
 		
