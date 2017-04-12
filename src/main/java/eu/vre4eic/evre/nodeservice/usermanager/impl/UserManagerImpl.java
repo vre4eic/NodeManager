@@ -46,8 +46,8 @@ import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 
 public class UserManagerImpl implements UserManager {
 
-	static int TOKEN_TIMEOT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT"));
-	static int CODE_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT"));
+	static int TOKEN_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT"));
+	static int CODE_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty("CODE_TIMEOUT"));
 
 
 	private Hashtable<String, AuthenticationMessage> pendingUsers = new Hashtable<String,AuthenticationMessage>();
@@ -210,10 +210,16 @@ public class UserManagerImpl implements UserManager {
 			
 			// generate code
 			String code = Utils.generateCode();
+			
+			// set code expiration time
+			LocalDateTime codeTimeLimit = LocalDateTime.now().plusMinutes(CODE_TIMEOUT);
+			ame.setTimeLimit(codeTimeLimit);
 
 			// save code
 			String key = ame.getToken()+"#"+code;
-			pendingUsers.put(key, ame);
+			synchronized (pendingUsers) {
+				pendingUsers.put(key, ame);
+			}
 			
 			// publish
 			Publisher<MultiFactorMessage> p =  PublisherFactory.getMFAPublisher();
@@ -235,15 +241,26 @@ public class UserManagerImpl implements UserManager {
 	public AuthenticationMessage loginMFACode(String token, String code) {
 
 		String key = token + "#" + code;
-		AuthenticationMessage ame = pendingUsers.remove(key);
+		AuthenticationMessage ame;
+		synchronized (pendingUsers) {
+			ame = pendingUsers.remove(key);			
+		}
+		
 		if (ame == null){
 			AuthenticationMessage error =  new AuthenticationMessageImpl();
 			error.setStatus(ResponseStatus.FAILED)
 				 .setMessage("LoginMFAcode failed");
 			return error;
 		}
+		if (isCodeExpired(ame)){
+			AuthenticationMessage error =  new AuthenticationMessageImpl();
+			error.setStatus(ResponseStatus.FAILED)
+				 .setMessage("Code expired, please login again !");
+			return error;
+		}
+		
 		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
-		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TOKEN_TIMEOT);
+		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TOKEN_TIMEOUT);
 		ame.setTimeLimit(timeLimit);
 		p.publish(ame);
 		return ame;
@@ -322,9 +339,6 @@ public class UserManagerImpl implements UserManager {
 
 	private AuthenticationMessage getLoginMessage(String login, String password){
 
-		String TTL = Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT");
-
-
 		AuthenticationMessage ame;
 
 		ame = new AuthenticationMessageImpl(Common.ResponseStatus.FAILED, "Invalid credentials",
@@ -336,15 +350,22 @@ public class UserManagerImpl implements UserManager {
 		if (profile==null || !password.equals(profile.getPassword()))
 			return ame;
 		
-		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TOKEN_TIMEOT);
+		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TOKEN_TIMEOUT);
 		ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
 				profile.getPassword(), profile.getRole(),timeLimit);
 		
 		ame.setTimeZone(ZoneId.systemDefault().getId())
-		   .setRenewable(TTL)
+		   .setRenewable(String.valueOf(TOKEN_TIMEOUT))
 		   .setToken(Utils.generateToken());
 		
 		return ame;
+	}
+
+	
+	private boolean isCodeExpired (AuthenticationMessage am) {
+		ZoneId zone = ZoneId.of(am.getTimeZone());
+		LocalDateTime now = LocalDateTime.now(zone);
+		return now.isAfter(am.getTimeLimit());
 	}
 
 	
