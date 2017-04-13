@@ -82,7 +82,7 @@ public class UserDaoTest {
 	/*
 	 * Test the insert of a new User profile
 	 */
-	//@Test
+	@Test
 	public final void testInsertUserProfile2() {	
 		repository.save(new EVREUserProfile("userId", "userPWD", "Name","my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
@@ -94,7 +94,7 @@ public class UserDaoTest {
 	/*
 	 * Test the login logout
 	 */
-	//@Test
+	@Test
 	public final void testLoginLogout() {	
 		
 		Properties property = Utils.getNodeServiceProperties();
@@ -108,7 +108,7 @@ public class UserDaoTest {
 		// execute a login
 		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
 	
-		userMI.login(uc);
+		AuthenticationMessage ame= userMI.login(uc);
 		//wait for authentication message being dispatched
 		
 		
@@ -119,11 +119,11 @@ public class UserDaoTest {
 			e.printStackTrace();
 		}
 		//check if token is valid
-		Boolean auth=module.checkToken("userPWD");
+		Boolean auth=module.checkToken(ame.getToken());
 		assertEquals(auth, true);
 		
 		//logout
-		userMI.logout("userPWD");
+		userMI.logout(ame.getToken());
 		//wait for authentication message being dispatched
 		
 		try {
@@ -134,7 +134,7 @@ public class UserDaoTest {
 			e.printStackTrace();
 		}
 		//check if token is no longer valid
-		auth=module.checkToken("userPWD");
+		auth=module.checkToken(ame.getToken());
 		assertEquals(auth, false);
 		
 	}
@@ -177,7 +177,7 @@ public class UserDaoTest {
 		UserDaoTest.mfmCode.add(code);
 	}
 	
-	//@Test
+	@Test
 	public final void testUpdateUserProfile() {	
 		
 		Properties property = Utils.getNodeServiceProperties();
@@ -185,13 +185,13 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(brokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD1", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
-		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
+		UserCredentials uc= new UserCredentialsImpl("userId1", "userPWD1");
 	
-		userMI.login(uc);
+		AuthenticationMessage ame=userMI.login(uc);
 		//wait for authentication message being dispatched
 		
 		
@@ -202,11 +202,11 @@ public class UserDaoTest {
 			e.printStackTrace();
 		}
 		//check if token is valid
-		Boolean auth=module.checkToken("userPWD");
-		assertEquals(auth, true);
+		Boolean auth=module.checkToken(ame.getToken());
+		assertEquals(true, auth);
 		
 		//logout
-		userMI.logout("userPWD");
+		userMI.logout(ame.getToken());
 		//wait for authentication message being dispatched
 		
 		try {
@@ -219,10 +219,10 @@ public class UserDaoTest {
 		//check if token is no longer valid
 		auth=module.checkToken("userPWD");
 		assertEquals(auth, false);
-		mes=userMI.updateUserProfile("userId", new EVREUserProfile("userId", "userPWDupdate", "Nameupdate", "my_organization", eu.vre4eic.evre.core.Common.UserRole.CONTROLLER, 
+		mes=userMI.updateUserProfile("userId1", new EVREUserProfile("userId1", "userPWDupdate", "Nameupdate", "my_organization", eu.vre4eic.evre.core.Common.UserRole.CONTROLLER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
-		EVREUserProfile eup= userMI.getUserProfile("userId");
+		EVREUserProfile eup= userMI.getUserProfile("userId1");
 		assertEquals("userPWDupdate", eup.getPassword());
 		
 	}

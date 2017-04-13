@@ -16,6 +16,8 @@ import java.util.List;
 
 
 
+
+
 import javax.jms.JMSException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.EvreEvent;
 import eu.vre4eic.evre.core.UserProfile;
 import eu.vre4eic.evre.core.impl.EVREUserProfile;
+import eu.vre4eic.evre.core.impl.UserCredentialsImpl;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.MultiFactorMessage;
@@ -42,6 +45,7 @@ import eu.vre4eic.evre.core.Common.UserRole;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
+import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 
@@ -64,9 +68,11 @@ public class UserController {
 	@Autowired
 	private UserManagerImpl userManager;
 
+	private AuthModule authModule;
 
 	public UserController()  {
 		super();
+		authModule = AuthModule.getInstance("tcp://v4e-lab.isti.cnr.it:61616");
 
 	}
 
@@ -79,19 +85,8 @@ public class UserController {
 			@RequestParam(value="password") String password) {
 
 
-		userManager.createUserProfile(new EVREUserProfile(userId, password, name, organization, role, email, "0", "0"));
-		//repository.save(new EVREUserProfile(userId, password, name, role, email,snsId, authId));
-		System.out.println("UC: Users found with findAll():");
-		System.out.println("-------------------------------");
-		for (UserProfile userp : repository.findAll()) {
-			System.out.println(userp);
-		}
-		System.out.println();
-		System.out.println("-------------------------------");
-		System.out.println(repository.findByRole(Common.UserRole.RESEARCHER));
-
-		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
-
+		return(userManager.createUserProfile(new EVREUserProfile(userId, password, name, organization, role, email, "0", "0")));
+	
 	}
 
 	@ApiOperation(value = "Updates the information in a profile of a user ", 
@@ -129,29 +124,8 @@ public class UserController {
 	@RequestMapping(value="/user/login", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 
 	public AuthenticationMessage login(@ApiParam(name = "username", value = "Alphanumeric string", required = true) @RequestParam(value="username") String username, @ApiParam(name = "pwd", value = "Alphanumeric string", required = true) @RequestParam(value="pwd") String pwd) {
-		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
-		AuthenticationMessage m = new AuthenticationMessageImpl();
-
-		String token = pwd;
-
-		m.setToken(token);
-
-		// to do clock synchronization
-		String TTL = Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT");
-		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(Integer.valueOf(TTL));
-		m.setTimeZone(ZoneId.systemDefault().getId())
-		.setTimeLimit(timeLimit)
-		.setRenewable(TTL);
-
-		// fake Role
-		m.setRole(UserRole.OPERATOR);
-
-		// publish message on authentication topic
-		p.publish(m);
-
-
-
-		return m;
+		return (userManager.login(new UserCredentialsImpl(username, pwd)));
+		
 	}
 
 	@ApiOperation(value = "Authenticates a user with a <i>Two-factor authentication</i> procedure", 
@@ -212,7 +186,13 @@ public class UserController {
 	@RequestMapping(value="/user/removeprofile", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Message removeUserProfile(@RequestParam(value="token") String token, @RequestParam(value="id") String userId) {
 
-		return null;
+		//check if the token is valid
+		 if (authModule.checkToken(token)){
+			 //Check if it is authorized to remove: TBD
+			 return userManager.removeUserProfile(userId);
+		 }
+
+		return( new MessageImpl("Operation not permited!", Common.ResponseStatus.FAILED));
 	}
 
 	@ApiOperation(value = "Gets a user profile based on user id", 
