@@ -188,7 +188,7 @@ public class AuthModule {
 	
 	
 	private void doRenew(AuthenticationMessage am, LocalDateTime now) {
-		log.info("########### dorenew ##########");
+		log.info("########### renew check ##########");
 		log.info(am.getTimeLimit().toString());
 		int renewable = Integer.valueOf(am.getRenewable());
 		LocalDateTime halftime = am.getTimeLimit().minusMinutes(renewable/2);
