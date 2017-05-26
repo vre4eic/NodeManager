@@ -123,7 +123,23 @@
         <artifactId>telegrambots</artifactId>
         <version>2.4.4.5</version>
     </dependency>
-    
+
+        <dependency>
+        	<groupId>org.apache.curator</groupId>
+        	<artifactId>apache-curator</artifactId>
+        	<version>3.3.0</version>
+        	<type>pom</type>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.curator</groupId>
+        	<artifactId>curator-client</artifactId>
+        	<version>3.3.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.curator</groupId>
+        	<artifactId>curator-framework</artifactId>
+        	<version>3.3.0</version>
+        </dependency>
 	</dependencies>
 	
 	
@@ -158,10 +174,11 @@
 				<configuration>
 
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<webResources>
+<!-- -->				<webResources>
 						 <resource> <directory>doc</directory> <targetPath>doc</targetPath> 
 							</resource>
 					</webResources>
+
 					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
