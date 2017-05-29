@@ -27,7 +27,7 @@ public class TGBotMFAListener implements MessageListener<MultiFactorMessage>{
 	@Override
 	public void onMessage(MultiFactorMessage message) {
 
-		log.info("##### authentication message arrived #####");
+		log.info("##### MultiFactorMessage message arrived #####");
 
 		module.updateMFMQueue(new Integer(message.getAuthId()), message.getCode());     
 			

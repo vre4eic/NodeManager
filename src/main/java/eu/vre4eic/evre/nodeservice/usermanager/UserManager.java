@@ -35,7 +35,9 @@ public interface UserManager {
 	public EVREUserProfile getUserProfile(UserCredentials credentials);
 	
 
-	public List <UserProfile> getUserProfile(EvreQuery query);
+	public List <EVREUserProfile> getUserProfile(EvreQuery query);
+	
+	public List <EVREUserProfile> getAllUserProfiles();
 	
 	public Message subscribeEvent(String idUser, List <EvreEvent> events);
 	

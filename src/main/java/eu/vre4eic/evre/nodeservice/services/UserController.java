@@ -18,10 +18,14 @@ import java.util.List;
 
 
 
+
+import java.util.Vector;
+
 import javax.jms.JMSException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -78,6 +82,7 @@ public class UserController {
 
 	@ApiOperation(value = "Creates a user profile on e-VRE", 
 			notes = "Creates a  user profile on e-VRE", response = Message.class)
+	//@CrossOrigin(origins = "*")
 	@RequestMapping(value="/user/createprofile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 
 	public  Message createUserProfile(@RequestParam(value="userid") String userId, @RequestParam(value="name") String name, 
@@ -86,7 +91,7 @@ public class UserController {
 
 
 		return(userManager.createUserProfile(new EVREUserProfile(userId, password, name, organization, role, email, "0", "0")));
-	
+
 	}
 
 	@ApiOperation(value = "Updates the information in a profile of a user ", 
@@ -98,14 +103,17 @@ public class UserController {
 			@RequestParam(value="email") String email, @RequestParam(value="organization") String organization, @RequestParam(value="role") UserRole role, 
 			@RequestParam(value="password") String password){
 
-		if (repository.findOne(userId)!=null){
-			repository.save(new EVREUserProfile(userId, password, name, organization, role, email,"0", "0"));
+		if (authModule.checkToken(token)){
+			if (repository.findOne(userId)!=null){
+				repository.save(new EVREUserProfile(userId, password, name, organization, role, email,"0", "0"));
 
-			return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
+				return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
+			}
+
+			return( new MessageImpl("User Profile not found", Common.ResponseStatus.FAILED));
 		}
+		return( new MessageImpl("Operation not permited!", Common.ResponseStatus.FAILED));
 
-
-		return( new MessageImpl("User Profile not found", Common.ResponseStatus.FAILED));
 	}
 
 	@ApiOperation(value = "Removes the profile of a user from e-VRE", 
@@ -125,7 +133,7 @@ public class UserController {
 
 	public AuthenticationMessage login(@ApiParam(name = "username", value = "Alphanumeric string", required = true) @RequestParam(value="username") String username, @ApiParam(name = "pwd", value = "Alphanumeric string", required = true) @RequestParam(value="pwd") String pwd) {
 		return (userManager.login(new UserCredentialsImpl(username, pwd)));
-		
+
 	}
 
 	@ApiOperation(value = "Authenticates a user with a <i>Two-factor authentication</i> procedure", 
@@ -135,10 +143,10 @@ public class UserController {
 
 	public Message loginMfa(@ApiParam(name = "username", value = "Alphanumeric string", required = true) @RequestParam(value="username") String username, 
 			@ApiParam(name = "pwd", value = "Alphanumeric string", required = true) @RequestParam(value="pwd") String pwd) {
-	
+
 		return userManager.loginMFA(username, pwd);
 	}
-	
+
 	@ApiOperation(value = "Invoked to complete the <i>Two-factor authentication</i> procedure started by a user ", 
 			notes = "Authenticates a user on e-VRE system by completing the Two-Factor athentication procedure", 
 			response = Message.class)
@@ -146,7 +154,7 @@ public class UserController {
 
 	public Message loginMfaCode(@ApiParam(name = "token", value = "Alphanumeric string", required = true) @RequestParam(value="token") String token, 
 			@ApiParam(name = "code", value = "Alphanumeric string", required = true) @RequestParam(value="code") String code) {
-	
+
 		return userManager.loginMFACode(token, code);
 	}
 
@@ -187,10 +195,10 @@ public class UserController {
 	public Message removeUserProfile(@RequestParam(value="token") String token, @RequestParam(value="id") String userId) {
 
 		//check if the token is valid
-		 if (authModule.checkToken(token)){
-			 //Check if it is authorized to remove: TBD
-			 return userManager.removeUserProfile(userId);
-		 }
+		if (authModule.checkToken(token)){
+			//Check if it is authorized to remove: TBD
+			return userManager.removeUserProfile(userId);
+		}
 
 		return( new MessageImpl("Operation not permited!", Common.ResponseStatus.FAILED));
 	}
@@ -200,6 +208,9 @@ public class UserController {
 	@RequestMapping(value= "/user/getprofile", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserProfile getUserProfile(@RequestParam(value="token") String token, @RequestParam(value="userLogin") String userId) {
 
+		if (authModule.checkToken(token)){
+			return userManager.getUserProfile(userId);
+		}
 		return null;
 	}
 
@@ -209,8 +220,15 @@ public class UserController {
 			responseContainer="List")
 	@RequestMapping(value= "/user/getprofiles", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserProfile> getUserProfiles(@RequestParam(value="token") String token) {
+		List <UserProfile> profiles=new Vector<UserProfile>();
+		if (authModule.checkAdminToken(token)){
+			List <EVREUserProfile> temp= userManager.getAllUserProfiles();
+			for (EVREUserProfile p:temp){
+				profiles.add(p);
+			}
+		}
 
-		return null;
+		return profiles;
 	}
 
 	@ApiOperation(value = "Subscribes to a list of e-VRE events", 

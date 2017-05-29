@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.UserCredentials;
+import eu.vre4eic.evre.core.UserProfile;
 import eu.vre4eic.evre.core.comm.Subscriber;
 import eu.vre4eic.evre.core.comm.SubscriberFactory;
 import eu.vre4eic.evre.core.impl.EVREUserProfile;
@@ -136,6 +137,124 @@ public class UserDaoTest {
 		//check if token is no longer valid
 		auth=module.checkToken(ame.getToken());
 		assertEquals(auth, false);
+		
+	}
+	/*
+	 * Test: create a profile, login, get the User Profile, logout
+	 */
+	@Test
+	public final void testCreateGetProfile() {	
+		
+		Properties property = Utils.getNodeServiceProperties();
+		String brokerURL =  property.getProperty("BROKER_URL");
+		
+		module = AuthModule.getInstance(brokerURL);
+		//save a user profile
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+				"email@domain","snsId", "11"));
+		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
+		// execute a login
+		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
+	
+		AuthenticationMessage ame= userMI.login(uc);
+		//wait for authentication message being dispatched
+		
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is valid
+		Boolean auth=module.checkToken(ame.getToken());
+		assertEquals(auth, true);
+		UserProfile up=userMI.getUserProfile("userId");
+		assertEquals(up.getUserId(), "userId");
+		//logout
+		userMI.logout(ame.getToken());
+		//wait for authentication message being dispatched
+		
+		try {
+			
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is no longer valid
+		auth=module.checkToken(ame.getToken());
+		assertEquals(auth, false);
+		
+	}
+	
+	/*
+	 * Test: create an admin profile, login, get the User Profile, logout
+	 */
+	@Test
+	public final void testCreateGetAllProfiles() {	
+		
+		Properties property = Utils.getNodeServiceProperties();
+		String brokerURL =  property.getProperty("BROKER_URL");
+		
+		module = AuthModule.getInstance(brokerURL);
+		//save a user profile
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.ADMIN, 
+				"email@domain","snsId", "11"));
+		Message mes1=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+				"email@domain","snsId", "11"));
+		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
+		// execute a login
+		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
+	
+		
+		UserCredentials ucR= new UserCredentialsImpl("userId1", "userPWD");
+		AuthenticationMessage ame= userMI.login(uc);
+		//wait for authentication message being dispatched
+		
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is valid
+		Boolean auth=module.checkAdminToken(ame.getToken());
+		assertEquals(auth, true);
+		List<EVREUserProfile> up=userMI.getAllUserProfiles();
+		
+		assertEquals(up.size(), 2);
+		AuthenticationMessage ameR= userMI.login(ucR);
+		
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is valid
+		Boolean authR=module.checkAdminToken(ameR.getToken());
+		assertEquals(authR, false);
+		
+		//logout
+		userMI.logout(ame.getToken());
+		userMI.logout(ameR.getToken());
+		//wait for authentication message being dispatched
+		
+		try {
+			
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is no longer valid
+		auth=module.checkToken(ame.getToken());
+		assertEquals(auth, false);
+		authR=module.checkToken(ameR.getToken());
+		assertEquals(authR, false);
 		
 	}
 	

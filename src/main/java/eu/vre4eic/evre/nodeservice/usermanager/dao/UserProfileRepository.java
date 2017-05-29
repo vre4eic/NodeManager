@@ -14,5 +14,5 @@ public interface UserProfileRepository extends MongoRepository <EVREUserProfile,
     public List<EVREUserProfile> findByRole(UserRole role);
     public List<EVREUserProfile> findByPassword(String passsword);
     public EVREUserProfile findByEmail(String email);
-
+    
 }
