@@ -7,8 +7,11 @@ import java.util.Hashtable;
 import java.util.Map.Entry;
 
 import javax.jms.JMSException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.ControlMessage;
 import eu.vre4eic.evre.core.comm.Publisher;
@@ -201,6 +204,40 @@ public class AuthModule {
 
 	}
 
+	//Cesare
+		/**
+		 * It must be used to check validity of an admin token  
+		 * @param token - the token received with a service invocation
+		 * @return true - if the token is valid
+		 */
+		public boolean checkAdminToken (String token) {
+			if (AuthTable == null) {
+				getInstance();
+				return false;
+			}
+			
+			// granularity on AuthTable Lock could be reduced when renewing
+			synchronized(AuthTable) {
+				if (AuthTable.containsKey(token)) {
+					AuthenticationMessage am = AuthTable.get(token);
+					if (am.getRole()!=Common.UserRole.ADMIN)
+						return false;
+					ZoneId zone = ZoneId.of(am.getTimeZone());
+					LocalDateTime now = LocalDateTime.now(zone);
+					if (now.isBefore(am.getTimeLimit())){ // token valid
+						doRenew(am, now);
+						return true;
+					}
+					else { // token expired
+						AuthTable.remove(token);
+						return false;			
+					}
+
+				}
+			}
+			return false;				
+		}
+		
 	
 	/**
 	 *  helper method to remove the expired token
