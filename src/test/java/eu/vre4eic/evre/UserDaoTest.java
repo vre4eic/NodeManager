@@ -220,7 +220,7 @@ public class UserDaoTest {
 			e.printStackTrace();
 		}
 		//check if token is valid
-		Boolean auth=module.checkAdminToken(ame.getToken());
+		Boolean auth=module.checkToken(ame.getToken(), Common.UserRole.ADMIN);
 		assertEquals(auth, true);
 		List<EVREUserProfile> up=userMI.getAllUserProfiles();
 		
@@ -235,7 +235,7 @@ public class UserDaoTest {
 			e.printStackTrace();
 		}
 		//check if token is valid
-		Boolean authR=module.checkAdminToken(ameR.getToken());
+		Boolean authR=module.checkToken(ameR.getToken(), Common.UserRole.ADMIN);
 		assertEquals(authR, false);
 		
 		//logout

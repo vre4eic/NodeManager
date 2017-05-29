@@ -221,7 +221,7 @@ public class UserController {
 	@RequestMapping(value= "/user/getprofiles", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserProfile> getUserProfiles(@RequestParam(value="token") String token) {
 		List <UserProfile> profiles=new Vector<UserProfile>();
-		if (authModule.checkAdminToken(token)){
+		if (authModule.checkToken(token, Common.UserRole.ADMIN)){
 			List <EVREUserProfile> temp= userManager.getAllUserProfiles();
 			for (EVREUserProfile p:temp){
 				profiles.add(p);

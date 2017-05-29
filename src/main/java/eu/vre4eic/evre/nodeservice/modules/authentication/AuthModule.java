@@ -206,11 +206,12 @@ public class AuthModule {
 
 	//Cesare
 		/**
-		 * It must be used to check validity of an admin token  
+		 * It must be used to check validity of a token with a specific role  
 		 * @param token - the token received with a service invocation
+		 * @param role - the role  required for a service invocation
 		 * @return true - if the token is valid
 		 */
-		public boolean checkAdminToken (String token) {
+		public boolean checkToken (String token, Common.UserRole  role) {
 			if (AuthTable == null) {
 				getInstance();
 				return false;
@@ -220,7 +221,7 @@ public class AuthModule {
 			synchronized(AuthTable) {
 				if (AuthTable.containsKey(token)) {
 					AuthenticationMessage am = AuthTable.get(token);
-					if (am.getRole()!=Common.UserRole.ADMIN)
+					if (am.getRole()!= role)
 						return false;
 					ZoneId zone = ZoneId.of(am.getTimeZone());
 					LocalDateTime now = LocalDateTime.now(zone);
