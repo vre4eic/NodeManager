@@ -3,6 +3,8 @@
  */
 package eu.vre4eic.evre.core.messages.impl;
 
+
+
 import org.json.JSONObject;
 
 import eu.vre4eic.evre.core.Common.MetadataOperationType;
@@ -20,6 +22,7 @@ public class MetadataMessageImpl extends MessageImpl implements MetadataMessage 
 	
 	private String token;
 	private MetadataOperationType operation;
+	private JSONObject jsonMessage;
 
 	public  MetadataMessageImpl() {
 		super();
@@ -65,18 +68,31 @@ public class MetadataMessageImpl extends MessageImpl implements MetadataMessage 
 		return this;
 	}
 	public String toJSON() {
-        JSONObject object = new JSONObject();
+        org.json.JSONObject object = new org.json.JSONObject();
         try{
         object.put("token", this.token);
         object.put("operation", this.operation.toString());
-        object.put("message", this.message);
+       // object.put("message", this.message);
         object.put("status", ""+this.status);
+        object.put("message", jsonMessage.toString());
         }
         catch(Exception e){
         	e.printStackTrace();
         }
         return object.toString();
     }
+
+	@Override
+	public void setJsonMessage(JSONObject message) {
+		this.jsonMessage=message;
+		
+	}
+
+	@Override
+	public JSONObject getJsonMessage() {
+		
+		return jsonMessage;
+	}
 
 
 }

@@ -1,10 +1,14 @@
 package eu.vre4eic.evre.core.messages;
 
+
+
+import org.json.JSONObject;
+
 import eu.vre4eic.evre.core.Common.MetadataOperationType;
 
 /**
  * This interface defines the methods  to set/get values used to notify to e-VRE services that an operation has been executed
- * by the Metadata service
+ * by the Metadata Service
  * @author Cesare
  *
  */
@@ -36,4 +40,17 @@ public interface MetadataMessage extends Message {
 	public MetadataMessage setOperation(MetadataOperationType op);
 	
 	
+	/**
+	 * Sets the message as a JSON object 
+	 * 
+	 * @param message JSONObject - the message
+	 */
+	
+	public void setJsonMessage(JSONObject message);
+	
+	/**
+	 * Returns a JSON object containing the result of the request.
+	 * @return JSONObject - a JSON object
+	 */
+	public JSONObject getJsonMessage();
 }
