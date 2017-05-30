@@ -258,6 +258,11 @@ public class UserManagerImpl implements UserManager {
 
 		if (ame.getStatus() == Common.ResponseStatus.SUCCEED){
 			UserProfile profile= repository.findByUserId(userId);
+			
+			if (profile.getAuthId().trim().equalsIgnoreCase("0")){//no auth-id associted to this account, multi-factor not available
+				return new AuthenticationMessageImpl(Common.ResponseStatus.FAILED, "Multi-factor channels not defined",
+						"", null,LocalDateTime.MIN);
+			}
 
 			// generate code
 			String code = Utils.generateCode();

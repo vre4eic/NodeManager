@@ -74,7 +74,7 @@ public class MetadataMessageImpl extends MessageImpl implements MetadataMessage 
         object.put("operation", this.operation.toString());
        // object.put("message", this.message);
         object.put("status", ""+this.status);
-        object.put("message", jsonMessage.toString());
+        object.put("message", jsonMessage);
         }
         catch(Exception e){
         	e.printStackTrace();

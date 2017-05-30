@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jms.JMSException;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -129,5 +132,33 @@ public class MetadataDaoTest {
 		assertEquals(auth, false);
 		
 	}
+	@Test
+		public final void testCreateMetadataMessage() {
+		
+		MetadataMessageImpl mm = new MetadataMessageImpl();
+		
+		JSONArray ja= new JSONArray();
+		JSONObject jo= new JSONObject();
+		try {
+			jo.put("milliseconds", "12");
+			jo.put("modified", "2017");
+			ja.put(jo);
+			JSONObject mainObj = new JSONObject();
+			mainObj.put("data", jo);
+			mm.setJsonMessage(mainObj);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		mm.setMessage("test");
+		mm.setOperation(Common.MetadataOperationType.INSERT);
+		mm.setStatus(Common.ResponseStatus.SUCCEED);
+		mm.setToken("mytoken");
+		System.out.println(mm.toJSON());
+		assertEquals(mm.getToken(), "mytoken");
+		
+			
+		}
 	
 }
