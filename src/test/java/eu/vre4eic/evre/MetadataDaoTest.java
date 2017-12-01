@@ -32,6 +32,7 @@ import eu.vre4eic.evre.core.impl.UserCredentialsImpl;
 import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
 import eu.vre4eic.evre.core.messages.impl.MetadataMessageImpl;
+import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
@@ -91,8 +92,9 @@ public class MetadataDaoTest {
 	//@Test
 	public final void testLoginLogout() {	
 		
-		Properties property = Utils.getNodeServiceProperties();
-		String brokerURL =  property.getProperty("BROKER_URL");
+		Properties nodeServiceProps = Utils.getNodeServiceProperties();
+		String brokerPath = Settings.getProperties().getProperty(Settings.MESSAGE_BROKER_PATH);
+		String brokerURL =  nodeServiceProps.getProperty(brokerPath);
 		
 		module = AuthModule.getInstance(brokerURL);
 		//save a user profile

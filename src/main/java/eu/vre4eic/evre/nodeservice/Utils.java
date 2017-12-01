@@ -26,24 +26,26 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.vre4eic.evre.core.comm.NodeLinker;
+
 public class Utils {
 	
-	private static Utils instance;
-	private static String NS_PROPERTIES = "Nodeservice.properties";
-	private static Properties property;
 	
-	private static Logger log = LoggerFactory.getLogger(getInstance().getClass());
+	private static Properties nodeServiceProps;
 	
-	private Utils(){
-		loadProperties(NS_PROPERTIES);
+	private static String DEFAULT_PROPERTIES = "Nodeservice.properties";
+	
+	private static Logger log = LoggerFactory.getLogger(Utils.class.getClass());
+	
+	public Utils(){
 	}
 	
-	private void loadProperties(String resourceName){
+	public static Properties getProperties(String resourceName){
 		InputStream in;
-		property = new Properties();
+		Properties props = new Properties();
 		try {
-			in = this.getClass().getClassLoader().getResourceAsStream(resourceName);
-			property.load(in);
+			in = Utils.class.getClassLoader().getResourceAsStream(resourceName);
+			props.load(in);
 			in.close();
 		} catch (FileNotFoundException e) {
 			log.error(e.getMessage());
@@ -51,23 +53,22 @@ public class Utils {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
+		return props;
 		
 	}
 
 	
 	public static Properties getNodeServiceProperties () {
-		if (instance == null) 
-			instance = new Utils();
-		return property;
+		if (nodeServiceProps == null)
+			try {
+				nodeServiceProps = NodeLinker.getRemoteProperties();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				nodeServiceProps = getProperties(DEFAULT_PROPERTIES);
+			}
+		return nodeServiceProps;
 	}
-	
-	public static Utils getInstance(){
-		if (instance == null) 
-			instance = new Utils();
-		return instance;
-	
-	}
-
 	
 
 	public static String generateToken() {
@@ -82,6 +83,10 @@ public class Utils {
 	}
 
 	
-	
+	public static void test(){
+		Properties prop = getNodeServiceProperties();
+		System.out.println(prop);
+		System.out.println("service:"+prop.getProperty("services"));
+	}
 
 }
