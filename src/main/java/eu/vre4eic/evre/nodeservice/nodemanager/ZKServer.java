@@ -1,4 +1,4 @@
-package eu.vre4eic.evre.test;
+package eu.vre4eic.evre.nodeservice.nodemanager;
 
 import java.io.File;
 import java.io.IOException;
