@@ -32,15 +32,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Hashtable;
 import java.util.List;
-
-
-
-
-
-
-
-
-
+import java.util.Properties;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -63,6 +55,7 @@ import eu.vre4eic.evre.core.messages.MultiFactorMessage;
 import eu.vre4eic.evre.core.messages.impl.AuthenticationMessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MultiFactorMessageImpl;
+import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
@@ -78,8 +71,13 @@ import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 
 public class UserManagerImpl implements UserManager {
 
-	static int TOKEN_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty("TOKEN_TIMEOUT"));
-	static int CODE_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty("CODE_TIMEOUT"));
+	//Properties nodeSettings = Utils.getNodeServiceProperties();
+	//Properties defaultSettings = Settings.getProperties();
+	static int TOKEN_TIMEOUT = 0;
+	static int CODE_TIMEOUT = 0;
+	
+	//static int TOKEN_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty(Settings.TOKEN_TIMEOUT_PATH));
+	//static int CODE_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty(Settings.CODE_TIMEOUT_PATH));
 
 
 	private Hashtable<String, AuthenticationMessage> pendingUsers = new Hashtable<String,AuthenticationMessage>();
@@ -92,6 +90,11 @@ public class UserManagerImpl implements UserManager {
 	 */
 	public UserManagerImpl() {
 		super();
+		
+		Properties nodeSettings = Utils.getNodeServiceProperties();
+		 Properties defaultSettings = Settings.getProperties();
+		 TOKEN_TIMEOUT = Integer.valueOf( nodeSettings.getProperty(defaultSettings.getProperty(Settings.TOKEN_TIMEOUT_PATH)));
+		 CODE_TIMEOUT = Integer.valueOf( nodeSettings.getProperty(defaultSettings.getProperty(Settings.CODE_TIMEOUT_PATH)));
 	}
 
 	/**

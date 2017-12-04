@@ -15,6 +15,8 @@
  *******************************************************************************/
 package eu.vre4eic.evre.nodeservice;
 
+import java.util.Properties;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 
@@ -23,8 +25,9 @@ import com.mongodb.MongoClient;
 
 @Configuration
 public class MongoConfig extends AbstractMongoConfiguration {
-   private String profilesStorage=Utils.getNodeServiceProperties().getProperty("PROFILES_STORAGE");
-   private int profilesStoragePort=Integer.valueOf(Utils.getNodeServiceProperties().getProperty("PROFILES_STORAGE_PORT"));
+	
+  // private String profilesStorage=Utils.getNodeServiceProperties().getProperty("PROFILES_STORAGE");
+  // private int profilesStoragePort=Integer.valueOf(Utils.getNodeServiceProperties().getProperty("PROFILES_STORAGE_PORT"));
 
     @Override
     protected String getDatabaseName() {
@@ -33,8 +36,10 @@ public class MongoConfig extends AbstractMongoConfiguration {
   
     @Override
     public Mongo mongo() throws Exception {
-        //return new MongoClient("127.0.0.1", 27017);
-        return new MongoClient(profilesStorage, profilesStoragePort);
+        return new MongoClient("127.0.0.1", 27017);
+    	//Properties defaultSettings = Settings.getProperties();
+    	
+        //return new MongoClient(profilesStorage, profilesStoragePort);
     }
   
     @Override

@@ -23,6 +23,7 @@ import org.springframework.boot.SpringApplication;
 
 import eu.vre4eic.evre.nodeservice.modules.metadata.MDModule;
 import eu.vre4eic.evre.nodeservice.modules.monitor.AdvisoryModule;
+import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
 
 //@Configuration
 //@ComponentScan
@@ -39,7 +40,17 @@ public class NodeServiceStart {
 	public static void main(String[] args) {
      //	System.out.println("Working Directory is = " +
        //         System.getProperty("user.dir"));
+		ZKServer zkServer = new ZKServer();
+        try {
+            zkServer.startService(2181);
+            zkServer.init_eVRE_Env();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+       
         SpringApplication.run(NodeServiceStart.class, args);
+        
         AdvisoryModule.getInstance();
         mdModule= MDModule.getInstance();
         
