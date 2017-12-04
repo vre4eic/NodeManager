@@ -210,7 +210,9 @@ public class UserController {
 
 		//check if the token is valid
 		if (authModule.checkToken(token)){
-			//Check if it is authorized to remove: TBD
+			
+			//Check if this user is authorized to remove: TBD
+			//Check if the user that is being removed is logged in, if yes log out it: TBD
 			return userManager.removeUserProfile(userId);
 		}
 

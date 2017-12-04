@@ -44,16 +44,9 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
-
-
-
-
-
-
-
-
-
-
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -112,8 +105,8 @@ public class UserManagerImpl implements UserManager {
 			return( new MessageImpl("Operation not executed, User Id not unique", Common.ResponseStatus.FAILED));
 
 		if (repository.save(profile)!=null)
-		//	return (this.updateAAAI(profile.getUserId(), profile.getPassword(), "evre"));
-			return new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED);
+			return (this.addUserToAAAI(profile.getUserId(), profile.getPassword(), "evre"));
+		//return new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED);
 
 
 		return( new MessageImpl("Error, please contact server admin", Common.ResponseStatus.FAILED));
@@ -137,11 +130,14 @@ public class UserManagerImpl implements UserManager {
 	@Override
 	public Message removeUserProfile(String userId) {
 		EVREUserProfile profile= repository.findByUserId(userId);
+		int entityId=this.getEntityId(userId);
 		if (profile==null)
 			return( new MessageImpl("Operation not executed, User profile not found", Common.ResponseStatus.FAILED));
-
-
-		repository.delete(profile);
+		
+		if (entityId<=0)
+			return( new MessageImpl("Operation not executed, User profile not found", Common.ResponseStatus.FAILED));
+		if (this.removeUserFromAAAI(entityId).getStatus()== Common.ResponseStatus.SUCCEED)
+			repository.delete(profile);
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 
 
@@ -179,7 +175,7 @@ public class UserManagerImpl implements UserManager {
 	 */
 	@Override
 	public List<EVREUserProfile> getUserProfile(EvreQuery query) {
-		
+
 		return null;
 	}
 
@@ -188,9 +184,9 @@ public class UserManagerImpl implements UserManager {
 	 */
 	@Override
 	public List<EVREUserProfile> getAllUserProfiles() {
-		
-			return repository.findAll();
-		
+
+		return repository.findAll();
+
 	}
 
 	/* (non-Javadoc)
@@ -262,7 +258,7 @@ public class UserManagerImpl implements UserManager {
 
 		if (ame.getStatus() == Common.ResponseStatus.SUCCEED){
 			UserProfile profile= repository.findByUserId(userId);
-			
+
 			if (profile.getAuthId().trim().equalsIgnoreCase("0")){//no auth-id associted to this account, multi-factor not available
 				return new AuthenticationMessageImpl(Common.ResponseStatus.FAILED, "Multi-factor channels not defined",
 						"", null,LocalDateTime.MIN);
@@ -428,21 +424,116 @@ public class UserManagerImpl implements UserManager {
 		return now.isAfter(am.getTimeLimit());
 	}
 
+	private Message removeUserFromAAAI(String userId){
+		int entityId=getEntityId (userId);
+		if (entityId==-1){
+			return( new MessageImpl("The user id is invalid: "+userId, Common.ResponseStatus.FAILED));
+		}
+		return removeUserFromAAAI(entityId);
+	}
 
-	private Message updateAAAI(String userId, String pass, String groupId){
+	private int getEntityId(String userId){
+
+		String userPassword = "admin" + ":" + "LDAD5aKoC7";
+		int entityId=0;
+		String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
+		try{
+
+			// delete an entity
+
+			URL myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/resolve/userName/"+userId);//remove entity
+			HttpsURLConnection conn = (HttpsURLConnection) myUrl.openConnection();
+
+			conn.setRequestMethod("DELETE");
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setRequestProperty("Authorization", "Basic "+encoding );
+
+			InputStream inputStream = conn.getInputStream();
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+			String line = "";
+			JSONObject obj=null;
+			while ((line = bufferedReader.readLine()) != null) {
+				obj = new JSONObject(line);
+				System.out.println(line);
+				if (obj.has("id"))
+					entityId=obj.getInt("id");
+				else{
+					if (obj.has("error"))
+						entityId=-1;
+				}
+				
+			}
+			
+			bufferedReader.close();
+			inputStream.close();
+			conn.disconnect();
+
+		}
+		catch (Exception e){
+			return entityId;
+		}
+		return entityId;
+
+	}
+	private Message removeUserFromAAAI(int entityId){
+
+		String userPassword = "admin" + ":" + "LDAD5aKoC7";
+
+		String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
+		try{
+
+			// delete an entity
+
+			URL myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/entity/"+entityId);//remove entity
+
+			HttpsURLConnection conn = (HttpsURLConnection) myUrl.openConnection();
+
+			conn.setRequestMethod("DELETE");
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setRequestProperty("Authorization", "Basic "+encoding );
+
+			InputStream inputStream = conn.getInputStream();
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+			String line = "";
+			JSONObject obj=null;
+			while ((line = bufferedReader.readLine()) != null) {
+				obj = new JSONObject(line);
+				System.out.println(line);
+			}
+			bufferedReader.close();
+			inputStream.close();
+			conn.disconnect();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return( new MessageImpl("Error user not removed from AAAI, please contact the server admin", Common.ResponseStatus.FAILED));
+
+		}
+		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
+	}
+
+	private Message addUserToAAAI(String userId, String pass, String groupId){
+		int entityId = 0;
 		try {
 
 			//need to set these in the config file
 			String userPassword = "admin" + ":" + "LDAD5aKoC7";
 			//in AAI: @Path("/group/{groupPath}/entity/{entityId}")
+			//String credential=URLEncoder.encode("{\"password\":\""+pass+"\", \"answer\":\"Some answer\",\"question\":0}", "UTF-8") ;
+			JSONObject objCred=new JSONObject();
+			objCred.put("password", pass);
+			objCred.put("answer", "Some answer");
+			objCred.put("question", "a question");
 			String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
 			String credentialReq = URLEncoder.encode("Password requirement", "UTF-8") ;
 			String postData = URLEncoder.encode("group/CWI", "UTF-8") ;
-			
+
 			// create new entity
-			
+
 			URL myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/entity/identity/userName/"+userId+"?credentialRequirement="+credentialReq);//add entity
-			
+
 			HttpsURLConnection conn = (HttpsURLConnection) myUrl.openConnection();
 
 			conn.setRequestMethod("POST");
@@ -455,51 +546,100 @@ public class UserManagerImpl implements UserManager {
 			InputStream inputStream = conn.getInputStream();
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 			String line = "";
+			JSONObject obj=null;
 			while ((line = bufferedReader.readLine()) != null) {
+				obj = new JSONObject(line);
+				entityId=obj.getInt("entityId");
 				System.out.println(line);
 			}
 			bufferedReader.close();
 			inputStream.close();
 			conn.disconnect();
-			
+
 			//add password to entity
-			//{"password":"newpass","answer":"Some answer","question":1}
-			///entity/{entityId}/credential-adm/{credential}, @QueryParam("identityType"), PUT
-			String credential=URLEncoder.encode("{\"password\":\""+pass+"\", \"answer\":\"Some answer\",\"question\":1}", "UTF-8") ;
-			myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/entity/"+userId+"/credential-adm/"+credentialReq+"?identityType=userName");//password for the entity
-			
+
+			myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/entity/"+obj.getInt("entityId")+"/credential-adm/Password%20credential");//+credentialReq+"?identityType=userName");//password for the entity
+
 			conn = (HttpsURLConnection) myUrl.openConnection();
+
+			conn.setRequestMethod("PUT");
 			conn.setRequestProperty("Authorization", "Basic "+encoding );
 			conn.setDoOutput(true);
-			conn.setRequestMethod("PUT");
 			conn.setRequestProperty( "Content-Type", "application/json" );
-			OutputStreamWriter out = new OutputStreamWriter(
-				    conn.getOutputStream());
-			out.write(credential);
+			OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+			out.write(objCred.toString() );
 			out.close();
 			//conn.setDoInput(true);
-			
+
 			inputStream = conn.getInputStream();
-			 bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-			 line = "";
+			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+			line = "";
 			while ((line = bufferedReader.readLine()) != null) {
 				System.out.println(line);
 			}
 			bufferedReader.close();
 			inputStream.close();
 			conn.disconnect();
-			
+			/*
+			//add attribute email to the entity (not necessary?)
+			myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/entity/"+obj.getInt("entityId")+"/attribute");// add attribute
+			JSONObject jaAttr= new JSONObject();
+			JSONArray ja= new JSONArray();
+			JSONObject jo= new JSONObject();
+			JSONObject joConfData= new JSONObject();
+			try {
+				jo.put("value", "user@fava");
+				joConfData.put("confirmed", "true");
+				joConfData.put("confirmationDate", 0);
+				joConfData.put("sentRequestAmount", 0);
+				jo.put("confirmationData", joConfData);
+
+				ja.put(jo);
+				jaAttr.put("name", "email");
+				jaAttr.put("groupPath", "/");
+				jaAttr.put("visibility", "full");
+				jaAttr.put("values", ja);
+
+				conn = (HttpsURLConnection) myUrl.openConnection();
+
+				conn.setRequestMethod("PUT");
+				conn.setRequestProperty("Authorization", "Basic "+encoding );
+				conn.setDoOutput(true);
+				conn.setRequestProperty( "Content-Type", "application/json" );
+				OutputStreamWriter outAtr = new OutputStreamWriter(conn.getOutputStream());
+
+				outAtr.write(jaAttr.toString() );
+				outAtr.close();
+
+
+				inputStream = conn.getInputStream();
+				 bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+				 line = "";
+				while ((line = bufferedReader.readLine()) != null) {
+					System.out.println(line);
+				}
+				bufferedReader.close();
+				inputStream.close();
+				conn.disconnect();
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 */
+
+			//add entity to evre group
 			myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/group/"+groupId+"/entity/"+userId+"?identityType=userName");//add entity to group
-			
-			//add entity to group
+
+
 			conn = (HttpsURLConnection) myUrl.openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
 			conn.setRequestProperty("Authorization", "Basic "+encoding );
 			inputStream = conn.getInputStream();
-			 bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-			 line = "";
+			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+			line = "";
 			while ((line = bufferedReader.readLine()) != null) {
 				System.out.println(line);
 			}
@@ -507,9 +647,12 @@ public class UserManagerImpl implements UserManager {
 			inputStream.close();
 			conn.disconnect();
 
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			if (entityId>0)
+				removeUserProfile(userId);
 			return( new MessageImpl("Error, please contact the server admin", Common.ResponseStatus.FAILED));
 		} 
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));

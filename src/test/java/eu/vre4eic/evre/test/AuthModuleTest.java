@@ -1,6 +1,8 @@
 package eu.vre4eic.evre.test;
 
 import java.util.Properties;
+
+import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 
@@ -10,10 +12,12 @@ public class AuthModuleTest {
 	
 	public static void main(String[] args)  {
 
-		Properties property = Utils.getNodeServiceProperties();
-		String brokerURL =  property.getProperty("BROKER_URL");
+		Properties nodeSettings = Utils.getNodeServiceProperties();
+		Properties defaultSettings = Settings.getProperties();
+		String messageBrokerPath = defaultSettings.getProperty(Settings.MESSAGE_BROKER_PATH);
+		
+		String brokerURL =  nodeSettings.getProperty(messageBrokerPath);
 
-		AuthModule mymodule = AuthModule.getInstance("tcp://v4e-lab.isti.cnr.it:61616");
 		module = AuthModule.getInstance(brokerURL);
 		System.out.println("############ TOKEN Pluto " + module.checkToken("pluto"));
 		
