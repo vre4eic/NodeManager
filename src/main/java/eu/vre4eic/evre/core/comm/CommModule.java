@@ -27,6 +27,7 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
+import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
 
 /**
@@ -43,9 +44,13 @@ public class CommModule {
 	
 	protected CommModule() throws JMSException {
 
-
-		Properties property = Utils.getNodeServiceProperties();
-		factory = new ActiveMQConnectionFactory(property.getProperty("BROKER_URL"));
+		Properties defaultSettings = Settings.getProperties();
+		String messageBrokerPath = defaultSettings.getProperty(Settings.MESSAGE_BROKER_PATH);
+		
+		Properties nodeSettings = Utils.getNodeServiceProperties();
+		String messageBrokerURL = nodeSettings.getProperty(messageBrokerPath);
+		
+		factory = new ActiveMQConnectionFactory(messageBrokerURL);
 		// TODO
 		// Development configuration to be fixed with trusted packages
 		factory.setTrustAllPackages(true);
