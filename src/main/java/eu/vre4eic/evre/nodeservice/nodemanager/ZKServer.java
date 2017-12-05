@@ -91,6 +91,15 @@ public class ZKServer {
 			String messageBrokerPath = settings.getProperty(Settings.MESSAGE_BROKER_PATH);
 			String messageBrokerValue = settings.getProperty(Settings.MESSAGE_BROKER_DEFAULT);
 			createEntry(messageBrokerPath, messageBrokerValue, client);
+			
+			String profileStoragePath = settings.getProperty(Settings.PROFILES_STORAGE);
+			String profileStorageValue = settings.getProperty(Settings.PROFILES_STORAGE_DEFAULT);
+			createEntry(profileStoragePath, profileStorageValue, client);
+			
+			String profileStoragePort = settings.getProperty(Settings.PROFILES_STORAGE_PORT);
+			String profileStoragePortValue = settings.getProperty(Settings.PROFILES_STORAGE_PORT_DEFAULT);
+			createEntry(profileStoragePort, profileStoragePortValue, client);
+			
 
 		}
 			

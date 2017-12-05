@@ -36,10 +36,12 @@ public class MongoConfig extends AbstractMongoConfiguration {
   
     @Override
     public Mongo mongo() throws Exception {
-        return new MongoClient("127.0.0.1", 27017);
-    	//Properties defaultSettings = Settings.getProperties();
-    	
-        //return new MongoClient(profilesStorage, profilesStoragePort);
+        //return new MongoClient("127.0.0.1", 27017);
+        Properties nodeSettings = Utils.getNodeServiceProperties();
+		 Properties defaultSettings = Settings.getProperties();
+		 String profilesStorage = nodeSettings.getProperty(defaultSettings.getProperty(Settings.PROFILES_STORAGE));
+		 int profilesStoragePort = Integer.valueOf(nodeSettings.getProperty(defaultSettings.getProperty(Settings.PROFILES_STORAGE_PORT)));
+        return new MongoClient(profilesStorage, profilesStoragePort);
     }
   
     @Override

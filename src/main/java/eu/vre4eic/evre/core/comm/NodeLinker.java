@@ -50,7 +50,9 @@ public class NodeLinker {
 			loadZKProperty(Settings.VERSION_PATH,client);
 			loadZKProperty(Settings.TOKEN_TIMEOUT_PATH,client);
 			loadZKProperty(Settings.CODE_TIMEOUT_PATH,client);
-			loadZKProperty(Settings.MESSAGE_BROKER_PATH,client);			
+			loadZKProperty(Settings.MESSAGE_BROKER_PATH,client);	
+			loadZKProperty(Settings.PROFILES_STORAGE,client);
+			loadZKProperty(Settings.PROFILES_STORAGE_PORT,client);
 		}
 		
 		finally

@@ -91,7 +91,7 @@ public class UserManagerImpl implements UserManager {
 	public UserManagerImpl() {
 		super();
 		
-		Properties nodeSettings = Utils.getNodeServiceProperties();
+		 Properties nodeSettings = Utils.getNodeServiceProperties();
 		 Properties defaultSettings = Settings.getProperties();
 		 TOKEN_TIMEOUT = Integer.valueOf( nodeSettings.getProperty(defaultSettings.getProperty(Settings.TOKEN_TIMEOUT_PATH)));
 		 CODE_TIMEOUT = Integer.valueOf( nodeSettings.getProperty(defaultSettings.getProperty(Settings.CODE_TIMEOUT_PATH)));
