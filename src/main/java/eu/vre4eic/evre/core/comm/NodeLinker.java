@@ -65,7 +65,9 @@ public class NodeLinker {
 			saveZKProperty(Settings.VERSION_PATH,client);
 			saveZKProperty(Settings.TOKEN_TIMEOUT_PATH,client);
 			saveZKProperty(Settings.CODE_TIMEOUT_PATH,client);
-			saveZKProperty(Settings.MESSAGE_BROKER_PATH,client);			
+			saveZKProperty(Settings.MESSAGE_BROKER_PATH,client);
+			saveZKProperty(Settings.PROFILES_STORAGE,client);
+			saveZKProperty(Settings.PROFILES_STORAGE_PORT,client);
 		}
 		
 		finally
