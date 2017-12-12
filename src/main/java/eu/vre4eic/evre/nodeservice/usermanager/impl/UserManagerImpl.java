@@ -57,6 +57,7 @@ import eu.vre4eic.evre.core.messages.impl.MessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MultiFactorMessageImpl;
 import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
+import eu.vre4eic.evre.core.comm.NodeLinker;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.usermanager.UserManager;
@@ -90,11 +91,12 @@ public class UserManagerImpl implements UserManager {
 	 */
 	public UserManagerImpl() {
 		super();
-		
-		 Properties nodeSettings = Utils.getNodeServiceProperties();
-		 Properties defaultSettings = Settings.getProperties();
-		 TOKEN_TIMEOUT = Integer.valueOf( nodeSettings.getProperty(defaultSettings.getProperty(Settings.TOKEN_TIMEOUT_PATH)));
-		 CODE_TIMEOUT = Integer.valueOf( nodeSettings.getProperty(defaultSettings.getProperty(Settings.CODE_TIMEOUT_PATH)));
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+
+		TOKEN_TIMEOUT = node.getTokenTimeout();
+		CODE_TIMEOUT = node.getCodeTimeout();
 	}
 
 	/**

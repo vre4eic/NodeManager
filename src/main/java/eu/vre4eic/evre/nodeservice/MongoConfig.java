@@ -23,6 +23,8 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 
+import eu.vre4eic.evre.core.comm.NodeLinker;
+
 @Configuration
 public class MongoConfig extends AbstractMongoConfiguration {
 	
@@ -37,11 +39,12 @@ public class MongoConfig extends AbstractMongoConfiguration {
     @Override
     public Mongo mongo() throws Exception {
         //return new MongoClient("127.0.0.1", 27017);
-        Properties nodeSettings = Utils.getNodeServiceProperties();
-		 Properties defaultSettings = Settings.getProperties();
-		 String profilesStorage = nodeSettings.getProperty(defaultSettings.getProperty(Settings.PROFILES_STORAGE));
-		 int profilesStoragePort = Integer.valueOf(nodeSettings.getProperty(defaultSettings.getProperty(Settings.PROFILES_STORAGE_PORT)));
-        return new MongoClient(profilesStorage, profilesStoragePort);
+    	
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+
+        return new MongoClient(node.getProfileStorage(), node.getProfileStoragePort());
     }
   
     @Override

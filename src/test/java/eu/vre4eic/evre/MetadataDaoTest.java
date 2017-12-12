@@ -2,11 +2,8 @@ package eu.vre4eic.evre;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
-import javax.jms.JMSException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +22,7 @@ import eu.vre4eic.evre.core.UserCredentials;
 import eu.vre4eic.evre.core.Common.MetadataOperationType;
 import eu.vre4eic.evre.core.Common.ResponseStatus;
 import eu.vre4eic.evre.core.Common.Topics;
+import eu.vre4eic.evre.core.comm.NodeLinker;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.core.impl.EVREUserProfile;
@@ -33,7 +31,6 @@ import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
 import eu.vre4eic.evre.core.messages.impl.MetadataMessageImpl;
 import eu.vre4eic.evre.nodeservice.Settings;
-import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
@@ -92,11 +89,12 @@ public class MetadataDaoTest {
 	//@Test
 	public final void testLoginLogout() {	
 		
-		Properties nodeServiceProps = Utils.getNodeServiceProperties();
-		String brokerPath = Settings.getProperties().getProperty(Settings.MESSAGE_BROKER_PATH);
-		String brokerURL =  nodeServiceProps.getProperty(brokerPath);
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+		String messageBrokerURL =  node.getMessageBrokerURL();
 		
-		module = AuthModule.getInstance(brokerURL);
+		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
 		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));

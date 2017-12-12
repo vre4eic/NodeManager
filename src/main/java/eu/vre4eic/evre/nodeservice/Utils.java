@@ -31,10 +31,6 @@ import eu.vre4eic.evre.core.comm.NodeLinker;
 public class Utils {
 	
 	
-	private static Properties nodeServiceProps;
-	
-	private static String DEFAULT_PROPERTIES = "Nodeservice.properties";
-	
 	private static Logger log = LoggerFactory.getLogger(Utils.class.getClass());
 	
 	public Utils(){
@@ -58,17 +54,17 @@ public class Utils {
 	}
 
 	
-	public static Properties getNodeServiceProperties () {
-		if (nodeServiceProps == null)
-			try {
-				nodeServiceProps = NodeLinker.getRemoteProperties();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				nodeServiceProps = getProperties(DEFAULT_PROPERTIES);
-			}
-		return nodeServiceProps;
-	}
+//	public static Properties getNodeServiceProperties () {
+//		if (nodeServiceProps == null)
+//			try {
+//				nodeServiceProps = NodeLinker.getRemoteProperties();
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//				nodeServiceProps = getProperties(DEFAULT_PROPERTIES);
+//			}
+//		return nodeServiceProps;
+//	}
 	
 
 	public static String generateToken() {
@@ -83,10 +79,5 @@ public class Utils {
 	}
 
 	
-	public static void test(){
-		Properties prop = getNodeServiceProperties();
-		System.out.println(prop);
-		System.out.println("service:"+prop.getProperty("services"));
-	}
 
 }

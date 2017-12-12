@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.UserCredentials;
 import eu.vre4eic.evre.core.UserProfile;
+import eu.vre4eic.evre.core.comm.NodeLinker;
 import eu.vre4eic.evre.core.comm.Subscriber;
 import eu.vre4eic.evre.core.comm.SubscriberFactory;
 import eu.vre4eic.evre.core.impl.EVREUserProfile;
@@ -99,11 +100,11 @@ public class UserDaoTest {
 	@Test
 	public final void testLoginLogout() {	
 		
-		Properties nodeServiceProps = Utils.getNodeServiceProperties();
-		String brokerPath = Settings.getProperties().getProperty(Settings.MESSAGE_BROKER_PATH);
-		String brokerURL =  nodeServiceProps.getProperty(brokerPath);
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);
 		
-		module = AuthModule.getInstance(brokerURL);
+		module = AuthModule.getInstance(node.getMessageBrokerURL());
 		//save a user profile
 		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
@@ -140,6 +141,7 @@ public class UserDaoTest {
 		auth=module.checkToken(ame.getToken());
 		assertEquals(auth, false);
 		
+		
 	}
 	/*
 	 * Test: create a profile, login, get the User Profile, logout
@@ -147,11 +149,12 @@ public class UserDaoTest {
 	@Test
 	public final void testCreateGetProfile() {	
 		
-		Properties nodeServiceProps = Utils.getNodeServiceProperties();
-		String brokerPath = Settings.getProperties().getProperty(Settings.MESSAGE_BROKER_PATH);
-		String brokerURL =  nodeServiceProps.getProperty(brokerPath);
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+		String messageBrokerURL =  node.getMessageBrokerURL();
 		
-		module = AuthModule.getInstance(brokerURL);
+		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
 		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
@@ -197,11 +200,12 @@ public class UserDaoTest {
 	@Test
 	public final void testCreateGetAllProfiles() {	
 		
-		Properties nodeServiceProps = Utils.getNodeServiceProperties();
-		String brokerPath = Settings.getProperties().getProperty(Settings.MESSAGE_BROKER_PATH);
-		String brokerURL =  nodeServiceProps.getProperty(brokerPath);
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+		String messageBrokerURL =  node.getMessageBrokerURL();
 		
-		module = AuthModule.getInstance(brokerURL);
+		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
 		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.ADMIN, 
 				"email@domain","snsId", "11"));
@@ -267,11 +271,12 @@ public class UserDaoTest {
 		
 		this.mfmCode= new Vector<String>();
 		
-		Properties nodeServiceProps = Utils.getNodeServiceProperties();
-		String brokerPath = Settings.getProperties().getProperty(Settings.MESSAGE_BROKER_PATH);
-		String brokerURL =  nodeServiceProps.getProperty(brokerPath);
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+		String messageBrokerURL =  node.getMessageBrokerURL();
 		
-		module = AuthModule.getInstance(brokerURL);
+		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
 		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
@@ -304,11 +309,12 @@ public class UserDaoTest {
 	@Test
 	public final void testUpdateUserProfile() {	
 		
-		Properties nodeServiceProps = Utils.getNodeServiceProperties();
-		String brokerPath = Settings.getProperties().getProperty(Settings.MESSAGE_BROKER_PATH);
-		String brokerURL =  nodeServiceProps.getProperty(brokerPath);
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+		String messageBrokerURL =  node.getMessageBrokerURL();
 		
-		module = AuthModule.getInstance(brokerURL);
+		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
 		Message mes=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD1", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));

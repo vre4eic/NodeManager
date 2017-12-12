@@ -28,7 +28,6 @@ import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import eu.vre4eic.evre.nodeservice.Settings;
-import eu.vre4eic.evre.nodeservice.Utils;
 
 /**
  * @author francesco
@@ -45,21 +44,22 @@ public class CommModule {
 	protected CommModule() throws JMSException {
 
 		Properties defaultSettings = Settings.getProperties();
-		String messageBrokerPath = defaultSettings.getProperty(Settings.MESSAGE_BROKER_PATH);
-		
-		Properties nodeSettings = Utils.getNodeServiceProperties();
-		String messageBrokerURL = nodeSettings.getProperty(messageBrokerPath);
-		
-		factory = new ActiveMQConnectionFactory(messageBrokerURL);
-		// TODO
-		// Development configuration to be fixed with trusted packages
-		factory.setTrustAllPackages(true);
-		
-		connection = factory.createConnection();
-		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+		String messageBrokerURL =  node.getMessageBrokerURL();
 
-	
 		try {
+
+			factory = new ActiveMQConnectionFactory(messageBrokerURL);
+			// TODO
+			// Development configuration to be fixed with trusted packages
+			factory.setTrustAllPackages(true);
+
+			connection = factory.createConnection();
+			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+
+
 			getConnection().start();
 		} catch (JMSException jmse) {
 			getConnection().close();
@@ -88,15 +88,15 @@ public class CommModule {
 	
 	public static CommModule getInstance() {
 		if(instance == null) {
-	         try {
+			try {
 				instance = new CommModule();
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	      }
-	      return instance;
-	      
+		}
+		return instance;
+
 	}
 
 	public static CommModule getInstance(String brokerURL) {

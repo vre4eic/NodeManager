@@ -15,8 +15,6 @@
  *******************************************************************************/
 package eu.vre4eic.evre.test;
 
-import javax.jms.JMSException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
