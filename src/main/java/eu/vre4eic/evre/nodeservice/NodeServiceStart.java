@@ -39,7 +39,7 @@ public class NodeServiceStart {
 
 	public static void main(String[] args) {
 		
-		ZKServer.init();
+		//ZKServer.init();
         SpringApplication.run(NodeServiceStart.class, args);
        
         AdvisoryModule.getInstance();
