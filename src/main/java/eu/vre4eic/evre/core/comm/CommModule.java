@@ -45,6 +45,7 @@ public class CommModule {
 
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		
 		NodeLinker node = NodeLinker.init(ZkServer);		
 		String messageBrokerURL =  node.getMessageBrokerURL();
 

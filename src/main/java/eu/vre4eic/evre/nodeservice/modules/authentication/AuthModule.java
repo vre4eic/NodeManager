@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.ControlMessage;
+import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.core.comm.Subscriber;
@@ -70,6 +71,14 @@ public class AuthModule {
 	}	
 	
 	protected AuthModule(String brokerURL) throws JMSException{
+		 ZKServer zkServer = new ZKServer();
+	        try {
+	            zkServer.startService(2181);
+	            zkServer.init_eVRE_Env();
+	        } catch (Exception e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
 		//initialize data structure for tokens
 		AuthTable = new  Hashtable<String, AuthenticationMessage> ();
 
@@ -78,7 +87,7 @@ public class AuthModule {
 		Subscriber<ControlMessage> subcriber = SubscriberFactory.getControlSubscriber();
 		subcriber.setListener(new ControlListener(this));
 		
-		log.info(" #### Authentication Module instanciated ####");
+		log.info(" #### Authentication Module instantiated ####");
 		log.info(" Connecting to Broker:: " + brokerURL);
 		
 		//subscribe Auth_channel
