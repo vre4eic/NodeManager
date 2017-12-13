@@ -21,11 +21,29 @@ import eu.vre4eic.evre.nodeservice.Utils;
 
 public class ZKServer {
 
-	private Thread zkService;
+
+	private static Thread zkService;
+	
+	public static void  init(){
+		if (zkService == null) // Double checked locking pattern
+			synchronized (ZKServer.class){
+				if (zkService == null) {
+					try {
+					startService(2181);
+					init_eVRE_Env();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			
+			} // end synchronized
+		
+	}
 
 
-	public void startService(int clientPort) throws Exception {
-		final Logger log = LoggerFactory.getLogger(this.getClass());
+	private static void startService(int clientPort) throws Exception {
+		final Logger log = LoggerFactory.getLogger(ZKServer.class);
 
 		try {
 			Properties properties = new Properties();
@@ -63,12 +81,13 @@ public class ZKServer {
 
 	}
 
-	public void stopService() throws IOException {
-		zkService.interrupt();
+	public static void stopService() {
+		if  (zkService != null)
+			zkService.interrupt();
 	}
 
 
-	public void init_eVRE_Env() throws Exception {
+	private static void init_eVRE_Env() throws Exception {
 		CuratorFramework client = CuratorFrameworkFactory
 									.newClient("localhost:2181",new RetryOneTime(1));
         client.start();
@@ -110,7 +129,7 @@ public class ZKServer {
 	}
 	
 	
-	public void createEntry(String path, String value,CuratorFramework client){
+	private static void createEntry(String path, String value,CuratorFramework client){
 		Stat exists;
 		try {
 			exists = client.checkExists().forPath(path);
@@ -137,28 +156,33 @@ public class ZKServer {
 	
 	
 	public static void main(String[] args) {
-
-		ZKServer zkServer = new ZKServer();
-		try {		
-			zkServer.startService(2181);
-			zkServer.init_eVRE_Env();
-
-			while (true){
-				TimeUnit.MILLISECONDS.sleep(50);			
+		// to test correct initialization in concurrent threads
+		
+		Thread concurrentInit1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ZKServer.init();
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+		}, "Init1");
 
-		finally
-		{
+		Thread concurrentInit2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+					ZKServer.init();
+			}
+		}, "Init2");
+
+		concurrentInit1.start();
+		concurrentInit2.start();
+		
+		while (true) {
 			try {
-				zkServer.stopService();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Thread.sleep(60000);
+			} catch (InterruptedException e) {
+
+				ZKServer.stopService();
 			}
+
 		}
 
 	}
