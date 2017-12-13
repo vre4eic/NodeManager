@@ -72,16 +72,6 @@ public class AuthModule {
 	
 	protected AuthModule(String brokerURL) throws JMSException{
 
-		ZKServer.init();
-		
-//		 ZKServer zkServer = new ZKServer();
-//	        try {
-//	            zkServer.startService(2181);
-//	            zkServer.init_eVRE_Env();
-//	        } catch (Exception e) {
-//	            // TODO Auto-generated catch block
-//	            e.printStackTrace();
-//	        }
 	        
 		//initialize data structure for tokens
 		AuthTable = new  Hashtable<String, AuthenticationMessage> ();

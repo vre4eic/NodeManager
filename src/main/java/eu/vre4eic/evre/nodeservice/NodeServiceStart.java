@@ -38,17 +38,8 @@ public class NodeServiceStart {
     //private static MDModule mdModule;
 
 	public static void main(String[] args) {
-     //	System.out.println("Working Directory is = " +
-       //         System.getProperty("user.dir"));
-		/* ZKServer zkServer = new ZKServer();
-	        try {
-	            zkServer.startService(2181);
-	            zkServer.init_eVRE_Env();
-	        } catch (Exception e) {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }
-       */
+		
+		ZKServer.init();
         SpringApplication.run(NodeServiceStart.class, args);
        
         AdvisoryModule.getInstance();
