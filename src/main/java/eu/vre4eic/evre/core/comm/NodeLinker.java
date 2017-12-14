@@ -124,7 +124,17 @@ public class NodeLinker {
 		return Integer.valueOf(zkSettings.getProperty(codeTimeout));	
 	}
 
+	public  String getAAAIUser() {
+		String user = defaultSettings.getProperty(Settings.AAAI_LOGIN_DEFAULT);
+		return user;	
+	}
 
+	public  String getAAAIPwd() {
+		String pwd = defaultSettings.getProperty(Settings.AAAI_PWD_DEFAULT);
+		return pwd;	
+	}
+
+	
 	public  Properties getProperties() throws Exception {
 		return zkSettings;
 		

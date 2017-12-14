@@ -30,6 +30,8 @@ public class Settings {
 	public static String MESSAGE_BROKER_PATH="MessageBroker_path";
 	public static String PROFILES_STORAGE="ProfileStorage_path";
 	public static String PROFILES_STORAGE_PORT="ProfileStoragePort_path";
+	public static String AAAI_LOGIN="AAAI_login";
+	public static String AAAI_PWD="AAAI_pwd";
 	
 	public static String VERSION_DEFAULT="Version_default";
 	public static String TOKEN_TIMEOUT_DEFAULT="TokenTimeout_default";
@@ -38,6 +40,10 @@ public class Settings {
 	
 	public static String PROFILES_STORAGE_DEFAULT="ProfileStorage_default";
 	public static String PROFILES_STORAGE_PORT_DEFAULT="ProfileStoragePort_default";
+	
+	public static String AAAI_LOGIN_DEFAULT="AAAI_login_default";
+	
+	public static String AAAI_PWD_DEFAULT="AAAI_pwd_default";
 	
 	private static Properties settingProps; 
 	

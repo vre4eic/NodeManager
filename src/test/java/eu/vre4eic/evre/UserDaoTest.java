@@ -30,6 +30,7 @@ import eu.vre4eic.evre.core.messages.MultiFactorMessage;
 import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
+import eu.vre4eic.evre.nodeservice.nodemanager.NodeServiceContextListener;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 
@@ -37,7 +38,7 @@ import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 //@ContextConfiguration ("/Test-context.xml")
 @ComponentScan
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringMongoConfig.class, UserManagerImpl.class}, 
+@ContextConfiguration(classes = {SpringMongoConfig.class, UserManagerImpl.class, NodeServiceContextListener.class}, 
 loader = SpringBootContextLoader.class)
 
 public class UserDaoTest {
@@ -61,19 +62,26 @@ public class UserDaoTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		repository.deleteAll();
+		//repository.deleteAll();
+		//userMI.removeUserProfile("userId0");
+		//userMI.removeUserProfile("userId1");
+		//repository.deleteAll();
 		subscriber = SubscriberFactory.getMFASubscriber();
 		subscriber.setListener(new eu.vre4eic.evre.util.TGBotMFAListener(this));
 	}
 
-	
+	private void cleanTestEnv(){
+		userMI.removeUserProfile("userId0");
+		userMI.removeUserProfile("userId1");
+		repository.deleteAll();
+	}
 /*
  * Test the insert of a new User profile
  */
-	@Test
+	//@Test
 	public final void testInsertUserProfile() {
 		
-		repository.save(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		repository.save(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		List<EVREUserProfile> userp = (List<EVREUserProfile>) repository.findAll();
 		
@@ -85,9 +93,9 @@ public class UserDaoTest {
 	/*
 	 * Test the insert of a new User profile
 	 */
-	@Test
+	//@Test
 	public final void testInsertUserProfile2() {	
-		repository.save(new EVREUserProfile("userId", "userPWD", "Name","my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		repository.save(new EVREUserProfile("userId0", "userPWD", "Name","my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		List<EVREUserProfile> userp = (List<EVREUserProfile>) repository.findByPassword("userPWD");
 		assertEquals(userp.get(0).getUserId(), "userId");
@@ -100,17 +108,18 @@ public class UserDaoTest {
 	@Test
 	public final void testLoginLogout() {	
 		
+		cleanTestEnv();
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		NodeLinker node = NodeLinker.init(ZkServer);
 		
 		module = AuthModule.getInstance(node.getMessageBrokerURL());
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
-		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
+		UserCredentials uc= new UserCredentialsImpl("userId0", "userPWD");
 	
 		AuthenticationMessage ame= userMI.login(uc);
 		//wait for authentication message being dispatched
@@ -146,9 +155,9 @@ public class UserDaoTest {
 	/*
 	 * Test: create a profile, login, get the User Profile, logout
 	 */
-	@Test
+	//@Test
 	public final void testCreateGetProfile() {	
-		
+		cleanTestEnv();
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		NodeLinker node = NodeLinker.init(ZkServer);		
@@ -156,11 +165,11 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
-		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
+		UserCredentials uc= new UserCredentialsImpl("userId0", "userPWD");
 	
 		AuthenticationMessage ame= userMI.login(uc);
 		//wait for authentication message being dispatched
@@ -200,6 +209,8 @@ public class UserDaoTest {
 	@Test
 	public final void testCreateGetAllProfiles() {	
 		
+		cleanTestEnv();
+		
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		NodeLinker node = NodeLinker.init(ZkServer);		
@@ -207,13 +218,13 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.ADMIN, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.ADMIN, 
 				"email@domain","snsId", "11"));
 		Message mes1=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
-		UserCredentials uc= new UserCredentialsImpl("userId", "userPWD");
+		UserCredentials uc= new UserCredentialsImpl("userId0", "userPWD");
 	
 		
 		UserCredentials ucR= new UserCredentialsImpl("userId1", "userPWD");
@@ -266,8 +277,9 @@ public class UserDaoTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public final void testLoginMFALogout() {	
+		cleanTestEnv();
 		
 		this.mfmCode= new Vector<String>();
 		
@@ -278,13 +290,13 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
 		
 	
-		AuthenticationMessage ame= userMI.loginMFA("userId", "userPWD");
+		AuthenticationMessage ame= userMI.loginMFA("userId0", "userPWD");
 		//wait for authentication message being dispatched
 		
 		
@@ -306,8 +318,10 @@ public class UserDaoTest {
 		UserDaoTest.mfmCode.add(code);
 	}
 	
-	@Test
+	//@Test
 	public final void testUpdateUserProfile() {	
+		
+		cleanTestEnv();
 		
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);

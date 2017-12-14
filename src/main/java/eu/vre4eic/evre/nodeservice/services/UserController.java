@@ -20,20 +20,7 @@ package eu.vre4eic.evre.nodeservice.services;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import java.util.Properties;
 import java.util.Vector;
 
 
@@ -60,7 +47,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import eu.vre4eic.evre.core.Common.UserRole;
+import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
+import eu.vre4eic.evre.core.comm.NodeLinker;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
@@ -90,7 +79,12 @@ public class UserController {
 
 	public UserController()  {
 		super();
-		authModule = AuthModule.getInstance("tcp://v4e-lab.isti.cnr.it:61616");
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+		String messageBrokerURL =  node.getMessageBrokerURL();
+		authModule = AuthModule.getInstance(messageBrokerURL);
+		//authModule = AuthModule.getInstance("tcp://v4e-lab.isti.cnr.it:61616");
 
 	}
 

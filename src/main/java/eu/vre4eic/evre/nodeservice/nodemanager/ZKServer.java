@@ -119,7 +119,14 @@ public class ZKServer {
 			String profileStoragePortValue = settings.getProperty(Settings.PROFILES_STORAGE_PORT_DEFAULT);
 			createEntry(profileStoragePort, profileStoragePortValue, client);
 			
-
+			String profileAAAIuser = settings.getProperty(Settings.AAAI_LOGIN);
+			String profileAAAIuserValue = settings.getProperty(Settings.AAAI_LOGIN_DEFAULT);
+			createEntry(profileAAAIuser, profileAAAIuserValue, client);
+			
+			String profileAAAIpwd = settings.getProperty(Settings.AAAI_PWD);
+			String profileAAAIpwdValue = settings.getProperty(Settings.AAAI_PWD_DEFAULT);
+			createEntry(profileAAAIpwd, profileAAAIpwdValue, client);
+			
 		}
 			
 		finally  {

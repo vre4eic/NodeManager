@@ -57,6 +57,7 @@ import eu.vre4eic.evre.core.messages.impl.MessageImpl;
 import eu.vre4eic.evre.core.messages.impl.MultiFactorMessageImpl;
 import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
+import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
 import eu.vre4eic.evre.core.comm.NodeLinker;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
@@ -72,18 +73,15 @@ import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 
 public class UserManagerImpl implements UserManager {
 
-	//Properties nodeSettings = Utils.getNodeServiceProperties();
-	//Properties defaultSettings = Settings.getProperties();
+	
 	static int TOKEN_TIMEOUT = 0;
 	static int CODE_TIMEOUT = 0;
 	
-	//static int TOKEN_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty(Settings.TOKEN_TIMEOUT_PATH));
-	//static int CODE_TIMEOUT = Integer.valueOf(Utils.getNodeServiceProperties().getProperty(Settings.CODE_TIMEOUT_PATH));
-
+	
 
 	private Hashtable<String, AuthenticationMessage> pendingUsers = new Hashtable<String,AuthenticationMessage>();
 
-
+	NodeLinker node;
 	@Autowired
 	private UserProfileRepository repository;
 	/**
@@ -91,9 +89,10 @@ public class UserManagerImpl implements UserManager {
 	 */
 	public UserManagerImpl() {
 		super();
+		ZKServer.init();;
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
-		NodeLinker node = NodeLinker.init(ZkServer);		
+		node = NodeLinker.init(ZkServer);		
 
 		TOKEN_TIMEOUT = node.getTokenTimeout();
 		CODE_TIMEOUT = node.getCodeTimeout();
@@ -137,10 +136,10 @@ public class UserManagerImpl implements UserManager {
 		EVREUserProfile profile= repository.findByUserId(userId);
 		int entityId=this.getEntityId(userId);
 		if (profile==null)
-			return( new MessageImpl("Operation not executed, User profile not found", Common.ResponseStatus.FAILED));
+			return( new MessageImpl("Operation not executed, profile not found", Common.ResponseStatus.FAILED));
 		
 		if (entityId<=0)
-			return( new MessageImpl("Operation not executed, User profile not found", Common.ResponseStatus.FAILED));
+			return( new MessageImpl("Operation not executed, profile not found", Common.ResponseStatus.FAILED));
 		if (this.removeUserFromAAAI(entityId).getStatus()== Common.ResponseStatus.SUCCEED)
 			repository.delete(profile);
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
@@ -439,17 +438,17 @@ public class UserManagerImpl implements UserManager {
 
 	private int getEntityId(String userId){
 
-		String userPassword = "admin" + ":" + "LDAD5aKoC7";
+		String userPassword = node.getAAAIUser() + ":" + node.getAAAIPwd();
 		int entityId=0;
 		String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
 		try{
 
 			// delete an entity
 
-			URL myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/resolve/userName/"+userId);//remove entity
+			URL myUrl = new URL("https://v4e-lab.isti.cnr.it:2443/rest-admin/v1/resolve/userName/"+userId);
 			HttpsURLConnection conn = (HttpsURLConnection) myUrl.openConnection();
 
-			conn.setRequestMethod("DELETE");
+			//conn.setRequestMethod("DELETE");
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
 			conn.setRequestProperty("Authorization", "Basic "+encoding );
@@ -483,7 +482,7 @@ public class UserManagerImpl implements UserManager {
 	}
 	private Message removeUserFromAAAI(int entityId){
 
-		String userPassword = "admin" + ":" + "LDAD5aKoC7";
+		String userPassword = node.getAAAIUser() + ":" + node.getAAAIPwd();
 
 		String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
 		try{
@@ -523,8 +522,9 @@ public class UserManagerImpl implements UserManager {
 		int entityId = 0;
 		try {
 
-			//need to set these in the config file
-			String userPassword = "admin" + ":" + "LDAD5aKoC7";
+
+
+			String userPassword = node.getAAAIUser() + ":" + node.getAAAIPwd();
 			//in AAI: @Path("/group/{groupPath}/entity/{entityId}")
 			//String credential=URLEncoder.encode("{\"password\":\""+pass+"\", \"answer\":\"Some answer\",\"question\":0}", "UTF-8") ;
 			JSONObject objCred=new JSONObject();
