@@ -75,33 +75,7 @@ public class UserDaoTest {
 		userMI.removeUserProfile("userId1");
 		repository.deleteAll();
 	}
-/*
- * Test the insert of a new User profile
- */
-	//@Test
-	public final void testInsertUserProfile() {
-		
-		repository.save(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
-				"email@domain","snsId", "authId"));
-		List<EVREUserProfile> userp = (List<EVREUserProfile>) repository.findAll();
-		
-		assertEquals(userp.size(), 1);
-		assertEquals((userp.get(0)).getUserId(), "userId");
-		
-		
-	}
-	/*
-	 * Test the insert of a new User profile
-	 */
-	//@Test
-	public final void testInsertUserProfile2() {	
-		repository.save(new EVREUserProfile("userId0", "userPWD", "Name","my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
-				"email@domain","snsId", "authId"));
-		List<EVREUserProfile> userp = (List<EVREUserProfile>) repository.findByPassword("userPWD");
-		assertEquals(userp.get(0).getUserId(), "userId");
-		
-		
-	}
+
 	/*
 	 * Test the login logout
 	 */
@@ -155,7 +129,7 @@ public class UserDaoTest {
 	/*
 	 * Test: create a profile, login, get the User Profile, logout
 	 */
-	//@Test
+	@Test
 	public final void testCreateGetProfile() {	
 		cleanTestEnv();
 		Properties defaultSettings = Settings.getProperties();
@@ -184,8 +158,8 @@ public class UserDaoTest {
 		//check if token is valid
 		Boolean auth=module.checkToken(ame.getToken());
 		assertEquals(auth, true);
-		UserProfile up=userMI.getUserProfile("userId");
-		assertEquals(up.getUserId(), "userId");
+		UserProfile up=userMI.getUserProfile("userId0");
+		assertEquals(up.getUserId(), "userId0");
 		//logout
 		userMI.logout(ame.getToken());
 		//wait for authentication message being dispatched
@@ -318,7 +292,7 @@ public class UserDaoTest {
 		UserDaoTest.mfmCode.add(code);
 	}
 	
-	//@Test
+	@Test
 	public final void testUpdateUserProfile() {	
 		
 		cleanTestEnv();
