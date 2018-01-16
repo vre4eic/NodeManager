@@ -138,9 +138,11 @@ public class UserManagerImpl implements UserManager {
 		if (profile==null)
 			return( new MessageImpl("Operation not executed, profile not found", Common.ResponseStatus.FAILED));
 		
-		if (entityId<=0)
-			return( new MessageImpl("Operation not executed, profile not found", Common.ResponseStatus.FAILED));
+		//if (entityId<=0)
+		//	return( new MessageImpl("Operation not executed, profile not found", Common.ResponseStatus.FAILED));
 		if (this.removeUserFromAAAI(entityId).getStatus()== Common.ResponseStatus.SUCCEED)
+			repository.delete(profile);
+		else //to be compatible with previous release, needs to be fixed ASAP!
 			repository.delete(profile);
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 

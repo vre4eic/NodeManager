@@ -167,7 +167,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "Sign off a user", 
-			notes = "The user exit the e-VRE and the assignedz token is no longer valid", 
+			notes = "The user quits the e-VRE and the assigned token is no longer valid", 
 			response = Message.class)
 
 	@RequestMapping(value="/user/logout",  method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
