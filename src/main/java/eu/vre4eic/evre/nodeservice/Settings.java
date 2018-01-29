@@ -20,6 +20,12 @@ import java.util.Properties;
 public class Settings {
 	
 	public static String DEFAULT_SETTINGS = "Settings.properties";
+	
+	public static String EVRE_TEST = "/evre/test";
+	public static String EVRE_PRODUCTION = "/evre/production";
+	public static String EVRE_SERVICES = "/services";
+
+
 
 	public static String ZOOKEEPER_DEFAULT = "ZooKeeper_default";
 
