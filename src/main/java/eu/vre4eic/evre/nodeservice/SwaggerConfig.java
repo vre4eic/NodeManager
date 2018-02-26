@@ -86,8 +86,8 @@ public class SwaggerConfig {
 				.description("This page shows the Web Services entry points for the e-VRE NodeService building block.")
 				.version(property.getProperty("VERSION"))
 				.termsOfServiceUrl("http://terms-of-services.evre")
-				.license(property.getProperty("LICENSE_TYPE"))
-				.licenseUrl(property.getProperty("LICENSE_URL"))
+				.license("Apache License, Version 2.0")
+				.licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
 				.build();
 	}
 }
