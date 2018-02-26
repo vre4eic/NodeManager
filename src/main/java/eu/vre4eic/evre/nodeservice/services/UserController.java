@@ -53,6 +53,7 @@ import eu.vre4eic.evre.core.comm.NodeLinker;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
+import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 
@@ -79,7 +80,9 @@ public class UserController {
 
 	public UserController()  {
 		super();
+		ZKServer.init();
 		Properties defaultSettings = Settings.getProperties();
+		
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		NodeLinker node = NodeLinker.init(ZkServer);		
 		String messageBrokerURL =  node.getMessageBrokerURL();
@@ -144,7 +147,7 @@ public class UserController {
 
 	}
 
-	@ApiOperation(value = "Authenticates a user with a <i>Two-factor authentication</i> procedure", 
+	@ApiOperation(value = "Authenticates a user using a 2FA procedure", 
 			notes = "Authenticates a user on e-VRE system. Returns the URL to a WS that must be used to verify the second authentication factor.", 
 			response = Message.class)
 	@RequestMapping(value="/user/loginmfa", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

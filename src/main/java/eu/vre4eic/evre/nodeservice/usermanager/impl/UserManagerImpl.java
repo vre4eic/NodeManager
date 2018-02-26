@@ -89,7 +89,7 @@ public class UserManagerImpl implements UserManager {
 	 */
 	public UserManagerImpl() {
 		super();
-		ZKServer.init();;
+		ZKServer.init();
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		node = NodeLinker.init(ZkServer);		

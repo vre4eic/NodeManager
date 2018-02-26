@@ -27,6 +27,7 @@ public class ZKServer {
 	public static void  init(){
 		if (zkService == null) // Double checked locking pattern
 			synchronized (ZKServer.class){
+
 				if (zkService == null) {
 					try {
 					startService(2181);
@@ -57,7 +58,7 @@ public class ZKServer {
 			final ServerConfig configuration = new ServerConfig();
 			configuration.readFrom(quorumPeerConfig);
 
-
+			System.out.println("######### here######");
 			final ZooKeeperServerMain server = new ZooKeeperServerMain();
 			zkService = new Thread(new Runnable() {
 				@Override
@@ -82,8 +83,11 @@ public class ZKServer {
 	}
 
 	public static void stopService() {
-		if  (zkService != null)
+		if  (zkService != null && zkService.isAlive()){
 			zkService.interrupt();
+
+		}
+			
 	}
 
 
@@ -139,6 +143,7 @@ public class ZKServer {
 	private static void createEntry(String path, String value,CuratorFramework client){
 		Stat exists;
 		try {
+			//System.out.println("##################################################### ceckinkg " +path );
 			exists = client.checkExists().forPath(path);
 			if (exists == null) {
         		client.create()
@@ -162,7 +167,7 @@ public class ZKServer {
 		
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {/*
 		// to test correct initialization in concurrent threads
 		
 		Thread concurrentInit1 = new Thread(new Runnable() {
@@ -192,6 +197,6 @@ public class ZKServer {
 
 		}
 
-	}
+	*/}
 
 }
