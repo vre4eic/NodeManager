@@ -83,7 +83,7 @@ public class SwaggerConfig {
 		}
 		return new ApiInfoBuilder()
 				.title("e-VRE NodeService")
-				.description("This pages shows the Web Services entry points for the e-VRE NodeService component.")
+				.description("This page shows the Web Services entry points for the e-VRE NodeService building block.")
 				.version(property.getProperty("VERSION"))
 				.termsOfServiceUrl("http://terms-of-services.evre")
 				.license(property.getProperty("LICENSE_TYPE"))
