@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 VRE4EIC Consortium
+ * Copyright (c) 2018 VRE4EIC Consortium
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 
 import eu.vre4eic.evre.core.comm.NodeLinker;
+import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
 
 @Configuration
 public class MongoConfig extends AbstractMongoConfiguration {
@@ -39,7 +40,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
     @Override
     public Mongo mongo() throws Exception {
         //return new MongoClient("127.0.0.1", 27017);
-    	
+    	ZKServer.init();
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		NodeLinker node = NodeLinker.init(ZkServer);		

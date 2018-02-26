@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 VRE4EIC Consortium
+ * Copyright (c) 2018 VRE4EIC Consortium
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import eu.vre4eic.evre.nodeservice.Settings;
+import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
 
 /**
  * @author francesco
@@ -43,6 +44,7 @@ public class CommModule {
 	
 	protected CommModule() throws JMSException {
 
+		ZKServer.init();
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		

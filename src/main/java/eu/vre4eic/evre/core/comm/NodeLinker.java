@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2018 VRE4EIC Consortium
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package eu.vre4eic.evre.core.comm;
 
 import java.util.Properties;
@@ -9,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.vre4eic.evre.nodeservice.Settings;
+import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
 
 public class NodeLinker {
 	
@@ -47,12 +63,12 @@ public class NodeLinker {
 	
 	private  static void loadRemoteProperties(String nodeServiceURL){
 
-
 		if (defaultSettings == null)
 			defaultSettings = Settings.getProperties();
 		
-		if (nodeServiceURL == null)
+		if (nodeServiceURL == null){
 			nodeServiceURL = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		}
 
 
 		zkSettings = new Properties();
@@ -68,6 +84,8 @@ public class NodeLinker {
 			saveZKProperty(Settings.MESSAGE_BROKER_PATH,client);
 			saveZKProperty(Settings.PROFILES_STORAGE,client);
 			saveZKProperty(Settings.PROFILES_STORAGE_PORT,client);
+			saveZKProperty(Settings.AAAI_LOGIN,client);
+			saveZKProperty(Settings.AAAI_PWD,client);
 		}
 		
 		finally
