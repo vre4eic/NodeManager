@@ -660,7 +660,7 @@ public class UserManagerImpl implements UserManager {
 			e.printStackTrace();
 			if (entityId>0)
 				removeUserProfile(userId);
-			return( new MessageImpl("Error, please contact the server admin", Common.ResponseStatus.FAILED));
+			return( new MessageImpl("Warning: operation completed but an issue has occurred, a notification has been sent to the System Administrator", Common.ResponseStatus.WARNING));
 		} 
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 	}
