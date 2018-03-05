@@ -23,7 +23,7 @@ import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
  * This interface defines the methods to set/get the values returned when an authentication operation is executed by a client.
- * The same values are used to build the <i>message</i> sent to other e-VRE services to notify the authentication event.
+ * These values are used to build the <i>message</i> sent to other e-VRE components to notify the authentication event.
  * @author Cesare
  *
  */

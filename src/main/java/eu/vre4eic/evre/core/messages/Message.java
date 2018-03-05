@@ -20,9 +20,15 @@ import java.io.Serializable;
 
 import  eu.vre4eic.evre.core.Common.ResponseStatus;
 
+/**
+ * This interface defines the methods to set/get the values returned when an operation is executed.
+ * @author Cesare
+ *
+ */
+
 public interface Message extends Serializable{
 	/**
-	 * Returns a message related to the request. It is always set for FAILED status
+	 * Returns a message related to the request.
 	 * @return String - a text message
 	 */
 	
@@ -41,7 +47,7 @@ public interface Message extends Serializable{
 	public Message setStatus(ResponseStatus status) ;
 
 	/**
-	 * Sets a message that gives a feedback about the request to the invoker method
+	 * Sets a message to give details on the operation.
 	 * @param message String - the message to set
 	 */
 	public Message setMessage(String message);

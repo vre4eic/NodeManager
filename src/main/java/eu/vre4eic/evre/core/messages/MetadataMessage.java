@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.vre4eic.evre.core.Common.MetadataOperationType;
 
 /**
- * This interface defines the methods  to set/get values used to notify to e-VRE services that an operation has been executed
+ * This interface defines the methods  to set/get values about an operation executed
  * by the Metadata Service
  * @author Cesare
  *
@@ -45,7 +45,7 @@ public interface MetadataMessage extends Message {
 	/**
 	 * Returns the operation type
 	 * 
-	 * @return MetadataOperationType - the operation
+	 * @return MetadataOperationType - READ,QUERY,INSERT,UPDATE, DELETE
 	 */
 	public MetadataOperationType getOperation();
 
