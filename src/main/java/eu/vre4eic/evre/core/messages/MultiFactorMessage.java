@@ -19,20 +19,50 @@
 package eu.vre4eic.evre.core.messages;
 
 /**
+ * /**
+ * This interface defines the methods  used in Two-phases authentication
  * @author francesco
  *
  */
 public interface MultiFactorMessage extends Message {
 	
+	
+	/**
+	 * Sets the temporary id of the user that has requested the 2fa. 
+	 * @param authId String - the temporary user id
+	 */
 	public MultiFactorMessage setAuthId(String authId);
-		
+	
+	/**
+	 * Gets the temporary id of the user that has requested the 2fa. 
+	 * @return String - the temporary user id
+	 */
+
 	public String getAuthId();
+	
+	/**
+	 * Sets the username of the user that has requested the 2fa. 
+	 * @param userId String - the username
+	 */
 	
 	public MultiFactorMessage setUserId(String userId);
 	
+	/**
+	 * Gets the username of the user that has requested the 2fa. 
+	 * @return String - the username
+	 */
 	public String getUserId();
 	
+	/**
+	 * Sets the second-factor sent to the user that has requested the 2fa. 
+	 * @param code String - the second-factor
+	 */
 	public MultiFactorMessage setCode(String code);
 	
+	
+	/**
+	 * Gets the second-factor sent to the user that has requested the 2fa. 
+	 * @return String - the second-factor
+	 */
 	public String getCode();
 }

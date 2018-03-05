@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.vre4eic.evre.core.Common.MetadataOperationType;
 
 /**
- * This interface defines the methods  to set/get values about an operation executed
+ * This interface defines the methods to set/get values about an operation executed
  * by the Metadata Service
  * @author Cesare
  *
