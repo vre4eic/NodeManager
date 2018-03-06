@@ -29,6 +29,8 @@ import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.core.messages.MetadataMessage;
 
 /**
+ * This class implements the methods defined in {@link eu.vre4eic.evre.core.messages.MetadataMessage} interface.
+ * 
  * @author francesco
  *
  */

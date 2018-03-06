@@ -20,7 +20,8 @@ package eu.vre4eic.evre.core.messages;
 
 /**
  * /**
- * This interface defines the methods  used in Two-phases authentication
+ * This interface defines the methods  used in Two-factors authentication
+ * 
  * @author francesco
  *
  */

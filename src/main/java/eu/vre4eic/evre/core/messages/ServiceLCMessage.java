@@ -20,7 +20,8 @@ import eu.vre4eic.evre.core.Common.ServiceStatus;
 import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
- * This interface defines the message published when a change happens in a service life-cycle.
+ * This interface defines the message published when a change happens in a e-VRE component life-cycle.
+ * 
  * @author Cesare
  *
  */

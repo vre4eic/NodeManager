@@ -18,6 +18,15 @@ package eu.vre4eic.evre.core.messages.impl;
 import eu.vre4eic.evre.core.Common.ResponseStatus;
 import eu.vre4eic.evre.core.messages.SubscriptionMessage;
 
+
+/**
+ * 
+ * This class implements the methods defined in {@link eu.vre4eic.evre.core.messages.SubscriptionMessage} interface.
+ * 
+ * @author francesco
+ *
+ */
+
 public class SubscriptionMessageImpl implements SubscriptionMessage {
 
 	

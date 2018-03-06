@@ -22,6 +22,9 @@ import eu.vre4eic.evre.core.Common.ResponseStatus;
 import eu.vre4eic.evre.core.messages.MultiFactorMessage;
 
 /**
+ * 
+ * This class implements the methods defined in {@link eu.vre4eic.evre.core.messages.MultiFactorMessage} interface.
+ * 
  * @author francesco
  *
  */

@@ -20,6 +20,7 @@ package eu.vre4eic.evre.core;
 
 /**
  * Enum types common to all classes
+ * 
  * @author Cesare
  *
  */
@@ -62,12 +63,19 @@ public class Common {
 		AUTHENTICATION, METADATA,USERPROFILE,SERVICE
 	}
 	
-		
+	/**
+	 * Topics: <ul><li>Auth_Channel</li> <li>Metadata_Op_Channel</li><li>Control_Channel</li> <li>MFA_Channel</li></ul>
+	 */
+	
 	public enum Topics {
 		AUTH_Channel, METADATA_OP_Channel, CONTROL_Channel, MFA_Channel;
 
 		
 	}
+	
+	/**
+	 * Control Operation: <ul><li>Print_Status</li> <li>Ping</li><li>Show_Warning</li></ul>
+	 */
 	
 	public enum ControlOperationType {
 		PRINT_STATUS,PING,SHOW_WARNING;

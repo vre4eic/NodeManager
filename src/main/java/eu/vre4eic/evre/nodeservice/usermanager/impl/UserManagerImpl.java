@@ -99,7 +99,7 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	/**
-	 * Create a user profile  
+	 * Creates a user profile  
 	 * @return Message 
 	 */
 	@Override

@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.vre4eic.evre.core.Common.UserRole;
 
 /**
- * This interface describes the user profile (will be modified, check CERIF  specs)
+ * This interface describes the user profile.
  * 
  * @author Cesare
  *

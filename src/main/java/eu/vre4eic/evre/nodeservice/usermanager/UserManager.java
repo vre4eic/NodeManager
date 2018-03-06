@@ -29,36 +29,79 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
 
 /**
- * This interface contains methods for managing user profiles. It contains signature of the methods of the UserManager component
- * decribed in the Deliverable 3.1
+ * This interface defines methods for managing User profiles. 
+ * 
+ * 
  * @author cesare
  *
  */
 public interface UserManager {
 	
 	
+	/**
+	 * Creates a User profile  
+	 * @return Message 
+	 */
+	
 	public Message createUserProfile(EVREUserProfile profile);
+	
+	/**
+	 * Updates a User profile  
+	 * @return Message 
+	 */
 	
 	public Message updateUserProfile(String userId, EVREUserProfile profile);
 	
+	/**
+	 * Used to recovery forgotten credentials  
+	 * @return Message 
+	 */
+	
 	public Message passwordRecovery(String email);
+	
+	/**
+	 * Removes the profile of a specific User
+	 * @return Message 
+	 */
 	
 	public Message removeUserProfile(String userId);
 	
+	/**
+	 * Returns a profile for a specific User id
+	 *  
+	 * @return EVREUserProfile 
+	 */
+	
 	public EVREUserProfile getUserProfile(String userId);
+	
+	/**
+	 * Returns a profile for a specific User id that provides credentials
+	 *  
+	 * @return EVREUserProfile 
+	 */
 	
 	public EVREUserProfile getUserProfile(UserCredentials credentials);
 	
 
+	/**
+	 * Returns a list of User profiles
+	 *  
+	 * @return List <EVREUserProfile> 
+	 */
+	
 	public List <EVREUserProfile> getUserProfile(EvreQuery query);
+	
+	/**
+	 * Returns all User profiles
+	 *  
+	 * @return List <EVREUserProfile> 
+	 */
 	
 	public List <EVREUserProfile> getAllUserProfiles();
 	
 	public Message subscribeEvent(String idUser, List <EvreEvent> events);
 	
-	/*
-	 * Warning: this method was not on the Deliverable. it is used to remove subscription to events.
-	 */
+	
 	public Message unSubscribeEvent(String idUser, List <EvreEvent> events);
 	
 	public Message checkEvent(String userId, String eventId);
@@ -68,15 +111,51 @@ public interface UserManager {
 	
 	public List<EvreEvent> getSubscribedEvents (String userId);
 	
+	/**
+	 * Authenticates a User
+	 *  
+	 * @return AuthenticationMessage
+	 */
+	
 	public AuthenticationMessage login (UserCredentials credentials);
+	
+	/**
+	 * Authenticates a User using the 2FA protocol
+	 *  
+	 * @return AuthenticationMessage
+	 */
 	
 	public AuthenticationMessage loginMFA (String userId, String password);
 	
+	/**
+	 * Authenticates a User using the 2FA protocol
+	 *  
+	 * @return AuthenticationMessage
+	 */
+	
 	public AuthenticationMessage loginMFACode (String token, String code);
+	
+	/**
+	 * ALogs out a User
+	 *  
+	 * @return AuthenticationMessage
+	 */
 	
 	public AuthenticationMessage logout(String token);
 	
+	/**
+	 * Registers an Authenticator for a specific User
+	 *  
+	 * @return Message
+	 */
+	
 	public Message registerAuthenticator(UserCredentials credentials, String authId);
+	
+	/**
+	 * removes an Authenticator for a User
+	 *  
+	 * @return Message
+	 */
 	
 	public Message removeAuthenticator(UserCredentials credentials, String authId);
 	

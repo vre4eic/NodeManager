@@ -25,6 +25,7 @@ import eu.vre4eic.evre.core.comm.MessageListener;
  * 
  * Class used to receive asynchronous messages related to users authenticated by  the system.
  * The authentication message can represent  Login or Logout operations and contains token which must be used by users for each service invocation.
+ *
  * @author francesco
  *
  */

@@ -30,10 +30,12 @@ import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 
 
 
-/**
- * @author cesare
+ /**
+ * This class implements the methods defined in {@link eu.vre4eic.evre.core.messages.AuthenticationMessage} interface.
+ * @author Cesare 
  *
  */
+ 
 @Configuration
 public class AuthenticationMessageImpl extends MessageImpl implements AuthenticationMessage {
 

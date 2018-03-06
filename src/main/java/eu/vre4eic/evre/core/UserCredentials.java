@@ -17,7 +17,7 @@ package eu.vre4eic.evre.core;
 
 
 /**
- * This interface describes user credentials (to be defined)
+ * This interface describes user credentials
  * 
  * @author Cesare
  *

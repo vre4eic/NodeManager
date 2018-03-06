@@ -18,7 +18,7 @@ package eu.vre4eic.evre.core.messages;
 
 
 /**
- * This interface defines the message published when a topic is subscribed
+ * This interface defines the <i>message</i> published when a topic is subscribed
  * @author Cesare
  *
  */

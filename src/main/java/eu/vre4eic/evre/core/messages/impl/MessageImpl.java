@@ -20,6 +20,12 @@ import org.springframework.context.annotation.Configuration;
 import eu.vre4eic.evre.core.Common.ResponseStatus;
 import eu.vre4eic.evre.core.messages.Message;
 
+/**
+ * This class implements the methods defined in {@link eu.vre4eic.evre.core.messages.Message} interface.
+ * 
+ * @author Cesare 
+ *
+ */
 @Configuration
 public class MessageImpl implements Message {
 
