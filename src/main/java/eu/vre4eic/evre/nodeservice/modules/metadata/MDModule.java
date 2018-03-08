@@ -69,7 +69,7 @@ public class MDModule {
 		//initialize data structure for tokens
 		mdTable = new  Hashtable<String, List<MetadataMessage>> ();
 				
-		log.info(" #### Metadata Module instanciated ####");
+		log.info(" #### Metadata Module ready ####");
 		log.info(" Connecting to Broker:: " + brokerURL);
 		
 		//subscribe Auth_channel
@@ -170,7 +170,7 @@ public class MDModule {
 		for (Entry<String, List<MetadataMessage>> tokenEntry : mdTable.entrySet()) {
 			log.info("------------------ Token " + tokenEntry.getKey() +"  ----------------------" );
 			for (MetadataMessage entry : tokenEntry.getValue()) {
-				log.info(entry.getOperation().toString() );
+				log.info(entry.getMessage().toString()+", "+entry.getOperation().toString() );
 			}					
 			log.info("---------------------------------------------------------------------- " );
 			

@@ -63,7 +63,7 @@ public class Subscriber<T extends eu.vre4eic.evre.core.messages.Message> {
 				if (message instanceof ObjectMessage) {
 					try {
 						T m = (T) ((ObjectMessage) message).getObject();
-						log.info("##### Broker message arrived #####");
+						log.debug("##### Broker message arrived #####");
 						listener.onMessage(m);           		            	
 					}
 					catch (JMSException ex) {
@@ -71,7 +71,7 @@ public class Subscriber<T extends eu.vre4eic.evre.core.messages.Message> {
 					}
 				}
 				else {
-					throw new IllegalArgumentException("Message must be of type ObjectMessage serializing Message extentions ");
+					throw new IllegalArgumentException("Message must be of type ObjectMessage serializing Message extentions");
 				}
 
 			} catch (Exception e) {
@@ -101,7 +101,7 @@ public class Subscriber<T extends eu.vre4eic.evre.core.messages.Message> {
 				messageConsumer.setMessageListener(null);
 			else {
 				messageConsumer.setMessageListener(new AMQListener(listener));
-				log.info(" subscribed to topic:: " + destination.toString());
+				log.info(" subscribed to topic: " + destination.toString());
 			}
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block

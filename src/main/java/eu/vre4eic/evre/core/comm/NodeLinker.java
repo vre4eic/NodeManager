@@ -49,7 +49,7 @@ public class NodeLinker {
 			try {
 				instance = new NodeLinker(nodeServiceURL);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				log.error(e.getMessage());
 				e.printStackTrace();
 			}
 		return instance;
@@ -103,7 +103,7 @@ public class NodeLinker {
 			if (data != null) 
 				zkSettings.setProperty(property_path, new String(data));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log.error(e.getMessage());
 			e.printStackTrace();
 		}
 		

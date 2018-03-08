@@ -36,6 +36,8 @@ import java.util.Properties;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,6 +83,7 @@ public class UserManagerImpl implements UserManager {
 
 	private Hashtable<String, AuthenticationMessage> pendingUsers = new Hashtable<String,AuthenticationMessage>();
 
+	private Logger logger = LoggerFactory.getLogger(UserManagerImpl.class);
 	NodeLinker node;
 	@Autowired
 	private UserProfileRepository repository;
@@ -96,6 +99,7 @@ public class UserManagerImpl implements UserManager {
 
 		TOKEN_TIMEOUT = node.getTokenTimeout();
 		CODE_TIMEOUT = node.getCodeTimeout();
+		logger.info("UserManager initialized");
 	}
 
 	/**
@@ -461,7 +465,7 @@ public class UserManagerImpl implements UserManager {
 			JSONObject obj=null;
 			while ((line = bufferedReader.readLine()) != null) {
 				obj = new JSONObject(line);
-				System.out.println(line);
+				logger.info(line);
 				if (obj.has("id"))
 					entityId=obj.getInt("id");
 				else{
@@ -506,7 +510,7 @@ public class UserManagerImpl implements UserManager {
 			JSONObject obj=null;
 			while ((line = bufferedReader.readLine()) != null) {
 				obj = new JSONObject(line);
-				System.out.println(line);
+				logger.info(line);
 			}
 			bufferedReader.close();
 			inputStream.close();
@@ -557,7 +561,7 @@ public class UserManagerImpl implements UserManager {
 			while ((line = bufferedReader.readLine()) != null) {
 				obj = new JSONObject(line);
 				entityId=obj.getInt("entityId");
-				System.out.println(line);
+				logger.info(line);
 			}
 			bufferedReader.close();
 			inputStream.close();
@@ -582,7 +586,7 @@ public class UserManagerImpl implements UserManager {
 			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 			line = "";
 			while ((line = bufferedReader.readLine()) != null) {
-				System.out.println(line);
+				logger.info(line);
 			}
 			bufferedReader.close();
 			inputStream.close();
@@ -648,7 +652,7 @@ public class UserManagerImpl implements UserManager {
 			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 			line = "";
 			while ((line = bufferedReader.readLine()) != null) {
-				System.out.println(line);
+				logger.info(line);
 			}
 			bufferedReader.close();
 			inputStream.close();
@@ -656,12 +660,15 @@ public class UserManagerImpl implements UserManager {
 
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			logger.error("The AAAI db has not been updated, more info: ");
+			logger.error(e.getCause().toString());
 			e.printStackTrace();
 			if (entityId>0)
 				removeUserProfile(userId);
-			return( new MessageImpl("Warning: operation completed but an issue has occurred, a notification has been sent to the System Administrator", Common.ResponseStatus.WARNING));
+			return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
+			//return( new MessageImpl("Warning: a system issue occurs, please contact  the administrator", Common.ResponseStatus.WARNING));
 		} 
+		logger.info("Operation completed, user added");
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 	}
 

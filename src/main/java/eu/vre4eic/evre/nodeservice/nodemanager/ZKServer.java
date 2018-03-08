@@ -18,7 +18,6 @@ package eu.vre4eic.evre.nodeservice.nodemanager;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -32,12 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.vre4eic.evre.nodeservice.Settings;
-import eu.vre4eic.evre.nodeservice.Utils;
+
 
 public class ZKServer {
 
 
+	
 	private static Thread zkService;
+	private static Logger log = LoggerFactory.getLogger(ZKServer.class);
 	
 	public static void  init(){
 		if (zkService == null) // Double checked locking pattern
@@ -48,7 +49,7 @@ public class ZKServer {
 					startService(2181);
 					init_eVRE_Env();
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
+						log.error(e.getMessage());
 						e.printStackTrace();
 					}
 				}
@@ -59,7 +60,7 @@ public class ZKServer {
 
 
 	private static void startService(int clientPort) throws Exception {
-		final Logger log = LoggerFactory.getLogger(ZKServer.class);
+		
 
 		try {
 			Properties properties = new Properties();
@@ -73,7 +74,7 @@ public class ZKServer {
 			final ServerConfig configuration = new ServerConfig();
 			configuration.readFrom(quorumPeerConfig);
 
-			System.out.println("######### here######");
+			
 			final ZooKeeperServerMain server = new ZooKeeperServerMain();
 			zkService = new Thread(new Runnable() {
 				@Override
@@ -81,9 +82,9 @@ public class ZKServer {
 					try {
 						server.runFromConfig(configuration);
 					} catch (IOException e) {
-						log.error("coordinator start failure", e);
+						log.error("Coordinator start failure", e);
 					} catch (AdminServerException e) {
-						// TODO Auto-generated catch block
+						log.error(e.getMessage());
 						e.printStackTrace();
 					}
 				}
@@ -165,17 +166,17 @@ public class ZKServer {
         				.creatingParentContainersIfNeeded()
         				.forPath(path, value.getBytes());
         		// log
-				System.out.println("## Created " +path + "::"+  value);
+        		log.info("## Created " +path + "::"+  value);
 			}
 			else {
 				byte[] data = client.getData().forPath(path);
 				if (data != null) 
 	        		// log
-					System.out.println("## Existing " + path + "::"+  new String(data));
+					log.info("## Existing " + path + "::"+  new String(data));
 			}
 				;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log.error(e.getMessage());
 			e.printStackTrace();
 		}
 	} 

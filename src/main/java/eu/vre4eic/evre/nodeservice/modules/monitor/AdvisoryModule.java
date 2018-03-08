@@ -33,9 +33,12 @@ import org.apache.activemq.command.ConsumerId;
 import org.apache.activemq.command.ConsumerInfo;
 import org.apache.activemq.command.DataStructure;
 import org.apache.activemq.command.RemoveInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.vre4eic.evre.core.Common.Topics;
 import eu.vre4eic.evre.core.comm.CommModule;
+import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
 
 
 /**
@@ -45,6 +48,7 @@ import eu.vre4eic.evre.core.comm.CommModule;
 public class AdvisoryModule implements MessageListener {
 	
 	private static AdvisoryModule instance = null;
+	private static Logger log = LoggerFactory.getLogger(AdvisoryModule.class);
 	public AdvisoryModule(){
 
 		Session session =CommModule.getInstance().getSession();
@@ -54,7 +58,7 @@ public class AdvisoryModule implements MessageListener {
 				ActiveMQDestination destination = (ActiveMQDestination)session.createTopic(topic.name());
 
 				Destination consumerTopic = AdvisorySupport.getConsumerAdvisoryTopic(destination);
-				System.out.println("Subscribing to advisory " + consumerTopic);
+				log.info("Subscribing to advisory " + consumerTopic);
 				MessageConsumer consumerAdvisory = session.createConsumer(consumerTopic);
 				consumerAdvisory.setMessageListener(this);
 
@@ -76,7 +80,7 @@ public class AdvisoryModule implements MessageListener {
 
 	@Override
 	public void onMessage(Message message) {
-		System.out.println("############ ADVISORY #############");
+		log.info("############ ADVISORY #############");
 //		System.out.println(message);
 		ActiveMQMessage msg = (ActiveMQMessage) message;
 		DataStructure ds = msg.getDataStructure();
@@ -84,21 +88,20 @@ public class AdvisoryModule implements MessageListener {
 			switch (ds.getDataStructureType()) {
 			case CommandTypes.CONSUMER_INFO:
 				ConsumerInfo consumerInfo = (ConsumerInfo) ds;
-				System.out.println("Consumer '" + consumerInfo.getConsumerId()
+				log.info("Consumer '" + consumerInfo.getConsumerId()
 						+ "' subscribed to '" + consumerInfo.getDestination()
 						+ "'");
 				break;
 			case CommandTypes.REMOVE_INFO:
 				RemoveInfo removeInfo = (RemoveInfo) ds;
 				ConsumerId consumerId = ((ConsumerId) removeInfo.getObjectId());
-				System.out
-						.println("Consumer '" + consumerId + "' unsubscribed");
+				log.info("Consumer '" + consumerId + "' unsubscribed");
 				break;
 			default:
-				System.out.println("Unkown data structure type");
+				log.warn("Unkown data structure type");
 			}
 		} else {
-			System.out.println("No data structure provided");
+			log.warn("No data structure provided");
 		}
 	}		
 	}
