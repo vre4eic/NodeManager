@@ -39,6 +39,7 @@ public interface MetadataMessage extends Message {
 	/**
 	 * Sets the token of the user that has requested the operation. 
 	 * @param token String - the user token
+	 * @return MetadataMessage
 	 */
 	public MetadataMessage setToken(String token);
 
@@ -53,6 +54,7 @@ public interface MetadataMessage extends Message {
 	 * Sets the operation type 
 	 * 
 	 * @param op MetadataOperationType - the type of the operation
+	 * @return MetadataMessage
 	 */
 	public MetadataMessage setOperation(MetadataOperationType op);
 	

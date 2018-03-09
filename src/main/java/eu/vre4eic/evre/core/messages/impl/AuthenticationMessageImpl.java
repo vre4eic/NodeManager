@@ -62,14 +62,14 @@ public class AuthenticationMessageImpl extends MessageImpl implements Authentica
 	}
 	
 	/**
-	 * @return the token
+	 * @return String - the token
 	 */
 	public String getToken() {
 		return token;
 	}
 	/**
-	 * @param token the token to set
-	 * @return 
+	 * @param token - the token to set
+	 * @return AuthenticationMessage
 	 */
 	public AuthenticationMessage setToken(String token) {
 		this.token = token;

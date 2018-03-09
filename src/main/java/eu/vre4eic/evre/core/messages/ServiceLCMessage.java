@@ -44,15 +44,15 @@ public interface ServiceLCMessage extends Message {
 	 * Returns the new life-cycle status
 	 * 
 	 * @return ServiceStatus - the current service status
-	 * @see UserRole
+	 * 
 	 */
 	public ServiceStatus getServiceStatus();
 
 	/**
 	 * Sets the the current service status 
 	 * 
-	 * @param status ServiceStatus - the service status
-	 * @see UserRole
+	 * @param serviceStatus ServiceStatus - the service status
+	 * 
 	 */
 	public void setServiceStatus(ServiceStatus serviceStatus);
 	

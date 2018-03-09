@@ -31,20 +31,8 @@ import eu.vre4eic.evre.core.messages.ControlMessage;
 
 
 /**
- * This class must be instanced to automatically receive information of the users authenticated with the system.
- * The method checkToken() can be used  to verify if the token received during the invocation of a service is valid.
- * 
- * example:
- * <br>
- * <code>
- * AuthModule module = AuthModule.getInstance(tcp://localhost:61616); <br>
- * module.checkToken(tkn);
- * </code>
- * 
- * <br>
- * If you don't specify a Broker URL ( i.e. AuthModule.getInstance() )
- * <br>then the default URL is tcp://v4e-lab.isti.cnr.it:61616
- * 
+ * This class must be instanced to automatically receive information about building blocks
+ *
  * @author francesco
  *
  */
@@ -74,8 +62,7 @@ public class ControlModule {
 	
 	/**
 	 * The class constructor is protected and can be instantiated with this method.
-	 * The default Broker URL is: v4e-lab.isti.cnr.it
-	 * @return AuthModule - the singleton instance of the Class
+	 * @return ControlModule - the singleton instance of the Class
 	 */
 	public static ControlModule getInstance() {
 		if(instance == null) {
@@ -94,7 +81,7 @@ public class ControlModule {
 	/**
 	 * The class constructor is protected and can be instanced only by this method.
 	 * @param brokerURL -  the URL of the Local or Remote Broker
-	 * @return AuthModule - the singleton instance of the Class
+	 * @return ControlModule - the singleton instance of the Class
 	 */
 
 	public static ControlModule getInstance(String brokerURL) {
@@ -112,8 +99,7 @@ public class ControlModule {
 	}
 	
 	/**
-	 * It is a private method invoked during the class instantiation to register a listener to the authentication channel
-	 * @param brokerURL - the URL of the Broker provider
+	 * It is a private method to register a listener to the authentication channel
 	 * @throws JMSException - JMS interfaces are used to connect to the provider
 	 */
 	private void doSubcribe() throws JMSException{	
@@ -138,8 +124,8 @@ public class ControlModule {
 	}
 
 	/**
-	 *  Method invoked by the authentication listener to register tokens of new authenticated users
-	 * @param mdm - AuthenticationMessage received from the system
+	 *  Method invoked by the authentication listener to read messages
+	 * @param msg ControlMessage
 	 */
 	protected void doSomething(ControlMessage msg){
 

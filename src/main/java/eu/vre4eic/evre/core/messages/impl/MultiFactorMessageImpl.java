@@ -34,17 +34,12 @@ public class MultiFactorMessageImpl extends MessageImpl implements MultiFactorMe
 	private String userId;
 	private String code;
 
-	/**
-	 * 
-	 */
+	
 	public MultiFactorMessageImpl() {
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @param message
-	 * @param status
-	 */
+	
 	public MultiFactorMessageImpl(String message, ResponseStatus status) {
 		super(message, status);
 		// TODO Auto-generated constructor stub

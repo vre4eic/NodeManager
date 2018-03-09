@@ -43,12 +43,14 @@ public interface Message extends Serializable{
 	/**
 	 * Sets the status of the executed request
 	 * @param status ResponseStatus - FAILED, SUCCEED, EMPTY_RESULT, WARNING
+	 * @return Message
 	 */
 	public Message setStatus(ResponseStatus status) ;
 
 	/**
 	 * Sets a message to give details on the operation.
 	 * @param message String - the message to set
+	 * @return Message
 	 */
 	public Message setMessage(String message);
 

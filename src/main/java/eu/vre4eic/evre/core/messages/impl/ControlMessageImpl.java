@@ -30,17 +30,12 @@ public class ControlMessageImpl extends MessageImpl implements ControlMessage {
 
 	private ControlOperationType op;
 
-	/**
-	 * 
-	 */
+	
 	public ControlMessageImpl() {
 		super();
 	}
 
-	/**
-	 * @param message
-	 * @param status
-	 */
+	
 	public ControlMessageImpl(String message, ResponseStatus status) {
 		super(message, status);
 		// TODO Auto-generated constructor stub

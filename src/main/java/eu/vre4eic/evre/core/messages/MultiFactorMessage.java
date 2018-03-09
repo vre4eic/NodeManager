@@ -31,6 +31,7 @@ public interface MultiFactorMessage extends Message {
 	/**
 	 * Sets the temporary id of the user that has requested the 2fa. 
 	 * @param authId String - the temporary user id
+	 * @return MultiFactorMessage
 	 */
 	public MultiFactorMessage setAuthId(String authId);
 	
@@ -44,6 +45,7 @@ public interface MultiFactorMessage extends Message {
 	/**
 	 * Sets the username of the user that has requested the 2fa. 
 	 * @param userId String - the username
+	 * @return MultiFactorMessage
 	 */
 	
 	public MultiFactorMessage setUserId(String userId);
@@ -57,6 +59,7 @@ public interface MultiFactorMessage extends Message {
 	/**
 	 * Sets the second-factor sent to the user that has requested the 2fa. 
 	 * @param code String - the second-factor
+	 * @return MultiFactorMessage
 	 */
 	public MultiFactorMessage setCode(String code);
 	

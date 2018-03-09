@@ -39,12 +39,13 @@ public interface AuthenticationMessage extends Message{
 	 * Sets the token assigned to the authenticated user. The token is assigned by the AAAI service.
 	 *
 	 * @param token String - the user token
+	 * @return AuthenticationMessage
 	 */
 	public AuthenticationMessage setToken(String token);
 	
 	/**
 	 * Gets the zone time id used to calculate the token's TimeLimit.
-	 * @return ZoneId - the zoneId
+	 * @return String - the zone Id
 	 */
 	@JsonIgnore
 	public String  getTimeZone();
@@ -52,13 +53,14 @@ public interface AuthenticationMessage extends Message{
 	/**
 	 * Sets the time zone id used to calculate the token's time limit.
 	 *
-	 * @param string ZoneId - the ZoneId
+	 * @param string String - the ZoneId
+	 * @return AuthenticationMessage 
 	 */
 	public AuthenticationMessage setTimeZone(String string);
 	
 	/**
 	 * Gets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
-	 * @return String - the token identifying the user
+	 * @return LocalDateTime
 	 */
 	public LocalDateTime  getTimeLimit();
 	
@@ -66,6 +68,7 @@ public interface AuthenticationMessage extends Message{
 	 * Sets the time to live assigned to the authenticated user. Once the ttl has elapsed the token is no longer valid.
 	 *
 	 * @param ttl String - the lifetime of a token i e-VRE
+	 * @return AuthenticationMessage
 	 */
 	public AuthenticationMessage setTimeLimit(LocalDateTime ttl);
 
@@ -73,7 +76,7 @@ public interface AuthenticationMessage extends Message{
 	
 	/**
 	 * Gets the period of time in minutes of a renewable token, 0 otherwise.
-	 * @return String  - the minutes
+	 * @return String 
 	 */
 	@JsonIgnore
 	public String  getRenewable();
@@ -81,7 +84,8 @@ public interface AuthenticationMessage extends Message{
 	/**
 	 * Sets  the period of time in minutes of a renewable token.
 	 *
-	 * @param String - minutes
+	 * @param ttl String - minutes
+	 * @return AuthenticationMessage
 	 */
 	public AuthenticationMessage setRenewable(String ttl);
 
@@ -100,6 +104,7 @@ public interface AuthenticationMessage extends Message{
 	 * Sets the UserRole 
 	 * 
 	 * @param role UserRole - the role to set
+	 * @return AuthenticationMessage
 	 * @see UserRole
 	 */
 	public AuthenticationMessage setRole(UserRole role);

@@ -32,19 +32,7 @@ import eu.vre4eic.evre.core.messages.MetadataMessage;
 
 
 /**
- * This class must be instanced to automatically receive information of the users authenticated with the system.
- * The method checkToken() can be used  to verify if the token received during the invocation of a service is valid.
- * 
- * example:
- * <br>
- * <code>
- * AuthModule module = AuthModule.getInstance(tcp://localhost:61616); <br>
- * module.checkToken(tkn);
- * </code>
- * 
- * <br>
- * If you don't specify a Broker URL ( i.e. AuthModule.getInstance() )
- * <br>then the default URL is tcp://v4e-lab.isti.cnr.it:61616
+ * This class automatically receive notifications of the operations executed on the e-VRE Catalogue.
  * 
  * @author francesco
  *
@@ -79,8 +67,7 @@ public class MDModule {
 	
 	/**
 	 * The class constructor is protected and can be instantiated with this method.
-	 * The default Broker URL is: v4e-lab.isti.cnr.it
-	 * @return AuthModule - the singleton instance of the Class
+	 * @return MDModule - the singleton instance of the Class
 	 */
 	public static MDModule getInstance() {
 		if(instance == null) {
@@ -97,9 +84,9 @@ public class MDModule {
 	}
 	
 	/**
-	 * The class constructor is protected and can be instanced only by this method.
+	 * The class constructor is protected and can be invoked only by this method.
 	 * @param brokerURL -  the URL of the Local or Remote Broker
-	 * @return AuthModule - the singleton instance of the Class
+	 * @return MDModule - the singleton instance of the Class
 	 */
 
 	public static MDModule getInstance(String brokerURL) {
@@ -118,7 +105,6 @@ public class MDModule {
 	
 	/**
 	 * It is a private method invoked during the class instantiation to register a listener to the authentication channel
-	 * @param brokerURL - the URL of the Broker provider
 	 * @throws JMSException - JMS interfaces are used to connect to the provider
 	 */
 	private void doSubcribe() throws JMSException{	
@@ -143,8 +129,8 @@ public class MDModule {
 	}
 
 	/**
-	 *  Method invoked by the authentication listener to register tokens of new authenticated users
-	 * @param mdm - AuthenticationMessage received from the system
+	 *  Method invoked by the  publisher to publish the operation executed on the e-VRE Catalogue
+	 * @param mdm - MetadataMessage
 	 */
 	protected void addMessage(MetadataMessage mdm){
 		synchronized(mdTable) {
@@ -162,7 +148,7 @@ public class MDModule {
 
 
 	/**
-	 * utility to print the table of the managed tokens
+	 * utility to print the table of the operation on the Catalogue
 	 */
 	public void listToken(){
 		log.info("" );log.info("" );

@@ -39,7 +39,8 @@ public interface UserManager {
 	
 	
 	/**
-	 * Creates a User profile  
+	 * Creates a User profile
+	 * @param profile EVREUserProfile
 	 * @return Message 
 	 */
 	
@@ -47,13 +48,16 @@ public interface UserManager {
 	
 	/**
 	 * Updates a User profile  
+	 * @param userId String - the User identifier
+	 * @param profile EVREUserProfile - the User profile
 	 * @return Message 
 	 */
 	
 	public Message updateUserProfile(String userId, EVREUserProfile profile);
 	
 	/**
-	 * Used to recovery forgotten credentials  
+	 * Used to recovery forgotten credentials 
+	 * @param email String 
 	 * @return Message 
 	 */
 	
@@ -61,6 +65,7 @@ public interface UserManager {
 	
 	/**
 	 * Removes the profile of a specific User
+	 * @param userId String  
 	 * @return Message 
 	 */
 	
@@ -68,7 +73,8 @@ public interface UserManager {
 	
 	/**
 	 * Returns a profile for a specific User id
-	 *  
+	 * @param userId String
+	 *   
 	 * @return EVREUserProfile 
 	 */
 	
@@ -76,7 +82,7 @@ public interface UserManager {
 	
 	/**
 	 * Returns a profile for a specific User id that provides credentials
-	 *  
+	  * @param credentials UserCredentials 
 	 * @return EVREUserProfile 
 	 */
 	
@@ -85,8 +91,8 @@ public interface UserManager {
 
 	/**
 	 * Returns a list of User profiles
-	 *  
-	 * @return List <EVREUserProfile> 
+	 * @param query EvreQuery    
+	 * @return the list of User Profiles matching the query conditions
 	 */
 	
 	public List <EVREUserProfile> getUserProfile(EvreQuery query);
@@ -94,7 +100,7 @@ public interface UserManager {
 	/**
 	 * Returns all User profiles
 	 *  
-	 * @return List <EVREUserProfile> 
+	 * @return all User Profiles
 	 */
 	
 	public List <EVREUserProfile> getAllUserProfiles();
@@ -113,7 +119,7 @@ public interface UserManager {
 	
 	/**
 	 * Authenticates a User
-	 *  
+	 * @param credentials UserCredentials
 	 * @return AuthenticationMessage
 	 */
 	
@@ -121,7 +127,8 @@ public interface UserManager {
 	
 	/**
 	 * Authenticates a User using the 2FA protocol
-	 *  
+	 *  @param userId String
+	 *  @param password String
 	 * @return AuthenticationMessage
 	 */
 	
@@ -129,15 +136,16 @@ public interface UserManager {
 	
 	/**
 	 * Authenticates a User using the 2FA protocol
-	 *  
+	 * @param token String
+	 * @param code String
 	 * @return AuthenticationMessage
 	 */
 	
 	public AuthenticationMessage loginMFACode (String token, String code);
 	
 	/**
-	 * ALogs out a User
-	 *  
+	 * Logs out a User
+	 * @param token String
 	 * @return AuthenticationMessage
 	 */
 	
@@ -145,7 +153,8 @@ public interface UserManager {
 	
 	/**
 	 * Registers an Authenticator for a specific User
-	 *  
+	 * @param credentials UserCredentials
+	 * @param authId String
 	 * @return Message
 	 */
 	
@@ -153,7 +162,8 @@ public interface UserManager {
 	
 	/**
 	 * removes an Authenticator for a User
-	 *  
+	 * @param credentials UserCredentials
+	 * @param authId String 
 	 * @return Message
 	 */
 	

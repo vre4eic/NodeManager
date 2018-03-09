@@ -109,7 +109,12 @@ public class NodeLinker {
 		
 	}
 	
-	
+	public  String getEvreVersion() {
+		String versionPath = defaultSettings.getProperty(Settings.VERSION_PATH);
+		String version =  zkSettings.getProperty(versionPath);
+		return version;
+		
+	}
 	
 	public  String getMessageBrokerURL() {
 		String messageBrokerPath = defaultSettings.getProperty(Settings.MESSAGE_BROKER_PATH);
