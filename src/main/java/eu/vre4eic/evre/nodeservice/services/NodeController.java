@@ -86,12 +86,13 @@ public class NodeController {
 			session.setAttribute(RELEASE, "0.01a");
 
 			return component;
-		}
+		}*/
 		@RequestMapping(value = "/doc", method = RequestMethod.GET)
 		public String redirect() {
 
 			return "redirect:/doc/index"; 
 		}
+		/*
 		@RequestMapping(value = "/test", method = RequestMethod.GET)
 		public String redirect_index() {
 
