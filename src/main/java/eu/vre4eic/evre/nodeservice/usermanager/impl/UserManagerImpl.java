@@ -28,16 +28,22 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,7 +89,7 @@ public class UserManagerImpl implements UserManager {
 
 	private Hashtable<String, AuthenticationMessage> pendingUsers = new Hashtable<String,AuthenticationMessage>();
 
-	private Logger logger = LoggerFactory.getLogger(UserManagerImpl.class);
+	private Logger logger = LoggerFactory.getLogger(UserManagerImpl.class.getClass());
 	NodeLinker node;
 	@Autowired
 	private UserProfileRepository repository;
@@ -111,7 +117,14 @@ public class UserManagerImpl implements UserManager {
 
 		if (repository.findByUserId(profile.getUserId())!=null)
 			return( new MessageImpl("Operation not executed, User Id not unique", Common.ResponseStatus.FAILED));
-
+		
+		  SecureRandom sr=new SecureRandom();
+		  byte[] salt=new byte[20];
+		  sr.nextBytes(salt);
+		  String ePwd=encryptData(profile.getPassword(), salt);
+		  profile.setPassword(ePwd);
+		  profile.setSalt(salt);
+		  
 		if (repository.save(profile)!=null)
 			return (this.addUserToAAAI(profile.getUserId(), profile.getPassword(), "evre"));
 		//return new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED);
@@ -413,9 +426,18 @@ public class UserManagerImpl implements UserManager {
 		ame.setTimeLimit(LocalDateTime.MIN);
 		UserProfile profile= repository.findByUserId(login);
 
-		if (profile==null || !password.equals(profile.getPassword()))
+		if (profile==null)
 			return ame;
 
+		//backward compatibility
+		if (profile.getSalt() == null && !profile.getPassword().equals(password))
+			return ame;
+		
+		if (profile.getSalt() != null && !encryptData(password, profile.getSalt()).equals(profile.getPassword()))
+		
+			return ame;
+	
+		
 		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TOKEN_TIMEOUT);
 		ame = new AuthenticationMessageImpl(Common.ResponseStatus.SUCCEED, "Operation completed",
 				profile.getPassword(), profile.getRole(),timeLimit);
@@ -432,6 +454,31 @@ public class UserManagerImpl implements UserManager {
 		ZoneId zone = ZoneId.of(am.getTimeZone());
 		LocalDateTime now = LocalDateTime.now(zone);
 		return now.isAfter(am.getTimeLimit());
+	}
+	
+	private String encryptData(String data, byte[] salt){
+		byte[] secret=new byte[12];
+		String passHash=data;
+		
+		  String uPwd=data;
+		  try {
+			 PBEKeySpec keySpec = new PBEKeySpec(uPwd.toCharArray(), salt, 2048, 160);
+			SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			
+			secret = keyFactory.generateSecret(keySpec).getEncoded();
+			
+
+			passHash = Base64.encodeBase64String(secret);
+	       // String saltString = Base64.encodeBase64String(salt);
+			System.out.println("data " + uPwd+", secret "+passHash);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		  return passHash;
 	}
 
 	private Message removeUserFromAAAI(String userId){

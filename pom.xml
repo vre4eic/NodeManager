@@ -196,10 +196,10 @@
 				<configuration>
 
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-<!-- 				<webResources>
+			<webResources>
 						 <resource> <directory>doc</directory> <targetPath>doc</targetPath> 
 							</resource>
-					</webResources>-->
+					</webResources>
 
 					<attachClasses>true</attachClasses>
 				</configuration>

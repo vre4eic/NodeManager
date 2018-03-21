@@ -54,5 +54,9 @@ public interface UserProfile extends UserCredentials{
 
 	public void setAuthId(String commId) ;
 	
+	@JsonIgnore
+	public byte[] getSalt ();
 	
+	@JsonIgnore
+	public void setSalt(byte[] salt) ;
 }

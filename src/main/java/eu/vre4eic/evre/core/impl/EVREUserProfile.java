@@ -24,6 +24,8 @@ import eu.vre4eic.evre.core.Common.UserRole;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.annotation.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import eu.vre4eic.evre.core.UserProfile;
 
 /**
@@ -45,6 +47,7 @@ public class EVREUserProfile implements UserProfile {
 	String email;
 	String snsId;
 	String authId;
+	byte[] salt;
 	
 	
 	public EVREUserProfile() {
@@ -63,6 +66,7 @@ public class EVREUserProfile implements UserProfile {
 		this.email=email;
 		this.snsId=snsId;
 		this.authId=authId;
+		//add the salt 
 		
 	}
 	
@@ -98,6 +102,7 @@ public class EVREUserProfile implements UserProfile {
 		this.userId = userId;
 	}
 
+	@JsonIgnore
 	@ApiModelProperty(position = 2, required = false)
 	public String getPassword() {
 		return password;
@@ -152,6 +157,11 @@ public class EVREUserProfile implements UserProfile {
 		this.organization=organization;
 		
 	}
-	
+	public byte[] getSalt() {
+		return salt;
+	}
+	public void setSalt(byte[] salt) {
+		this.salt = salt;
+	}
 
 }
