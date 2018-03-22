@@ -30,13 +30,14 @@ public class NodeServiceContextListener implements ServletContextListener {
 	  @Override
 	  
 	  public void contextDestroyed(ServletContextEvent arg0) {
+		  System.out.println("******************NodeService context stopping ");
 		  ZKServer.stopService();
 	  }
 
 	  @Override
 	
 	  public void contextInitialized(ServletContextEvent arg0) {
-		  System.out.println("****************** context initialized " + this);
+		  System.out.println("******************NodeService context initialized " + this);
 		  //ZKServer.init();
 	  }
 
