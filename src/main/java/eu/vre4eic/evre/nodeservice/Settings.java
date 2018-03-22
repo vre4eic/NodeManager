@@ -19,38 +19,44 @@ import java.util.Properties;
 
 public class Settings {
 	
-	public static String DEFAULT_SETTINGS = "Settings.properties";
+
+	public static final String DEFAULT_SETTINGS = "Settings.properties";
 	
-	public static String EVRE_TEST = "/evre/test";
-	public static String EVRE_PRODUCTION = "/evre/production";
-	public static String EVRE_SERVICES = "/services";
+	public static final String EVRE_TEST = "/evre/test";
+	public static final String EVRE_PRODUCTION = "/evre/production";
+	public static final String NODE_SERVICE = "/NodeService";
+	public static final String SERVICES = "/Services";
 
 
 
-	public static String ZOOKEEPER_DEFAULT = "ZooKeeper_default";
+	public static final String ZOOKEEPER_DEFAULT = "ZooKeeper_default";
 
 	
-	public static String VERSION_PATH="Version_path";
-	public static String TOKEN_TIMEOUT_PATH="TokenTimeout_path";
-	public static String CODE_TIMEOUT_PATH="CodeTimeout_path";
-	public static String MESSAGE_BROKER_PATH="MessageBroker_path";
-	public static String PROFILES_STORAGE="ProfileStorage_path";
-	public static String PROFILES_STORAGE_PORT="ProfileStoragePort_path";
-	public static String AAAI_LOGIN="AAAI_login";
-	public static String AAAI_PWD="AAAI_pwd";
+	public static final String VERSION_PATH="Version_path";
+	public static final String VERSION_DEFAULT="Version_default";
+
+	public static final String TOKEN_TIMEOUT_PATH="TokenTimeout_path";
+	public static final String TOKEN_TIMEOUT_DEFAULT="TokenTimeout_default";
+	public static final String CODE_TIMEOUT_PATH="CodeTimeout_path";
+	public static final String CODE_TIMEOUT_DEFAULT="CodeTimeout_default";
+
+	public static final String SECRET_PATH = "Secret_path";;
+	public static final String SECRET_DEFAULT = "Secret_default";;
+
+	public static final String MESSAGE_BROKER_URL_PATH="MessageBrokerURL_path";
+	public static final String MESSAGE_BROKER_URL_DEFAULT="MessageBrokerURL_default";
+
+	public static final String PROFILES_STORAGE_URL_PATH="ProfileStorageURL_path";
+	public static final String PROFILES_STORAGE_URL_DEFAULT="ProfileStorageURL_default";
+	public static final String PROFILES_STORAGE_CRED_PATH="ProfileStorageCred_path";
+	public static final String PROFILES_STORAGE_CRED_DEFAULT="ProfileStorageCred_default";
 	
-	public static String VERSION_DEFAULT="Version_default";
-	public static String TOKEN_TIMEOUT_DEFAULT="TokenTimeout_default";
-	public static String CODE_TIMEOUT_DEFAULT="CodeTimeout_default";
-	public static String MESSAGE_BROKER_DEFAULT="MessageBroker_default";
+	public static final String AAAI_URL_PATH="AAAI_URL_path";
+	public static final String AAAI_URL_DEFAULT="AAAI_URL_default";
+	public static final String AAAI_CRED_PATH="AAAI_Cred_path";
+	public static final String AAAI_CRED_DEFAULT="AAAI_Cred_default";
 	
-	public static String PROFILES_STORAGE_DEFAULT="ProfileStorage_default";
-	public static String PROFILES_STORAGE_PORT_DEFAULT="ProfileStoragePort_default";
-	
-	public static String AAAI_LOGIN_DEFAULT="AAAI_login_default";
-	
-	public static String AAAI_PWD_DEFAULT="AAAI_pwd_default";
-	
+		
 	private static Properties settingProps; 
 	
 	public Settings(){
