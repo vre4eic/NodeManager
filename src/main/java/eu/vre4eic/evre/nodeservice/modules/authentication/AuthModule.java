@@ -15,6 +15,7 @@
  *******************************************************************************/
 package eu.vre4eic.evre.nodeservice.modules.authentication;
 
+import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,6 +27,12 @@ import javax.jms.JMSException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
@@ -57,38 +64,38 @@ import eu.vre4eic.evre.core.comm.SubscriberFactory;
  */
 
 public class AuthModule {
-	
+
 	private static Logger log = LoggerFactory.getLogger(AuthModule.class);
 
 	private static AuthModule instance = null;
 	private Hashtable<String, AuthenticationMessage> AuthTable;
 	Publisher<AuthenticationMessage> ap;
-	
+
 	private static String BROKER_URL = "tcp://localhost:61616";
-	
+
 	protected AuthModule() throws JMSException{		
 		this(BROKER_URL);		
 	}	
-	
+
 	protected AuthModule(String brokerURL) throws JMSException{
 
-	        
+
 		//initialize data structure for tokens
 		AuthTable = new  Hashtable<String, AuthenticationMessage> ();
 
 		ap = PublisherFactory.getAuthenticationPublisher(brokerURL);
-				
+
 		Subscriber<ControlMessage> subcriber = SubscriberFactory.getControlSubscriber();
 		subcriber.setListener(new ControlListener(this));
-		
+
 		log.info(" #### Authentication Module instantiated ####");
 		log.info(" Connecting to Broker:: " + brokerURL);
-		
+
 		//subscribe Auth_channel
 		doSubcribe(brokerURL);
-		
+
 	}
-	
+
 	/**
 	 * The class constructor is protected and can be instantiated with this method.
 	 * The default Broker URL is: v4e-lab.isti.cnr.it
@@ -96,18 +103,18 @@ public class AuthModule {
 	 */
 	public static AuthModule getInstance() {
 		if(instance == null) {
-	         try {
+			try {
 				instance = new AuthModule();
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
 				log.info(e.getMessage()); 
 				e.printStackTrace();
 			}
-	      }
-	      return instance;
-	      
+		}
+		return instance;
+
 	}
-	
+
 	/**
 	 * The class constructor is protected and can be instanced only by this method.
 	 * @param brokerURL -  the URL of the Local or Remote Broker
@@ -116,18 +123,18 @@ public class AuthModule {
 
 	public static AuthModule getInstance(String brokerURL) {
 		if(instance == null) {
-	         try {
+			try {
 				instance = new AuthModule(brokerURL);
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
 				log.info(e.getMessage()); 
 				e.printStackTrace();
 			}
-	      }
-	      return instance;
-	      
+		}
+		return instance;
+
 	}
-	
+
 	/**
 	 * It is a private method invoked during the class instantiation to register a listener to the authentication channel
 	 * @param brokerURL - the URL of the Broker provider
@@ -136,7 +143,7 @@ public class AuthModule {
 	private void doSubcribe(String brokerURL) throws JMSException{	
 		Subscriber<AuthenticationMessage> subscriber = SubscriberFactory.getAuthenticationSubscriber();
 		subscriber.setListener(new AuthListener(this));
-		
+
 		// Forces thread switch to receive early notification on Auth_channel
 		// TODO improve handshake
 		try {
@@ -161,7 +168,7 @@ public class AuthModule {
 		log.info(" token " + am.getToken() );
 		log.info(" token timeout " + am.getTimeLimit() );
 	}
-	
+
 	/**
 	 *  Method invoked by the authentication listener to register tokens of new authenticated users
 	 * @param am - AuthenticationMessage received from the system
@@ -175,7 +182,7 @@ public class AuthModule {
 		log.info(" token " + am.getToken() );
 	}
 
-	
+
 	/**
 	 * It must be used to check validity of the token receved with a service invocation
 	 * @param token - the token received with a service invocation
@@ -186,18 +193,19 @@ public class AuthModule {
 			getInstance();
 			return false;
 		}
-		
+
 		// granularity on AuthTable Lock could be reduced when renewing
 		synchronized(AuthTable) {
 			if (AuthTable.containsKey(token)) {
 				AuthenticationMessage am = AuthTable.get(token);
 				ZoneId zone = ZoneId.of(am.getTimeZone());
 				LocalDateTime now = LocalDateTime.now(zone);
-				if (now.isBefore(am.getTimeLimit())){ // token valid
+				//if (now.isBefore(am.getTimeLimit())){ // token valid
+				if (now.isBefore(am.getTimeLimit()) && checkSignature(token)){ // token valid
 					doRenew(am, now);
 					return true;
 				}
-				else { // token expired
+				else { // token expired or signature wrong
 					AuthTable.remove(token);
 					return false;			
 				}
@@ -206,9 +214,25 @@ public class AuthModule {
 		}
 		return false;				
 	}
-	
-	
-	
+
+	private boolean checkSignature(String token){
+		DecodedJWT jwt=null;
+		try {
+			Algorithm algorithm = Algorithm.HMAC256("fvsecret");
+			JWTVerifier verifier = JWT.require(algorithm)
+					.withIssuer("NodeService")
+					.build(); //Reusable verifier instance
+			jwt = verifier.verify(token);
+		} catch (UnsupportedEncodingException exception){
+			//UTF-8 encoding not supported
+			return false;
+		} catch (JWTVerificationException exception){
+			//Invalid signature/claims
+			return false;
+		}
+		return true;
+	}
+
 	private void doRenew(AuthenticationMessage am, LocalDateTime now) {
 		log.info("########### renew check ##########");
 		log.info(am.getTimeLimit().toString());
@@ -224,41 +248,41 @@ public class AuthModule {
 	}
 
 	//Cesare
-		/**
-		 * It must be used to check validity of a token with a specific role  
-		 * @param token - the token received with a service invocation
-		 * @param role - the role  required for a service invocation
-		 * @return true - if the token is valid
-		 */
-		public boolean checkToken (String token, Common.UserRole  role) {
-			if (AuthTable == null) {
-				getInstance();
-				return false;
-			}
-			
-			// granularity on AuthTable Lock could be reduced when renewing
-			synchronized(AuthTable) {
-				if (AuthTable.containsKey(token)) {
-					AuthenticationMessage am = AuthTable.get(token);
-					if (am.getRole()!= role)
-						return false;
-					ZoneId zone = ZoneId.of(am.getTimeZone());
-					LocalDateTime now = LocalDateTime.now(zone);
-					if (now.isBefore(am.getTimeLimit())){ // token valid
-						doRenew(am, now);
-						return true;
-					}
-					else { // token expired
-						AuthTable.remove(token);
-						return false;			
-					}
-
-				}
-			}
-			return false;				
+	/**
+	 * It must be used to check validity of a token with a specific role  
+	 * @param token - the token received with a service invocation
+	 * @param role - the role  required for a service invocation
+	 * @return true - if the token is valid
+	 */
+	public boolean checkToken (String token, Common.UserRole  role) {
+		if (AuthTable == null) {
+			getInstance();
+			return false;
 		}
-		
-	
+
+		// granularity on AuthTable Lock could be reduced when renewing
+		synchronized(AuthTable) {
+			if (AuthTable.containsKey(token)) {
+				AuthenticationMessage am = AuthTable.get(token);
+				if (am.getRole()!= role)
+					return false;
+				ZoneId zone = ZoneId.of(am.getTimeZone());
+				LocalDateTime now = LocalDateTime.now(zone);
+				if (now.isBefore(am.getTimeLimit())){ // token valid
+					doRenew(am, now);
+					return true;
+				}
+				else { // token expired
+					AuthTable.remove(token);
+					return false;			
+				}
+
+			}
+		}
+		return false;				
+	}
+
+
 	/**
 	 *  helper method to remove the expired token
 	 */
@@ -277,14 +301,14 @@ public class AuthModule {
 		}
 
 	}
-	
+
 
 	/**
 	 * utility to print the table of the managed tokens
 	 */
 	public void listToken(){
 		log.info("#### --------------------------- Token list ----------------------------------- ####" );
-//		LocalDateTime now = LocalDateTime.now();	
+		//		LocalDateTime now = LocalDateTime.now();	
 		for (Entry<String, AuthenticationMessage> entry : AuthTable.entrySet()) {
 			ZoneId zone = ZoneId.of(entry.getValue().getTimeZone());
 			LocalDateTime now = LocalDateTime.now(zone);	

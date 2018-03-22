@@ -18,6 +18,7 @@ package eu.vre4eic.evre.nodeservice;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -25,6 +26,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 
 import eu.vre4eic.evre.core.comm.NodeLinker;
 
@@ -68,8 +73,21 @@ public class Utils {
 	
 
 	public static String generateToken() {
+		String token ="";
+		//generate JWT token
+		try {
+		    Algorithm algorithm = Algorithm.HMAC256("fvsecret");
+
+		    token = JWT.create()
+		        .withIssuer("NodeService")
+		        .sign(algorithm);
+		} catch (UnsupportedEncodingException exception){
+		    //UTF-8 encoding not supported
+		} catch (JWTCreationException exception){
+		    //Invalid Signing configuration / Couldn't convert Claims.
+		}
 		UUID uniqueKey = UUID.randomUUID();
-		return uniqueKey.toString();
+		return token;//uniqueKey.toString();
 	}
 	
 	public static String generateCode() {

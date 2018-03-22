@@ -24,16 +24,19 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
+import org.springframework.web.bind.annotation.RequestParam;
 
 import eu.vre4eic.evre.core.comm.NodeLinker;
+import eu.vre4eic.evre.core.messages.Message;
 import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
+import io.swagger.annotations.ApiOperation;
 
 
 /**
@@ -88,15 +91,29 @@ public class NodeController {
 			return component;
 		}*/
 		@RequestMapping(value = "/doc", method = RequestMethod.GET)
-		public String redirect() {
-
-			return "redirect:/doc/index"; 
+		public String docs(ModelMap model, HttpSession session) {
+			System.out.println("showing docs");
+			return "doc/index"; 
 		}
-		/*
-		@RequestMapping(value = "/test", method = RequestMethod.GET)
-		public String redirect_index() {
+		
+		@ApiOperation(value = "creates an id that can be used to register an e-VRE building block in the node", 
+				notes = "A user with a valid Admin token can invoke this web service to get an id that can be used to register an e-VRE building block to the  e-VRE Node", 
+				response = Message.class)
 
-			return "main_index"; 
-		}*/
+		@RequestMapping(value="node/getevrecomponentid", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+		public Message getEvreComponentID(@RequestParam(value="token") String token) {
+
+			return null;
+		}
+		
+		@ApiOperation(value = "returns the list of running e-VRE building block in the node", 
+				notes = "A user with a valid Admin token can invoke this web service to get the list e-VRE building block active in the e-VRE Node", 
+				response = Message.class)
+
+		@RequestMapping(value="node/listcomponents", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+		public Message removeEvreComponentID(@RequestParam(value="token") String token) {
+
+			return null;
+		}
 
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head> 
-    <title>e-VRE</title> 
+    <title>VRE4EIC: e-VRE API</title> 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="css/style.css"/>
     
@@ -14,17 +14,38 @@
 	</div>
 <div class="colmask fullpage">
 <div class="col1">
-	<h2>Welcome to e-VRE system.</h2>
-	<p>The following e-VRE building blocks are available:
-	<ul>
-	<li><a href="http://v4e-lab.isti.cnr.it:8080/NodeService/">Node Service</a></li>
-	<li> <a href="http://139.91.183.97:8080/EVREMetadataServices-1.0-SNAPSHOT/">Metadata Service</a></li>
-	<li> <a href="http://www.unity-idm.eu/documentation/unity-1.9.4/manual.html#_how_to_work_">AAAI</a></li>
-	<li> Workflow Service</li>
-	</ul>
+	<h2>Welcome to e-VRE API documentation page</h2>
+
 	
+	The e-VRE API enables developers of VREs system to use e-VRE functionalities in their applications. 
+	e-VRE API is a server side implementation designed using REST paradigm.
+
+	The e-VRE API helps developers to implement crucial VRE functionalities such as creating, editing and deleting user profiles, 
+	import, manage and search resources description, integrate Workflow engines, etc. It also provides functionalities to authenticate users, including two-factor authentication.  
+	
+	<p>The following e-VRE API are available:</p>
+	<ul>
+	<li>User profile management and authentication, implemented by the <a href="http://v4e-lab.isti.cnr.it:8080/NodeService/">Node Service</a> building block</li>
+	<li>Resource description management, implemented by the <a href="http://139.91.183.97:8080/EVREMetadataServices-1.0-SNAPSHOT/">Metadata Service</a> building block</li>
+	<li> A subset of the Workflow management functionalities, implemented by the <a href="http://v4e-lab.isti.cnr.it:8080/NodeService/">Workflow Service</a> building block</li>
+	</ul>
 	<p></p>
-	</div>
+	<h3>Authentication</h3>
+	The e-VRE API implements JSON Web Tokens (JWT) for authentication. 
+	An agent can send the token to the API either in the HTTP Authorization Header or as a  Parameter in the API call.
+	
+	<p>Header</p>
+
+	Authorization: Bearer &lt;token&gt;
+	<p>Query Parameter</p>
+
+	&lt;api_entry_point&gt;?token=&lt;token&gt;
+	<!-- 
+	<p>
+	The e-VRE API authentication protocol is  implemented using  <a href="http://www.unity-idm.eu/documentation/unity-1.9.4/manual.html#_how_to_work_">Unity IDM</a>.
+	</p>
+	 -->
+</div>
 </div>
 	<div class="footer">
 	
