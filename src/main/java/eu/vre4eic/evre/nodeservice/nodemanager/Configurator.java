@@ -46,7 +46,9 @@ public class Configurator implements Watcher  {
 		builder.connectString(nodeServiceURL);
 		builder.retryPolicy(new RetryOneTime(1));
 		builder.authorization("digest", "NodeService:N0d3S3rv1ce18".getBytes());
-//		builder.authorization("digest", "MessageBroker:broker".getBytes());
+		// subsquent calls to authorization overwrite previous calls
+		//builder.authorization("digest", "MessageBroker:broker".getBytes());
+
 
 		client = builder.build();
 		client.start();
@@ -68,6 +70,8 @@ public class Configurator implements Watcher  {
 			//zk.addAuthInfo("digest", "NodeService:N0d3S3rv1c318".getBytes());
 			aclList = new ArrayList<ACL>();
 			aclList.add(new ACL(ZooDefs.Perms.ALL, new Id("auth","")));
+			// multiple scheme can be added
+			//aclList.add(new ACL(ZooDefs.Perms.ALL, new Id("ip","146.48.80.21")));
 		}
 		return aclList;
 	}
