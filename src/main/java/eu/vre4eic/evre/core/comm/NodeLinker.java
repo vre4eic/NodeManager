@@ -15,36 +15,52 @@
  *******************************************************************************/
 package eu.vre4eic.evre.core.comm;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryOneTime;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+
+import org.apache.curator.utils.CloseableUtils;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
+import org.apache.curator.x.discovery.ServiceProvider;
+import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.nodeservice.Settings;
-import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
+
+
 
 public class NodeLinker {
-	
+
 	private static Logger log = LoggerFactory.getLogger(NodeLinker.class.getClass());
 	private static NodeLinker instance;
-
-	
 
 	private static Properties defaultSettings;
 	private static Properties zkSettings;
 
+	//private static final String PATH = "/discovery/services";
+	static CuratorFramework client = null;
+	static ServiceDiscovery<InstanceDetails> serviceDiscovery = null;
+	static Map<String, ServiceProvider<InstanceDetails>> providers = Maps.newHashMap();
+	private static List<EvreService> servers = Lists.newArrayList();
 
-	
 	private NodeLinker(String nodeServiceURL) {
 
 		loadRemoteProperties(nodeServiceURL);
 	}
 
-		
-	public  static NodeLinker  init(String nodeServiceURL){
+	public static NodeLinker init(String nodeServiceURL) {
 		if (instance == null)
 			try {
 				instance = new NodeLinker(nodeServiceURL);
@@ -54,114 +70,187 @@ public class NodeLinker {
 			}
 		return instance;
 	}
-	
-	public  static NodeLinker  getInstance() {
+
+	public static NodeLinker getInstance() {
 		if (instance == null)
 			log.error("NodeLinker not initialised");
 		return instance;
 	}
-	
-	private  static void loadRemoteProperties(String nodeServiceURL){
+
+	// close the connection with then node master.
+
+	public static void close() {
+
+		for (ServiceProvider<InstanceDetails> cache : providers.values()) {
+			CloseableUtils.closeQuietly(cache);
+		}
+
+		CloseableUtils.closeQuietly(serviceDiscovery);
+		if (client != null)
+			CloseableUtils.closeQuietly(client);
+	}
+
+	private static void loadRemoteProperties(String nodeServiceURL) {
 
 		if (defaultSettings == null)
 			defaultSettings = Settings.getProperties();
-		
-		if (nodeServiceURL == null){
+
+		if (nodeServiceURL == null) {
 			nodeServiceURL = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		}
 
-
 		zkSettings = new Properties();
-		
-		CuratorFramework client = CuratorFrameworkFactory
-				.newClient(nodeServiceURL,new RetryOneTime(1));
+
+		// client = CuratorFrameworkFactory.newClient(nodeServiceURL,new
+		// RetryOneTime(1));
+		client = CuratorFrameworkFactory.newClient(nodeServiceURL, new ExponentialBackoffRetry(1000, 3));
 		client.start();
-		try
-		{
-			saveZKProperty(Settings.VERSION_PATH,client);
-			saveZKProperty(Settings.TOKEN_TIMEOUT_PATH,client);
-			saveZKProperty(Settings.CODE_TIMEOUT_PATH,client);
-			saveZKProperty(Settings.MESSAGE_BROKER_PATH,client);
-			saveZKProperty(Settings.PROFILES_STORAGE,client);
-			saveZKProperty(Settings.PROFILES_STORAGE_PORT,client);
-			saveZKProperty(Settings.AAAI_LOGIN,client);
-			saveZKProperty(Settings.AAAI_PWD,client);
+		try {
+			saveZKProperty(Settings.VERSION_PATH, client);
+			saveZKProperty(Settings.TOKEN_TIMEOUT_PATH, client);
+			saveZKProperty(Settings.TOKEN_SECRET_PATH, client);
+			saveZKProperty(Settings.CODE_TIMEOUT_PATH, client);
+			saveZKProperty(Settings.MESSAGE_BROKER_PATH, client);
+			saveZKProperty(Settings.PROFILES_STORAGE, client);
+			saveZKProperty(Settings.PROFILES_STORAGE_PORT, client);
+			saveZKProperty(Settings.AAAI_LOGIN, client);
+			saveZKProperty(Settings.AAAI_PWD, client);
 		}
-		
-		finally
-		{
-			if (client != null)
-				client.close();
+
+		finally {
+			JsonInstanceSerializer<InstanceDetails> serializer = new JsonInstanceSerializer<InstanceDetails>(
+					InstanceDetails.class);
+			serviceDiscovery = ServiceDiscoveryBuilder.builder(InstanceDetails.class).client(client).basePath(Common.EvreServicePATH)
+					.serializer(serializer).build();
+			try {
+				serviceDiscovery.start();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// if (client != null)
+			// client.close();
 		}
 	}
-	
-	private static void saveZKProperty(String property_name, CuratorFramework client){
+
+	private static void saveZKProperty(String property_name, CuratorFramework client) {
 		String property_path = defaultSettings.getProperty(property_name);
 
 		try {
 			byte[] data = client.getData().forPath(property_path);
-			if (data != null) 
+			if (data != null)
 				zkSettings.setProperty(property_path, new String(data));
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	public  String getEvreVersion() {
+
+	public String getEvreVersion() {
 		String versionPath = defaultSettings.getProperty(Settings.VERSION_PATH);
-		String version =  zkSettings.getProperty(versionPath);
+		String version = zkSettings.getProperty(versionPath);
 		return version;
-		
+
 	}
-	
-	public  String getMessageBrokerURL() {
+
+	public String getMessageBrokerURL() {
 		String messageBrokerPath = defaultSettings.getProperty(Settings.MESSAGE_BROKER_PATH);
-		String brokerURL =  zkSettings.getProperty(messageBrokerPath);
+		String brokerURL = zkSettings.getProperty(messageBrokerPath);
 		return brokerURL;
-		
+
 	}
-	
-	public  String getProfileStorage() {
+
+	public String getProfileStorage() {
 		String profilesStorage = defaultSettings.getProperty(Settings.PROFILES_STORAGE);
-		String address =  zkSettings.getProperty(profilesStorage);
+		String address = zkSettings.getProperty(profilesStorage);
 		return address;
-	
+
 	}
-	
-	public  int getProfileStoragePort() {
+
+	public int getProfileStoragePort() {
 		String profilesStoragePort = defaultSettings.getProperty(Settings.PROFILES_STORAGE_PORT);
-		String port =  zkSettings.getProperty(profilesStoragePort);
+		String port = zkSettings.getProperty(profilesStoragePort);
 		return Integer.valueOf(port);
-	
+
 	}
-	
-	public  int getTokenTimeout() {
+
+	public int getTokenTimeout() {
 		String tokenTimeout = defaultSettings.getProperty(Settings.TOKEN_TIMEOUT_PATH);
-		return Integer.valueOf(zkSettings.getProperty(tokenTimeout));	
+		return Integer.valueOf(zkSettings.getProperty(tokenTimeout));
 	}
-	
-	public  int getCodeTimeout() {
+
+	public String getTokenSecret() {
+		String tokenSecret = defaultSettings.getProperty(Settings.TOKEN_SECRET_PATH);
+		return zkSettings.getProperty(tokenSecret);
+	}
+
+	public int getCodeTimeout() {
 		String codeTimeout = defaultSettings.getProperty(Settings.CODE_TIMEOUT_PATH);
-		return Integer.valueOf(zkSettings.getProperty(codeTimeout));	
+		return Integer.valueOf(zkSettings.getProperty(codeTimeout));
 	}
 
-	public  String getAAAIUser() {
+	public String getAAAIUser() {
 		String user = defaultSettings.getProperty(Settings.AAAI_LOGIN_DEFAULT);
-		return user;	
+		return user;
 	}
 
-	public  String getAAAIPwd() {
+	public String getAAAIPwd() {
 		String pwd = defaultSettings.getProperty(Settings.AAAI_PWD_DEFAULT);
-		return pwd;	
+		return pwd;
 	}
 
-	
-	public  Properties getProperties() throws Exception {
+	public Properties getProperties() throws Exception {
 		return zkSettings;
-		
+
 	}
 
-	
+	// Cesare
+	public boolean addService(String name, String description, String entrypoint) {
+
+		String serviceName = name;
+		EvreService server;
+		try {
+			server = new EvreService(client, Common.EvreServicePATH, serviceName, description.toString(), entrypoint);
+			servers.add(server);
+			server.start();
+		} catch (Exception e) {
+			log.error("Cannot publish the service: "+serviceName);
+			e.printStackTrace();
+			return false;
+		}
+
+		System.out.println(serviceName + " added");
+
+		return true;
+	}
+
+	public boolean removeService(String name) {
+
+		String serviceName = name;
+		EvreService server = Iterables.find
+			    (
+			        servers,
+			        new Predicate<EvreService>()
+			        {
+			            @Override
+			            public boolean apply(EvreService server)
+			            {
+			                return server.getThisInstance().getName().endsWith(serviceName);
+			            }
+			        },
+			        null
+			    );
+			    if ( server == null )
+			    {
+			    	log.error("No servers found named: " + serviceName);
+			        System.err.println("No servers found named: " + serviceName);
+			        return false;
+			    }
+
+			    servers.remove(server);
+			    CloseableUtils.closeQuietly(server);
+			    System.out.println("Removed a random instance of: " + serviceName);
+			    return true;
+	}
 }

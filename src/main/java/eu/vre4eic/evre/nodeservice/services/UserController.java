@@ -54,7 +54,9 @@ import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
+import eu.vre4eic.evre.nodeservice.usermanager.dao.ProfileStatusRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
+import eu.vre4eic.evre.nodeservice.usermanager.impl.ProfileStatus;
 import eu.vre4eic.evre.nodeservice.usermanager.impl.UserManagerImpl;
 
 
@@ -72,6 +74,9 @@ public class UserController {
 
 	@Autowired
 	private UserProfileRepository repository;
+	
+	@Autowired
+	private ProfileStatusRepository profileStatusRepository;
 
 	@Autowired
 	private UserManagerImpl userManager;
@@ -87,6 +92,8 @@ public class UserController {
 		NodeLinker node = NodeLinker.init(ZkServer);		
 		String messageBrokerURL =  node.getMessageBrokerURL();
 		authModule = AuthModule.getInstance(messageBrokerURL);
+		node.addService(Common.BuildingBlocks.NodeService.toString(), "the e-VRE magement block", "http://v4e-lab.isti.cnr.it:8080/nodeservice");
+
 		//authModule = AuthModule.getInstance("tcp://v4e-lab.isti.cnr.it:61616");
 
 	}
@@ -97,11 +104,13 @@ public class UserController {
 	@RequestMapping(value="/user/createprofile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 
 	public  Message createUserProfile(@RequestParam(value="userid") String userId, @RequestParam(value="name") String name, 
-			@RequestParam(value="email") String email, @RequestParam(value="organization") String organization, @RequestParam(value="role") UserRole role, 
+			@RequestParam(value="email") String email, @RequestParam(value="organization") String organization, 
+			@RequestParam(value="organizationURL") String organizationURL,
+			@RequestParam(value="role") UserRole role, 
 			@RequestParam(value="password") String password) {
 
 
-		return(userManager.createUserProfile(new EVREUserProfile(userId, password, name, organization, role, email, "0", "0")));
+		return(userManager.createUserProfile(new EVREUserProfile(userId, password, name, organization,  organizationURL, role, email, "0", "0")));
 
 	}
 
@@ -111,19 +120,24 @@ public class UserController {
 
 	@RequestMapping(value="/user/updateprofile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Message updateUserProfile(@RequestParam(value="token") String token, @RequestParam(value="userid") String userId, @RequestParam(value="name") String name, 
-			@RequestParam(value="email") String email, @RequestParam(value="organization") String organization, @RequestParam(value="role") UserRole role, 
-			@RequestParam(value="password") String password){
+			@RequestParam(value="email") String email, @RequestParam(value="organization") String organization, 
+			@RequestParam(value="organizationURL") String organizationURL,
+			@RequestParam(value="role") UserRole role, 
+			@RequestParam(value="password", required = false) String password){
 
-		if (authModule.checkToken(token)){
+		ProfileStatus ps= profileStatusRepository.findBytoken(token);
+		if ((ps!=null && (authModule.checkToken(token) && ps.getUserId().trim().equals(userId)))
+				|| authModule.checkToken(token, Common.UserRole.ADMIN)){
 			if (repository.findOne(userId)!=null){
-				repository.save(new EVREUserProfile(userId, password, name, organization, role, email,"0", "0"));
+				return userManager.updateUserProfile(userId, new EVREUserProfile(userId, password, name, organization, organizationURL, role, email,"0", "0"));
+				//repository.save(new EVREUserProfile(userId, password, name, organization, organizationURL, role, email,"0", "0"));
 
-				return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
+			//	return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 			}
 
 			return( new MessageImpl("User Profile not found", Common.ResponseStatus.FAILED));
 		}
-		return( new MessageImpl("Operation not permited!", Common.ResponseStatus.FAILED));
+		return( new MessageImpl("Operation not permitted!", Common.ResponseStatus.FAILED));
 
 	}
 
@@ -177,7 +191,8 @@ public class UserController {
 
 	public Message logout(@RequestParam(value="token") String token) {
 
-		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
+		return userManager.logout(token);
+		/*Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 		AuthenticationMessage m = new AuthenticationMessageImpl();
 
 		m.setToken(token);
@@ -194,7 +209,7 @@ public class UserController {
 		p.publish(m);
 
 
-		return m;
+		return m;*/
 
 	}
 
@@ -205,15 +220,21 @@ public class UserController {
 	@RequestMapping(value="/user/removeprofile", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Message removeUserProfile(@RequestParam(value="token") String token, @RequestParam(value="id") String userId) {
 
-		//check if the token is valid
-		if (authModule.checkToken(token)){
+		//check if it is an admin operation
+		if (authModule.checkToken(token, Common.UserRole.ADMIN)){
 			
-			//Check if this user is authorized to remove: TBD
-			//Check if the user that is being removed is logged in, if yes log out it: TBD
+			logout (token);
+			return userManager.removeUserProfile(userId);
+			
+			}
+		//check if the token is valid and has the permission to delete the profile
+		ProfileStatus ps= profileStatusRepository.findBytoken(token);
+		if (ps!=null && (authModule.checkToken(token) && ps.getUserId().trim().equals(userId))){
+			logout (token);
 			return userManager.removeUserProfile(userId);
 		}
 
-		return( new MessageImpl("Operation not permited!", Common.ResponseStatus.FAILED));
+		return( new MessageImpl("Operation not permitted!", Common.ResponseStatus.FAILED));
 	}
 
 	@ApiOperation(value = "Gets a user profile based on user id", 

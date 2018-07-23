@@ -47,6 +47,7 @@ public class EVREUserProfile implements UserProfile {
 	String email;
 	String snsId;
 	String authId;
+	String organizationURL;
 	byte[] salt;
 	
 	
@@ -54,7 +55,7 @@ public class EVREUserProfile implements UserProfile {
 		
 	}
 	
-	public EVREUserProfile(String userId, String password, String name, String organization, UserRole role, String email, 
+	public EVREUserProfile(String userId, String password, String name, String organization, String organizationURL, UserRole role, String email, 
 							String snsId, String authId) {
 		
 		this.id=userId;
@@ -66,6 +67,7 @@ public class EVREUserProfile implements UserProfile {
 		this.email=email;
 		this.snsId=snsId;
 		this.authId=authId;
+		this.organizationURL=organizationURL;
 		//add the salt 
 		
 	}
@@ -139,6 +141,14 @@ public class EVREUserProfile implements UserProfile {
 	}
 	
 
+	@ApiModelProperty(position = 6, required = true)
+	public String getOrganizationURL() {
+		return organizationURL;
+	}
+
+	public void setOrganizationURL(String organizationUrl) {
+		this.organizationURL = organizationUrl;
+	}
 	@Override
     public String toString() {
         return String.format(

@@ -60,7 +60,7 @@ public class MDModule {
 		log.info(" #### Metadata Module ready ####");
 		log.info(" Connecting to Broker:: " + brokerURL);
 		
-		//subscribe Auth_channel
+		//subscribe Metadata_channel
 		doSubcribe();
 		
 	}

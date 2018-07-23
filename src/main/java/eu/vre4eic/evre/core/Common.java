@@ -27,11 +27,11 @@ package eu.vre4eic.evre.core;
 public class Common {
 	
 	/**
-	 * UserRole: <ul><li>RESEARCHER</li> <li>OPERATOR</li> <li>ADMIN</li> <li>CONTROLLER</li></ul>
+	 * UserRole: <ul><li>RESEARCHER</li> <li>OPERATOR</li> <li>ADMIN</li> <li>CONTROLLER</li> <li>DEMO</li></ul>
 	 *
 	 */
 	public enum UserRole {
-		RESEARCHER, OPERATOR, ADMIN, CONTROLLER
+		RESEARCHER, OPERATOR, ADMIN, CONTROLLER, DEMO
 	}
 	
 	/**
@@ -51,10 +51,10 @@ public class Common {
 	}
 	
 	/**
-	 * MetadataOperationType: <ul><li>Read</li> <li>Query</li> <li>Insert</li><li>Update</li><li>Delete</li></ul>
+	 * MetadataOperationType: <ul><li>Read</li> <li>Query</li> <li>Insert</li><li>InsertWorkflow</li><li>Update</li><li>Delete</li></ul>
 	 */
 	public enum MetadataOperationType{
-		READ,QUERY,INSERT,UPDATE, DELETE
+		READ,QUERY,INSERT,INSERTWORKFLOW,UPDATE,DELETE
 	}
 	/**
 	 * NotificationType: <ul><li>Authentication</li> <li>Metadata</li><li>UserProfile</li> <li>Service</li></ul>
@@ -74,6 +74,16 @@ public class Common {
 	}
 	
 	/**
+	 * Building Blocks: <ul><li>NodeService</li> <li>MetadataService</li><li>AppService</li> <li>WorkflowService</li><li>AAAI</li><li>QueryService</li><li>LDService</li></ul>
+	 */
+	
+	public enum BuildingBlocks {
+		NodeService, MetadataService, AppService, WorkflowService, AAAAI, QueryService, LDService;
+
+		
+	}
+	
+	/**
 	 * Control Operation: <ul><li>Print_Status</li> <li>Ping</li><li>Show_Warning</li></ul>
 	 */
 	
@@ -82,5 +92,6 @@ public class Common {
 		
 	}
 
+	public static String EvreServicePATH = "/discovery/services";
 	
 }

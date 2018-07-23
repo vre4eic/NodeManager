@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import javax.jms.JMSException;
@@ -35,9 +36,12 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import eu.vre4eic.evre.core.Common;
+import eu.vre4eic.evre.core.Common.UserRole;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.ControlMessage;
+import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
+import eu.vre4eic.evre.core.comm.NodeLinker;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.core.comm.Subscriber;
@@ -70,16 +74,26 @@ public class AuthModule {
 	private static AuthModule instance = null;
 	private Hashtable<String, AuthenticationMessage> AuthTable;
 	Publisher<AuthenticationMessage> ap;
+	private NodeLinker node=null;
 
 	private static String BROKER_URL = "tcp://localhost:61616";
 
-	protected AuthModule() throws JMSException{		
+	protected AuthModule() throws JMSException{	
+		
 		this(BROKER_URL);		
 	}	
 
 	protected AuthModule(String brokerURL) throws JMSException{
 
+		//get properties, TO BE CHANGED!
 
+		
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		
+		node = NodeLinker.init(ZkServer);		
+		
+		
 		//initialize data structure for tokens
 		AuthTable = new  Hashtable<String, AuthenticationMessage> ();
 
@@ -184,7 +198,7 @@ public class AuthModule {
 
 
 	/**
-	 * It must be used to check validity of the token receved with a service invocation
+	 * It must be used to check validity of the token received with a service invocation
 	 * @param token - the token received with a service invocation
 	 * @return true - if the token is valid
 	 */
@@ -215,14 +229,20 @@ public class AuthModule {
 		return false;				
 	}
 
+	
 	private boolean checkSignature(String token){
 		DecodedJWT jwt=null;
+		
 		try {
-			Algorithm algorithm = Algorithm.HMAC256("fvsecret");
+			String secret =  node.getTokenSecret();
+			Algorithm algorithm = Algorithm.HMAC256(secret);
+			
+			//claims.ge
 			JWTVerifier verifier = JWT.require(algorithm)
 					.withIssuer("NodeService")
 					.build(); //Reusable verifier instance
 			jwt = verifier.verify(token);
+			//jwt.getClaim("userId");
 		} catch (UnsupportedEncodingException exception){
 			//UTF-8 encoding not supported
 			return false;
@@ -268,7 +288,7 @@ public class AuthModule {
 					return false;
 				ZoneId zone = ZoneId.of(am.getTimeZone());
 				LocalDateTime now = LocalDateTime.now(zone);
-				if (now.isBefore(am.getTimeLimit())){ // token valid
+				if (now.isBefore(am.getTimeLimit()) && checkSignature(token)){ // token valid
 					doRenew(am, now);
 					return true;
 				}

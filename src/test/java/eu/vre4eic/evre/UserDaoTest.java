@@ -104,7 +104,7 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(node.getMessageBrokerURL());
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
@@ -154,7 +154,7 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
@@ -207,9 +207,9 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.ADMIN, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.ADMIN, 
 				"email@domain","snsId", "11"));
-		Message mes1=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes1=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD", "Name", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
@@ -279,7 +279,7 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId0", "userPWD", "Name", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "11"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
@@ -319,7 +319,7 @@ public class UserDaoTest {
 		
 		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD1", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD1", "Name", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
@@ -353,12 +353,74 @@ public class UserDaoTest {
 		//check if token is no longer valid
 		auth=module.checkToken("userPWD");
 		assertEquals(auth, false);
-		mes=userMI.updateUserProfile("userId1", new EVREUserProfile("userId1", "userPWDupdate", "Nameupdate", "my_organization", eu.vre4eic.evre.core.Common.UserRole.CONTROLLER, 
+		mes=userMI.updateUserProfile("userId1", new EVREUserProfile("userId1", "userPWDupdate", "Nameupdate", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.CONTROLLER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		EVREUserProfile eup= userMI.getUserProfile("userId1");
 		assertEquals("userPWDupdate", eup.getPassword());
 		
 	}
+	
+	@Test
+	public final void testUpdateUserProfileWronguser() {	
+		
+		cleanTestEnv();
+		
+		Properties defaultSettings = Settings.getProperties();
+		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		NodeLinker node = NodeLinker.init(ZkServer);		
+		String messageBrokerURL =  node.getMessageBrokerURL();
+		
+		module = AuthModule.getInstance(messageBrokerURL);
+		//save a user profile
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId1", "userPWD1", "Name", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+				"email@domain","snsId", "authId"));
+		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
+		
+		//save a second user profile
+		
+		Message mes1=userMI.createUserProfile(new EVREUserProfile("userId11", "userPWD11", "Name1", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.DEMO, 
+				"email@domain","snsId", "authId"));
+		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
+		
+		// execute a login
+		UserCredentials uc= new UserCredentialsImpl("userId1", "userPWD1");
+	
+		AuthenticationMessage ame=userMI.login(uc);
+		//wait for authentication message being dispatched
+		
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is valid
+		Boolean auth=module.checkToken(ame.getToken());
+		assertEquals(true, auth);
+		
+		//logout
+		userMI.logout(ame.getToken());
+		//wait for authentication message being dispatched
+		
+		try {
+			
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		//check if token is no longer valid
+		auth=module.checkToken(ame.getToken());
+		assertEquals(auth, false);
+		mes=userMI.updateUserProfile("userId1", new EVREUserProfile("userId1", "userPWDupdate", "Nameupdate", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.CONTROLLER, 
+				"email@domain","snsId", "authId"));
+		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
+		EVREUserProfile eup= userMI.getUserProfile("userId1");
+		assertEquals("userPWDupdate", eup.getPassword());
+		
+	}
+
 
 }

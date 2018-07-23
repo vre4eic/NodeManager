@@ -32,6 +32,7 @@ public class Settings {
 	
 	public static String VERSION_PATH="Version_path";
 	public static String TOKEN_TIMEOUT_PATH="TokenTimeout_path";
+	public static String TOKEN_SECRET_PATH="TokenSecret_path";
 	public static String CODE_TIMEOUT_PATH="CodeTimeout_path";
 	public static String MESSAGE_BROKER_PATH="MessageBroker_path";
 	public static String PROFILES_STORAGE="ProfileStorage_path";
@@ -41,6 +42,7 @@ public class Settings {
 	
 	public static String VERSION_DEFAULT="Version_default";
 	public static String TOKEN_TIMEOUT_DEFAULT="TokenTimeout_default";
+	public static String TOKEN_SECRET_DEFAULT="TokenSecret_default";
 	public static String CODE_TIMEOUT_DEFAULT="CodeTimeout_default";
 	public static String MESSAGE_BROKER_DEFAULT="MessageBroker_default";
 	

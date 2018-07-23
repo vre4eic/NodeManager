@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 
-
+import eu.vre4eic.evre.nodeservice.modules.authentication.AuthModule;
 import eu.vre4eic.evre.nodeservice.modules.metadata.MDModule;
 import eu.vre4eic.evre.nodeservice.modules.monitor.AdvisoryModule;
 import eu.vre4eic.evre.nodeservice.nodemanager.ZKServer;
@@ -46,7 +46,7 @@ public class NodeServiceStart {
        
         AdvisoryModule.getInstance();
         MDModule mdModule= MDModule.getInstance();
-        
+        AuthModule aMod= AuthModule.getInstance();
         
 		while (true) {
 			try {
@@ -56,6 +56,7 @@ public class NodeServiceStart {
 				e.printStackTrace();
 			}
 			mdModule.listToken();
+			aMod.listToken();
 		}
 
     }

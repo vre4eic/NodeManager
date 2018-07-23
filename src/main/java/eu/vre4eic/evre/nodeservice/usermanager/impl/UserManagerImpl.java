@@ -56,6 +56,7 @@ import eu.vre4eic.evre.core.EvreQuery;
 import eu.vre4eic.evre.core.UserCredentials;
 import eu.vre4eic.evre.core.UserProfile;
 import eu.vre4eic.evre.core.Common.ResponseStatus;
+import eu.vre4eic.evre.core.Common.UserRole;
 import eu.vre4eic.evre.core.impl.EVREUserProfile;
 import eu.vre4eic.evre.core.messages.AuthenticationMessage;
 import eu.vre4eic.evre.core.messages.Message;
@@ -70,6 +71,7 @@ import eu.vre4eic.evre.core.comm.NodeLinker;
 import eu.vre4eic.evre.core.comm.Publisher;
 import eu.vre4eic.evre.core.comm.PublisherFactory;
 import eu.vre4eic.evre.nodeservice.usermanager.UserManager;
+import eu.vre4eic.evre.nodeservice.usermanager.dao.ProfileStatusRepository;
 import eu.vre4eic.evre.nodeservice.usermanager.dao.UserProfileRepository;
 
 
@@ -93,6 +95,8 @@ public class UserManagerImpl implements UserManager {
 	NodeLinker node;
 	@Autowired
 	private UserProfileRepository repository;
+	@Autowired
+	private ProfileStatusRepository profileStatusRepository;
 	/**
 	 * 
 	 */
@@ -139,9 +143,32 @@ public class UserManagerImpl implements UserManager {
 	@Override
 	public Message updateUserProfile(String userId, EVREUserProfile profile) {
 		if (repository.findByUserId(userId)==null)
-			return( new MessageImpl("Operation not executed, User profile not found", Common.ResponseStatus.FAILED));
+			return( new MessageImpl("User Profile not found", Common.ResponseStatus.FAILED));
 
+		
+		String ePwd="";
+		  SecureRandom sr=new SecureRandom();
+		  byte[] salt=new byte[20];
+		  sr.nextBytes(salt);
+		  
+		  EVREUserProfile exProfile=repository.findByUserId(userId);
+		  if (exProfile.getSalt() != null)
+		  	salt=exProfile.getSalt();
+		  if (profile.getPassword()==null || profile.getPassword().trim().equals("")){
+			  ePwd=exProfile.getPassword();
+		  }
+		  else{
+		   ePwd=encryptData(profile.getPassword(), salt);
+		  }
+		  profile.setPassword(ePwd);
+		  profile.setSalt(salt);
+		 
 		repository.save(profile);
+		ProfileStatus activeProfile=profileStatusRepository.findByUserId(userId);
+		if (activeProfile!=null){
+			activeProfile.setRole(profile.getRole());
+			profileStatusRepository.save(activeProfile);
+		}
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 	}
 
@@ -161,6 +188,10 @@ public class UserManagerImpl implements UserManager {
 			repository.delete(profile);
 		else //to be compatible with previous release, needs to be fixed ASAP!
 			repository.delete(profile);
+		ProfileStatus activeProfile=profileStatusRepository.findByUserId(userId);
+		if (activeProfile!=null){
+			profileStatusRepository.delete(activeProfile);
+		}
 		return( new MessageImpl("Operation completed", Common.ResponseStatus.SUCCEED));
 
 
@@ -266,6 +297,8 @@ public class UserManagerImpl implements UserManager {
 		if (ame.getStatus() == Common.ResponseStatus.SUCCEED) {
 			Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 			p.publish(ame);
+			ProfileStatus pS= new ProfileStatus(credentials.getUserId(), ame.getRole(), ame.getToken(), "");
+			profileStatusRepository.save(pS);
 		}
 		return ame;
 	}
@@ -310,6 +343,8 @@ public class UserManagerImpl implements UserManager {
 			mfam.setUserId(profile.getUserId());
 			mfam.setCode(code);
 			p.publish(mfam);
+			ProfileStatus pS= new ProfileStatus(profile.getUserId(), ame.getRole(), ame.getToken(), "pending");
+			profileStatusRepository.save(pS);
 
 		}
 
@@ -342,6 +377,13 @@ public class UserManagerImpl implements UserManager {
 		LocalDateTime timeLimit = LocalDateTime.now().plusMinutes(TOKEN_TIMEOUT);
 		ame.setTimeLimit(timeLimit);
 		p.publish(ame);
+		ProfileStatus pendingPs= profileStatusRepository.findBytoken(token);
+		if (pendingPs.getAuthId().trim().equalsIgnoreCase("pending")){
+			pendingPs.setAuthId("");
+			pendingPs.setToken(ame.getToken());
+			profileStatusRepository.save(pendingPs);
+		}
+		
 		return ame;
 	}
 
@@ -350,7 +392,7 @@ public class UserManagerImpl implements UserManager {
 	 *change this implementation
 	 */
 	@Override
-	public AuthenticationMessage logout(String token) {
+	public AuthenticationMessage logout(String token) {/*
 		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
 
 		LocalDateTime timeLimit;
@@ -361,7 +403,31 @@ public class UserManagerImpl implements UserManager {
 				token, Common.UserRole.ADMIN,timeLimit);
 		ame.setTimeZone(ZoneId.systemDefault().getId());
 		p.publish(ame);
+		ProfileStatus psLogout=profileStatusRepository.findBytoken(token);
+		profileStatusRepository.delete(psLogout);
 		return ame;
+	*/
+		Publisher<AuthenticationMessage> p =  PublisherFactory.getAuthenticationPublisher();
+		AuthenticationMessage m = new AuthenticationMessageImpl();
+		m.setToken(token);
+
+		m.setStatus(Common.ResponseStatus.SUCCEED);
+		LocalDateTime timeLimit = LocalDateTime.MIN;
+
+		m.setTimeZone(ZoneId.systemDefault().getId());
+		m.setTimeLimit(timeLimit);
+
+		// fake Role
+		m.setRole(UserRole.OPERATOR);
+
+		// publish message on authentication topic
+		p.publish(m);
+
+
+		ProfileStatus psLogout=profileStatusRepository.findBytoken(token);
+		profileStatusRepository.delete(psLogout);
+		
+		return m;	
 	}
 
 	/* (non-Javadoc)
@@ -444,7 +510,7 @@ public class UserManagerImpl implements UserManager {
 
 		ame.setTimeZone(ZoneId.systemDefault().getId())
 		.setRenewable(String.valueOf(TOKEN_TIMEOUT))
-		.setToken(Utils.generateToken());
+		.setToken(Utils.generateToken(login));
 
 		return ame;
 	}

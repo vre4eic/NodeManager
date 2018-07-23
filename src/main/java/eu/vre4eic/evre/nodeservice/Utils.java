@@ -72,13 +72,16 @@ public class Utils {
 //	}
 	
 
-	public static String generateToken() {
+	public static String generateToken(String login) {
 		String token ="";
 		//generate JWT token
 		try {
+			
+			
 		    Algorithm algorithm = Algorithm.HMAC256("fvsecret");
 
 		    token = JWT.create()
+		    	.withClaim("userId", login)
 		        .withIssuer("NodeService")
 		        .sign(algorithm);
 		} catch (UnsupportedEncodingException exception){

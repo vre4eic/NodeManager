@@ -59,4 +59,8 @@ public interface UserProfile extends UserCredentials{
 	
 	@JsonIgnore
 	public void setSalt(byte[] salt) ;
+	
+	public void setOrganizationURL(String organizationURL);
+	
+	public String getOrganizationURL();
 }

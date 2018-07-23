@@ -111,7 +111,7 @@ public class MetadataDaoTest {
 		
 		module = AuthModule.getInstance(messageBrokerURL);
 		//save a user profile
-		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
+		Message mes=userMI.createUserProfile(new EVREUserProfile("userId", "userPWD", "Name", "my_organization", "myURL://bean", eu.vre4eic.evre.core.Common.UserRole.RESEARCHER, 
 				"email@domain","snsId", "authId"));
 		assertEquals(Common.ResponseStatus.SUCCEED, mes.getStatus());
 		// execute a login
