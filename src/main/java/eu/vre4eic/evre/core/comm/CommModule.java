@@ -44,7 +44,6 @@ public class CommModule {
 	
 	protected CommModule() throws JMSException {
 
-		ZKServer.init();
 		Properties defaultSettings = Settings.getProperties();
 		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		
