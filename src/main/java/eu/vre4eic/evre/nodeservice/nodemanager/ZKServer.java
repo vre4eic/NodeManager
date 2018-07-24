@@ -207,6 +207,7 @@ public class ZKServer {
 		ServiceDiscovery<InstanceDetails> serviceDiscovery = ServiceDiscoveryBuilder.builder(InstanceDetails.class).client(client).basePath(Common.EvreServicePATH).serializer(serializer).build();
 		try {
 			serviceDiscovery.start();
+			
 			serviceNames = serviceDiscovery.queryForNames();
 			System.out.println(serviceNames.size() + " type(s)");
 			for ( String serviceName : serviceNames )

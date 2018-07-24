@@ -250,7 +250,7 @@ public class NodeLinker {
 
 			    servers.remove(server);
 			    CloseableUtils.closeQuietly(server);
-			    System.out.println("Removed a random instance of: " + serviceName);
+			    System.out.println("Removed a instance of: " + serviceName);
 			    return true;
 	}
 }
