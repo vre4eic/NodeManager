@@ -52,7 +52,6 @@ public class Settings {
 	public static String AAAI_LOGIN_DEFAULT="AAAI_login_default";
 	
 	public static String AAAI_PWD_DEFAULT="AAAI_pwd_default";
-	
 	private static Properties settingProps; 
 	
 	public Settings(){

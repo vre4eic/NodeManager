@@ -45,9 +45,10 @@ public class CommModule {
 	protected CommModule() throws JMSException {
 
 		Properties defaultSettings = Settings.getProperties();
-		String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 		
-		NodeLinker node = NodeLinker.init(ZkServer);		
+		String ZkServerURL = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
+		
+		NodeLinker node = NodeLinker.init(ZkServerURL);		
 		String messageBrokerURL =  node.getMessageBrokerURL();
 
 		try {

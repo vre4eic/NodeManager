@@ -17,12 +17,18 @@ package eu.vre4eic.evre.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.CuratorFrameworkFactory.Builder;
 import org.apache.curator.retry.RetryOneTime;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.data.ACL;
+import org.apache.zookeeper.data.Id;
 import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
@@ -48,7 +54,18 @@ public class ZKServer {
 			file.deleteOnExit();
 			properties.setProperty("dataDir", file.getAbsolutePath());
 			properties.setProperty("clientPort", String.valueOf(clientPort));
-
+			properties.setProperty("secureClientPort", "2281");
+			
+//			to enable superuser on non-secure port to be used only locally
+//			System.setProperty("zookeeper.DigestAuthenticationProvider.superDigest", "super:UdxDQl4f9v5oITwcAsO9bmWgHSI=");
+			
+			System.setProperty("zookeeper.serverCnxnFactory", "org.apache.zookeeper.server.NettyServerCnxnFactory");
+			System.setProperty("zookeeper.ssl.keyStore.location", "C:\\Users\\francesco\\git\\NodeService-CP\\serverKS");
+			System.setProperty("zookeeper.ssl.keyStore.password","serverKS");
+			System.setProperty("zookeeper.ssl.trustStore.location","C:\\Users\\francesco\\git\\NodeService-CP\\serverTS");
+			System.setProperty("zookeeper.ssl.trustStore.password","serverTS");
+			System.setProperty("zookeeper.X509AuthenticationProvider.superUser", "CN=super.evre.org,OU=ict,O=evre,L=Pisa,ST=Italy,C=IT");
+			
 			QuorumPeerConfig quorumPeerConfig = new QuorumPeerConfig();
 			quorumPeerConfig.parseProperties(properties);
 			final ServerConfig configuration = new ServerConfig();
@@ -84,10 +101,20 @@ public class ZKServer {
 
 
 	public void init_eVRE_Env() throws Exception {
-		CuratorFramework client = CuratorFrameworkFactory
-									.newClient("localhost:2181",new RetryOneTime(1));
-        client.start();
+//		CuratorFramework client = CuratorFrameworkFactory
+//									.newClient("localhost:2181",new RetryOneTime(1));
+//        client.start();
+		Builder builder = CuratorFrameworkFactory.builder();
+		builder.connectString("localhost:2181");
+		builder.retryPolicy(new RetryOneTime(1));
+		builder.authorization("digest", "NodeService:N0d3S3rv1ce18".getBytes());
+		// subsquent calls to authorization overwrite previous calls
+		//builder.authorization("digest", "MessageBroker:broker".getBytes());
 
+
+		CuratorFramework client = builder.build();
+		client.start();
+//
 
 		try {
 			Properties settings = Settings.getProperties();
@@ -115,7 +142,18 @@ public class ZKServer {
 
 	}
 	
-	
+	private List<ACL> getNodeServiceACL(){
+
+		// libreria zookeeper
+		//zk.addAuthInfo("digest", "NodeService:N0d3S3rv1c318".getBytes());
+		ArrayList<ACL> aclList = new ArrayList<ACL>();
+		aclList.add(new ACL(ZooDefs.Perms.ALL, new Id("auth","")));
+		// multiple scheme can be added
+		//aclList.add(new ACL(ZooDefs.Perms.ALL, new Id("ip","146.48.80.21")));
+
+		return aclList;
+	}
+
 	public void createEntry(String path, String value,CuratorFramework client){
 		Stat exists;
 		try {
@@ -123,15 +161,17 @@ public class ZKServer {
 			if (exists == null) {
         		client.create()
         				.creatingParentContainersIfNeeded()
+        				.withACL(getNodeServiceACL())
         				.forPath(path, value.getBytes());
+
         		// log
-				System.out.println("## Created " +path + "::"+  value);
+				System.out.println("## Created " +path + "::"+  value +"\n");
 			}
 			else {
 				byte[] data = client.getData().forPath(path);
 				if (data != null) 
 	        		// log
-					System.out.println("## Existing " + path + "::"+  new String(data));
+					System.out.println("## Existing " + path + "::"+  new String(data) +"\n");
 			}
 				;
 		} catch (Exception e) {

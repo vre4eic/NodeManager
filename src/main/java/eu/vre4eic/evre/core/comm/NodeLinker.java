@@ -38,6 +38,7 @@ import com.google.common.collect.Maps;
 
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.nodeservice.Settings;
+import eu.vre4eic.evre.nodeservice.Utils;
 
 
 
@@ -90,6 +91,35 @@ public class NodeLinker {
 			CloseableUtils.closeQuietly(client);
 	}
 
+	
+	private static void loadCredentials(){
+		if (defaultSettings == null)
+			defaultSettings = Settings.getProperties();
+		
+// Old store configuration
+//		String CredentialPath = defaultSettings.getProperty(Settings.CREDENTIALS);
+//		Properties credentials = Utils.getProperties(CredentialPath);
+//		String ksLocation = credentials.getProperty(Settings.KS_LOCATION);
+//		String tsLocation = credentials.getProperty(Settings.TS_LOCATION);
+//		String ksPwd = credentials.getProperty(Settings.KS_PWD);
+//		String tsPwd = credentials.getProperty(Settings.TS_PWD);
+
+		// properties to use SSL 
+		System.setProperty("zookeeper.clientCnxnSocket", "org.apache.zookeeper.ClientCnxnSocketNetty");
+		System.setProperty("zookeeper.client.secure", "true");
+		
+//		System.setProperty("zookeeper.ssl.keyStore.location", "C:\\Users\\francesco\\git\\NodeService-CP\\clientKS");
+		
+		// properties to access KeyStore e TrustStore del client
+		String userHome = System.getProperty("user.home");
+		System.setProperty("zookeeper.ssl.keyStore.location", userHome + "\\.keystore");
+		System.setProperty("zookeeper.ssl.keyStore.password","clientKS");
+		String javaHome = System.getProperty("java.home");
+		System.setProperty("zookeeper.ssl.trustStore.location",javaHome + "\\lib\\security\\cacerts");
+		System.setProperty("zookeeper.ssl.trustStore.password","changeit");
+
+	}
+	
 	private static void loadRemoteProperties(String nodeServiceURL) {
 
 		if (defaultSettings == null)
@@ -103,6 +133,7 @@ public class NodeLinker {
 
 		// client = CuratorFrameworkFactory.newClient(nodeServiceURL,new
 		// RetryOneTime(1));
+		loadCredentials();
 		client = CuratorFrameworkFactory.newClient(nodeServiceURL, new ExponentialBackoffRetry(1000, 3));
 		client.start();
 		try {

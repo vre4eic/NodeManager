@@ -33,7 +33,8 @@ public class AuthModuleTest {
 //			String ZkServer = defaultSettings.getProperty(Settings.ZOOKEEPER_DEFAULT);
 //			NodeLinker node = NodeLinker.init(ZkServer);
 			
-			NodeLinker node = NodeLinker.init("v4e-lab.isti.cnr.it:2181");
+//			NodeLinker node = NodeLinker.init("v4e-lab.isti.cnr.it:2181");
+			NodeLinker node = NodeLinker.init("localhost:2281");
 			String brokerURL =  node.getMessageBrokerURL();
 
 			module = AuthModule.getInstance(brokerURL);

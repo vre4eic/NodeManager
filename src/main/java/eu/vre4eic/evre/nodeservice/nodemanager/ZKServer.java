@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import eu.vre4eic.evre.core.Common;
 import eu.vre4eic.evre.core.comm.InstanceDetails;
 import eu.vre4eic.evre.nodeservice.Settings;
+
 
 
 public class ZKServer {
@@ -78,6 +80,17 @@ public class ZKServer {
 			file.deleteOnExit();
 			properties.setProperty("dataDir", file.getAbsolutePath());
 			properties.setProperty("clientPort", String.valueOf(clientPort));
+			properties.setProperty("secureClientPort", "2281");
+			
+//			to enable superuser on non-secure port to be used only with local connections
+//			System.setProperty("zookeeper.DigestAuthenticationProvider.superDigest", "super:UdxDQl4f9v5oITwcAsO9bmWgHSI=");
+			
+			System.setProperty("zookeeper.serverCnxnFactory", "org.apache.zookeeper.server.NettyServerCnxnFactory");
+			System.setProperty("zookeeper.ssl.keyStore.location", "C:\\Users\\francesco\\git\\NodeService-CP\\serverKS");
+			System.setProperty("zookeeper.ssl.keyStore.password","serverKS");
+			System.setProperty("zookeeper.ssl.trustStore.location","C:\\Users\\francesco\\git\\NodeService-CP\\serverTS");
+			System.setProperty("zookeeper.ssl.trustStore.password","serverTS");
+			System.setProperty("zookeeper.X509AuthenticationProvider.superUser", "CN=super.evre.org,OU=ict,O=evre,L=Pisa,ST=Italy,C=IT");
 
 			QuorumPeerConfig quorumPeerConfig = new QuorumPeerConfig();
 			quorumPeerConfig.parseProperties(properties);
@@ -118,8 +131,16 @@ public class ZKServer {
 
 
 	private static void init_eVRE_Env() throws Exception {
+		
+		System.setProperty("zookeeper.clientCnxnSocket", "org.apache.zookeeper.ClientCnxnSocketNetty");
+		System.setProperty("zookeeper.client.secure", "true");
+		System.setProperty("zookeeper.ssl.keyStore.location", "C:\\Users\\francesco\\git\\NodeService-CP\\serverKS");
+		System.setProperty("zookeeper.ssl.keyStore.password","serverKS");
+		System.setProperty("zookeeper.ssl.trustStore.location","C:\\Users\\francesco\\git\\NodeService-CP\\serverTS");
+		System.setProperty("zookeeper.ssl.trustStore.password","serverTS");
+
 		CuratorFramework client = CuratorFrameworkFactory
-				.newClient("localhost:2181",new RetryOneTime(1));
+				.newClient("localhost:2281",new RetryOneTime(1));
 		client.start();
 
 
@@ -230,7 +251,10 @@ public class ZKServer {
 		return serviceNames;
 	}
 
-	public static void main(String[] args) {/*
+	/*
+	 * Cuncurrece test
+	 
+	 public static void main(String[] args) {
 		// to test correct initialization in concurrent threads
 
 		Thread concurrentInit1 = new Thread(new Runnable() {
@@ -259,7 +283,31 @@ public class ZKServer {
 			}
 
 		}
+		
+		
 
-	 */}
+	 }
+	*/
+	
+	public static void main(String[] args) {
+
+		try {		
+			ZKServer.init();
+
+			while (true){
+				TimeUnit.MILLISECONDS.sleep(50);			
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+		finally
+		{
+			ZKServer.stopService();
+		}
+
+	}
+
 
 }

@@ -17,6 +17,8 @@ package eu.vre4eic.evre.test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
@@ -28,30 +30,23 @@ public class CuratorTest {
 	public CuratorTest() throws Exception {
 		
 		
-		class ZkTestServers {
+		System.setProperty("zookeeper.clientCnxnSocket", "org.apache.zookeeper.ClientCnxnSocketNetty");
+		System.setProperty("zookeeper.client.secure", "true");
+		
+//		System.setProperty("zookeeper.ssl.keyStore.location", "C:\\Users\\francesco\\git\\NodeService-CP\\clientKS");
+		System.setProperty("zookeeper.ssl.keyStore.location", "clientKS");
+		System.setProperty("zookeeper.ssl.keyStore.password","clientKS");
+//		System.setProperty("zookeeper.ssl.trustStore.location","C:\\Users\\francesco\\git\\NodeService-CP\\clientTS");
+		System.setProperty("zookeeper.ssl.trustStore.location","clientTS");
+		System.setProperty("zookeeper.ssl.trustStore.password","clientTS");
 
-			  TestingServer zkServer;
-			  
-			  public void startzkServer(int port) throws Exception {
-			    zkServer = new TestingServer(port);  
-			  }
-			  
-			  public void stopZkServer() throws IOException {
-			    zkServer.close();
-			  }
-			}		
-		
-		
-//		ZkTestServers zkServer = new ZkTestServers();
-//		zkServer.startzkServer(2181);
-		
 		CuratorFramework client = CuratorFrameworkFactory
-									.newClient("localhost:2181",new RetryOneTime(1));
+									.newClient("localhost:2281",new RetryOneTime(1));
 		client.start();
 		try
 		{
-			System.out.println(" ###### " + System.getProperty("user.dir"));
-			System.out.println(" ###### " + System.getProperty("user.home"));
+			System.out.println(" ###### user.dir " + System.getProperty("user.dir"));
+			System.out.println(" ###### user.home " + System.getProperty("user.home"));
 
 			
 //			String path = client.create()
@@ -64,7 +59,10 @@ public class CuratorTest {
 				.forPath("/evre/services/MessageBroker/url", "tcp://v4e-lab.isti.cnr.it:33333".getBytes());
 			List<String> paths = client.getChildren()
 					.forPath("/evre/services");
-			System.out.println("####### get data" +  paths);
+			System.out.println("####### get paths /evre/services " +  paths);
+			byte[] data = client.getData()
+					.forPath("/t");
+			System.out.println("####### get data /t " +  new String (data));
 
 		}
 		finally
@@ -77,10 +75,10 @@ public class CuratorTest {
 	public static void main(String[] args) {
 		try {
 
-//			new CuratorTest();
-//			while (true){
-//				TimeUnit.SECONDS.sleep(500);			
-//			}
+			new CuratorTest();
+			while (true){
+				TimeUnit.SECONDS.sleep(500);			
+			}
 		} catch (Exception e) {
 			
 			e.printStackTrace();
