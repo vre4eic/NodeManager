@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.curator.utils.CloseableUtils;
@@ -31,6 +32,8 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
@@ -40,7 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.vre4eic.evre.core.Common;
+import eu.vre4eic.evre.core.Common.Topics;
 import eu.vre4eic.evre.core.comm.InstanceDetails;
+import eu.vre4eic.evre.core.comm.Publisher;
+import eu.vre4eic.evre.core.messages.ControlMessage;
 import eu.vre4eic.evre.nodeservice.Settings;
 
 
@@ -215,6 +221,7 @@ public class ZKServer {
 			e.printStackTrace();
 		}
 	} 
+	
 
 	/// to be completed
 	

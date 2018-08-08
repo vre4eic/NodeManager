@@ -88,7 +88,7 @@ public class Common {
 	 */
 	
 	public enum ControlOperationType {
-		PRINT_STATUS,PING,SHOW_WARNING;
+		PRINT_STATUS,PING,SHOW_WARNING,SERVICE_STARTED,SERVICE_STOPPED;
 		
 	}
 

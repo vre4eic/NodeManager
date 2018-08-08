@@ -37,6 +37,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import eu.vre4eic.evre.core.Common;
+import eu.vre4eic.evre.core.Common.ControlOperationType;
+import eu.vre4eic.evre.core.Common.ResponseStatus;
+import eu.vre4eic.evre.core.Common.Topics;
+import eu.vre4eic.evre.core.messages.ControlMessage;
+import eu.vre4eic.evre.core.messages.LifeCycleMessage;
+import eu.vre4eic.evre.core.messages.impl.LifeCycleMessageImpl;
 import eu.vre4eic.evre.nodeservice.Settings;
 import eu.vre4eic.evre.nodeservice.Utils;
 
@@ -54,11 +60,15 @@ public class NodeLinker {
 	static CuratorFramework client = null;
 	static ServiceDiscovery<InstanceDetails> serviceDiscovery = null;
 	static Map<String, ServiceProvider<InstanceDetails>> providers = Maps.newHashMap();
+	
 	private static List<EvreService> servers = Lists.newArrayList();
+	Publisher<LifeCycleMessage> lifeCyclePublisher;
 
 	private NodeLinker(String nodeServiceURL) {
 
 		loadRemoteProperties(nodeServiceURL);
+		lifeCyclePublisher = new Publisher<LifeCycleMessage>(getMessageBrokerURL(),Topics.CONTROL_Channel);
+
 	}
 
 	public static NodeLinker init(String nodeServiceURL) {
@@ -252,7 +262,12 @@ public class NodeLinker {
 		}
 
 		System.out.println(serviceName + " added");
-
+		
+	    // lifecycle publishing
+		LifeCycleMessage lcm = new LifeCycleMessageImpl("Life Cycle Message", ResponseStatus.SUCCEED,ControlOperationType.SERVICE_STARTED)
+									.setServiceName(name)
+									.setEntryPoint(entrypoint);
+		lifeCyclePublisher.publish(lcm);
 		return true;
 	}
 
@@ -278,10 +293,17 @@ public class NodeLinker {
 			        System.err.println("No servers found named: " + serviceName);
 			        return false;
 			    }
-
 			    servers.remove(server);
 			    CloseableUtils.closeQuietly(server);
 			    System.out.println("Removed a random instance of: " + serviceName);
+			    
+			    // lifecycle publishing
+			    String ep = server.getThisInstance().getPayload().getEntrypoint();
+				LifeCycleMessage lcm = new LifeCycleMessageImpl("Life Cycle Message", ResponseStatus.SUCCEED,ControlOperationType.SERVICE_STOPPED)
+						.setServiceName(name)
+						.setEntryPoint(ep);
+				lifeCyclePublisher.publish(lcm);
+
 			    return true;
 	}
 }

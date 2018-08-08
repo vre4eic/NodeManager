@@ -5,11 +5,20 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.zookeeper.AsyncCallback.ChildrenCallback;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
+import org.apache.zookeeper.data.Stat;
+
+import eu.vre4eic.evre.core.Common;
+import eu.vre4eic.evre.core.Common.Topics;
+import eu.vre4eic.evre.core.comm.Publisher;
+import eu.vre4eic.evre.core.messages.ControlMessage;
+
 import org.apache.zookeeper.ZooKeeper;
 
 public class ServiceTracker implements Watcher {
@@ -55,7 +64,46 @@ public class ServiceTracker implements Watcher {
 				workersGetChildrenCallback,
 				null);
 	}
+	
+	
+	// to enable watchers using curator framework
+	private static void setWatchers(CuratorFramework client){
+
+		Stat exists = null;
+		Publisher<ControlMessage> controlPublisher = new Publisher<ControlMessage>(Topics.CONTROL_Channel);
+
+		CuratorWatcher watcher = new CuratorWatcher() {
+			
+			@Override
+			public void process(WatchedEvent event) throws Exception {
+				System.out.println("#### watched event" + event);
+				if( event.getType() == EventType.NodeChildrenChanged){
+					client.getChildren().usingWatcher(this).forPath(Common.EvreServicePATH);
+				}
+				
+			}
+		};
 		
+
+		try {
+			System.out.println("#### setting watchers #####" );
+
+			exists = client.checkExists().forPath(Common.EvreServicePATH);
+			if (exists == null) {
+				client.create()
+				.creatingParentContainersIfNeeded()
+				.forPath(Common.EvreServicePATH);
+				// log
+//				log.info("## Created " +Common.EvreServicePATH);
+			} 
+	
+		client.getChildren().usingWatcher(watcher).forPath(Common.EvreServicePATH);
+		
+		}catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 
 	public static void main(String[] args)  {
