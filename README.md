@@ -12,7 +12,7 @@ e-VRE Web Services are documented via Swagger:
 
 	http://v4e-lab.isti.cnr.it:8080/NodeService/swagger-ui.html#
 	
-#####Set up instructions
+##### Set up instructions
 
 To set up the Node Service MongoDB and ActiveMQ are required in your environment. 
 At the moment to install a Node Service you need to clone or download the source code, then manually change property values in the file:
